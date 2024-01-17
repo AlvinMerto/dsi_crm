@@ -1,0 +1,46 @@
+<?php
+
+namespace Modules\ActivityLog\Listeners;
+
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Modules\ActivityLog\Entities\AllActivityLog;
+use Modules\Retainer\Entities\Retainer;
+
+class SentRetainerLis
+{
+    /**
+     * Create the event listener.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     *
+     * @param  object  $event
+     * @return void
+     */
+    public function handle($event)
+    {
+        if (module_is_active('ActivityLog')) {
+            $retainer = $event->retainer;
+            $user = User::find($retainer->user_id);
+
+            $activity                   = new AllActivityLog();
+            $activity['module']         = 'Retainer';
+            $activity['sub_module']     = '--';
+            $activity['description']    = __('Retainer ') . Retainer::retainerNumberFormat($retainer->retainer_id) . __(' Send to ') . $user->name . __(' by the ') . Auth::user()->name . '.';
+            $activity['url']            = '';
+            $activity['workspace']      = $retainer->workspace;
+            $activity['created_by']     = $retainer->created_by;
+            $activity->save();
+        }
+    }
+}

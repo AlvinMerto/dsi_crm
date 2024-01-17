@@ -1,0 +1,4 @@
+"Name,SKU,Sale_Price,Purchase_Price,Quantity,Type,Description,Markup,Manufacturer Part Number,Manufacturer Name,Supplier Part Number,Supplier Name"
+"PC,00BG102,50000,45000,100,product,test demo,50,Manufacture_number,Manufacture_name,Supplier_number,Supplier_name"
+"TV,T0F201,45000,45000,150,service,test demo,50,Manufacture_number,Manufacture_name,Supplier_number,Supplier_name"
+"LAPTOP,L0912P,70000,65000,100,product,test demo,50,Manufacture_number,Manufacture_name,Supplier_number,Supplier_name"

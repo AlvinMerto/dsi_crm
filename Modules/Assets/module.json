@@ -1,0 +1,20 @@
+{
+    "name": "Assets",
+    "alias": "Assets",
+    "version": "2.1",
+    "description": "",
+    "keywords": [],
+    "priority": 310,
+    "providers": [
+        "Modules\\Assets\\Providers\\AssetsServiceProvider",
+        "Modules\\Assets\\Providers\\EventServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": [],
+    "settings": [
+        "Modules\\AmountInWords\\Providers\\Main",
+        "Modules\\AmountInWords\\Providers\\ViewComposer"
+
+    ]
+}

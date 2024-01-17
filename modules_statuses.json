@@ -1,0 +1,17 @@
+{
+    "ProductService": true,
+    "LandingPage": true,
+    "Taskly": true,
+    "Account": true,
+    "Hrm": true,
+    "Lead": true,
+    "Pos": true,
+    "Stripe": true,
+    "Paypal": true,
+    "ActivityLog": true,
+    "Assets": true,
+    "CustomField": true,
+    "Notes": true,
+    "Sales": true,
+    "SupportTicket": true
+}

@@ -1,0 +1,15 @@
+{
+    "name": "Notes",
+    "alias": "Notes",
+    "version": "2.1",
+    "description": "",
+    "keywords": [],
+    "priority": 270,
+    "providers": [
+        "Modules\\Notes\\Providers\\NotesServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": [],
+    "module_list": ["Note"]
+}
