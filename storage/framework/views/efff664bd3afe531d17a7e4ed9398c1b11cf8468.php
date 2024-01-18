@@ -109,10 +109,10 @@
     }
 
 </script>
-@if($type=="salesquote")
-{{--    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>--}}
-{{--    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css" />--}}
-{{--    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>--}}
+<?php if($type=="salesquote"): ?>
+
+
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 
 <style>
@@ -317,7 +317,7 @@
 
                     //  console.log(data);
                     
-                    postAjax("{{route('salesquote.update_fld')}}", data, function(response){
+                    postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
                         // console.log(response);
                         compute_subs(t_id);
                     });
@@ -369,7 +369,7 @@
         });
 
         function compute_subs(grp_id) {
-            postAjax("{{route('salesquote.compute_subtotal')}}", {grp_id:grp_id}, function(response){
+            postAjax("<?php echo e(route('salesquote.compute_subtotal')); ?>", {grp_id:grp_id}, function(response){
                 // $(document).find("#"+grp_id+"_desc").val(response['subs']['0']->qty);
                 $(document).find("#"+grp_id+"_qty").val(response['subs'][0].qty);
                 $(document).find("#"+grp_id+"_price").val(response['subs'][0].price);
@@ -388,7 +388,7 @@
             {
                 var type="substart";
                 var data={'id':dataId,'type':type};
-                postAjax("{{route('salesquote.getsubtotal')}}", data, function(response){
+                postAjax("<?php echo e(route('salesquote.getsubtotal')); ?>", data, function(response){
 
                     if(response.success==true)
                     {
@@ -407,7 +407,7 @@
            // addthis_subitem
             var qid            = $(document).find("#qid").val();
 
-            postAjax("{{route('salesquote.create_subtotal')}}", {ids : trs}, function(response){
+            postAjax("<?php echo e(route('salesquote.create_subtotal')); ?>", {ids : trs}, function(response){
                
                  $("#tblLocations").children().remove();
                  showquote_items(qid);
@@ -434,7 +434,7 @@
 
            // console.log(data); return;
 
-            postAjax("{{route('quote.updatetax')}}", data, function(response){
+            postAjax("<?php echo e(route('quote.updatetax')); ?>", data, function(response){
                 console.log(response);
                 $(document).find("#"+tr_id+"_tax_value").html(response);
                 get_computetotal( qt );
@@ -442,7 +442,7 @@
         });
 
         function load_quote(qid) {
-            postAjax("{{route('salesquote.getquote_items')}}",{qid:qid}, function(response) {
+            postAjax("<?php echo e(route('salesquote.getquote_items')); ?>",{qid:qid}, function(response) {
                 appendTolist(response);
             });
         }
@@ -459,7 +459,7 @@
             {
                 var type="substop";
                 var data={'id':dataId,'type':type,'datasubid':datasubid};
-                postAjax("{{route('salesquote.getsubtotal')}}", data, function(response){
+                postAjax("<?php echo e(route('salesquote.getsubtotal')); ?>", data, function(response){
 
                     if(response.success==true)
                     {
@@ -480,7 +480,7 @@
             {
                 var type="subitem";
                 var data={'id':dataId,'type':type,'datasubid':datasubid};
-                postAjax("{{route('salesquote.getsubtotal')}}", data, function(response){
+                postAjax("<?php echo e(route('salesquote.getsubtotal')); ?>", data, function(response){
 
                     if(response.success==true)
                     {
@@ -498,7 +498,7 @@
             // {
                 var type="subcomment";
                 var data={'id':dataId,'type':type,'datasubid':datasubid};
-                postAjax("{{route('salesquote.getsubtotal')}}", data, function(response){
+                postAjax("<?php echo e(route('salesquote.getsubtotal')); ?>", data, function(response){
 
                     if(response.success==true)
                     {
@@ -541,7 +541,7 @@
             // {
             var type="subblank";
             var data={'id':dataId,'type':type,'datasubid':datasubid};
-            postAjax("{{route('salesquote.getsubtotal')}}", data, function(response){
+            postAjax("<?php echo e(route('salesquote.getsubtotal')); ?>", data, function(response){
 
                 if(response.success==true)
                 {
@@ -572,7 +572,7 @@
         });
 
     </script>
-@endif
+<?php endif; ?>
 <script>
     $(document).on('change', '.product_type', function()
     {
@@ -583,20 +583,20 @@
         var selector = data;
         var itemSelect = selector.parent().parent().find('.product_id.item').attr('name');
         $.ajax({
-            url: '{{ route('get.item') }}',
+            url: '<?php echo e(route('get.item')); ?>',
             type: 'POST',
             data: {
                 "product_type": product_type,
-                "_token": "{{ csrf_token() }}",
+                "_token": "<?php echo e(csrf_token()); ?>",
             },
             success: function(data) {
                 selector.parent().parent().find('.product_id').empty();
                 var product_select = `<select class="form-control product_id item js-searchBox" name="${itemSelect}"
-                                        placeholder="Select Item" data-url="{{route('invoice.product')}}" required = 'required'>
+                                        placeholder="Select Item" data-url="<?php echo e(route('invoice.product')); ?>" required = 'required'>
                                         </select>`;
                 selector.parent().parent().find('.product_div').html(product_select);
 
-                selector.parent().parent().find('.product_id').append('<option value="0"> {{ __('Select Item') }} </option>');
+                selector.parent().parent().find('.product_id').append('<option value="0"> <?php echo e(__('Select Item')); ?> </option>');
                 $.each(data, function(key, value) {
                     var selected = (key == id) ? 'selected' : '';
                     selector.parent().parent().find('.product_id').append('<option value="' + key + '" ' + selected + '>' + value + '</option>');
@@ -640,7 +640,7 @@
     $(document).find(".viewdetails").on("click",function(){
         var id = trs[0];
         
-        postAjax("{{route('salesquote.viewitemdetails')}}", { id : id}, function(){
+        postAjax("<?php echo e(route('salesquote.viewitemdetails')); ?>", { id : id}, function(){
             
         });
     });
@@ -666,7 +666,7 @@
         var type=$('#commonModal form').find('.type').val();
 
         var data={'desc':sdesc,'cost':ccost,'markup':cmarkup,'quantity':cquantity,'price':cprice,'manufacturer_part_number':cmanufacturer_part_number,'manufacturer_name':cmanufacturer_name,'supplier_part_number':csupplier_part_number,'supplier_name':csupplier_name,'id':dataid,'datasubid':datasubid,'type':type};
-        postAjax("{{route('salesquote.getsubtotal')}}", data, function(response)
+        postAjax("<?php echo e(route('salesquote.getsubtotal')); ?>", data, function(response)
         {
             if(response.success==true)
             {
@@ -709,7 +709,7 @@
         // console.log(data);  
         var dis = $(this);
     
-        postAjax("{{route('salesquote.update_fld')}}", data, function(response){
+        postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
             console.log(response);
         });
 
@@ -737,7 +737,7 @@
         var dis   = $(this);
         var theid = dis.data("id");
     
-        postAjax("{{route('salesquote.update_fld')}}", data, function(response){
+        postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
             get_computetotal( $(document).find("#qid").val() );
             console.log(response[0].extended);
             $(document).find("#"+theid+"_amount").val(response[0].extended);
@@ -810,7 +810,7 @@
     });
 
     function savethis(values, table, somefunction = false) {
-        postAjax("{{route('salesquote.savethis')}}",{data:values, table:table}, function(response){
+        postAjax("<?php echo e(route('salesquote.savethis')); ?>",{data:values, table:table}, function(response){
             if (somefunction != false) {
                 somefunction(response);
             }
@@ -831,7 +831,7 @@
 
         var disid = dis.data('id');
 
-        postAjax("{{route('salesquote.blursave')}}", data, function(response){
+        postAjax("<?php echo e(route('salesquote.blursave')); ?>", data, function(response){
             if (table == "sales_quotes_items") {
                 $(document).find("#"+disid+"_profit").html(response['profit']);
                 $(document).find("#"+disid+"_price").html(response['price']);
@@ -847,7 +847,7 @@
     }
 
     function showquote_items(qid) {
-        postAjax("{{route('salesquote.getquote_items')}}",{qid:qid}, function(response) {
+        postAjax("<?php echo e(route('salesquote.getquote_items')); ?>",{qid:qid}, function(response) {
             appendTolist(response);
             get_computetotal(qid);
            // $(response).appendTo('.add-list');
@@ -859,7 +859,7 @@
             "quote_id" : quote_id
         };
 
-        postAjax("{{route('salesquote.get_total')}}",data, function(response) {
+        postAjax("<?php echo e(route('salesquote.get_total')); ?>",data, function(response) {
             // console.log(response);
             $(document).find(".totalproduct").html( response['product'] );
             $(document).find(".totalshipping").html( response['shipping'] );
@@ -933,7 +933,7 @@
 
         // $("#commonModal").modal("hide"); return;
         // console.log(data);
-        postAjax("{{route('salesquote.addcustomitem')}}",data, function(response) {
+        postAjax("<?php echo e(route('salesquote.addcustomitem')); ?>",data, function(response) {
             // $(response).appendTo('.add-list');
             appendTolist(response, function(){
                 $("#commonModal").modal("hide");
@@ -941,14 +941,14 @@
         });
     });
 </script>
-@if ($acction == 'edit')
+<?php if($acction == 'edit'): ?>
     <script>
         $(document).ready(function() {
             // $("#customer").trigger('change');
             triggerchange( $("#customer")  );
 
             var value = $(selector + " .repeater").attr('data-value');
-            var type = '{{ $type }}';
+            var type = '<?php echo e($type); ?>';
             if (typeof value != 'undefined' && value.length != 0) {
                 value = JSON.parse(value);
                 $repeater.setList(value);
@@ -967,9 +967,9 @@
 
        
     </script>
-    @if ($type == 'product')
+    <?php if($type == 'product'): ?>
         <script>
-            var invoice_id = '{{ $invoice->id }}';
+            var invoice_id = '<?php echo e($invoice->id); ?>';
 
             function changeItem(element) {
 
@@ -991,7 +991,7 @@
                         var item = JSON.parse(data);
 
                         $.ajax({
-                            url: '{{ route('invoice.items') }}',
+                            url: '<?php echo e(route('invoice.items')); ?>',
                             type: 'GET',
                             headers: {
                                 'X-CSRF-TOKEN': jQuery('#token').val()
@@ -1062,17 +1062,17 @@
                 });
             })
         </script>
-    @elseif($type == 'project')
+    <?php elseif($type == 'project'): ?>
         <script>
             $(document).ready(function() {
                 $(".price").trigger("keyup");
                 $("#tax_project").trigger('change');
             });
         </script>
-    @elseif($type == "salesquote")
+    <?php elseif($type == "salesquote"): ?>
         <script>
 
-            var invoice_id = '{{ $invoice->id }}';
+            var invoice_id = '<?php echo e($invoice->id); ?>';
 
             function changeItem(element) {
                 var iteams_id = element.val();
@@ -1094,7 +1094,7 @@
                         var item = JSON.parse(data);
 
                         $.ajax({
-                            url: '{{ route('invoice.items') }}',
+                            url: '<?php echo e(route('invoice.items')); ?>',
                             type: 'GET',
                             headers: {
                                 'X-CSRF-TOKEN': jQuery('#token').val()
@@ -1164,11 +1164,11 @@
             })
 
             $(document).ready(function() {
-                var acction = "{{$acction}}";
+                var acction = "<?php echo e($acction); ?>";
 
                 var data={'acction':acction,'invoice_id':invoice_id};
 
-                postAjax("{{route('salesquote.getsubtotal')}}", data, function(response){
+                postAjax("<?php echo e(route('salesquote.getsubtotal')); ?>", data, function(response){
                     if(response.success==true)
                     {
                         $('.add-list').append(response.data);
@@ -1207,8 +1207,8 @@
 
             });
         </script>
-    @endif
-@endif
+    <?php endif; ?>
+<?php endif; ?>
 <script>
      $(document).on('click', '[data-repeater-create]', function() {
         $('.item :selected').each(function() {
@@ -1233,7 +1233,7 @@
 
         if (tax_id != "") {
             $.ajax({
-                url: '{{ route('get.taxes') }}',
+                url: '<?php echo e(route('get.taxes')); ?>',
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': jQuery('#token').val()
@@ -1265,15 +1265,16 @@
         }
     }
 </script>
-@if ($type == 'product')
-    <h5 class="h4 d-inline-block font-weight-400 mb-4">{{ __('Items') }}</h5>
-    <div class="card repeater" @if ($acction == 'edit') data-value='{!! json_encode($invoice->items) !!}' @endif>
+<?php if($type == 'product'): ?>
+    <h5 class="h4 d-inline-block font-weight-400 mb-4"><?php echo e(__('Items')); ?></h5>
+    <div class="card repeater" <?php if($acction == 'edit'): ?> data-value='<?php echo json_encode($invoice->items); ?>' <?php endif; ?>>
         <div class="item-section py-4">
             <div class="row justify-content-between align-items-center">
                 <div class="col-md-12 d-flex align-items-center justify-content-md-end px-5">
                     <a href="#" data-repeater-create="" class="btn btn-primary mr-2" data-toggle="modal"
                         data-target="#add-bank">
-                        <i class="ti ti-plus"></i> {{ __('Add item') }}
+                        <i class="ti ti-plus"></i> <?php echo e(__('Add item')); ?>
+
                     </a>
                 </div>
             </div>
@@ -1283,63 +1284,71 @@
                 <table class="table  mb-0 table-custom-style" data-repeater-list="items" id="sortable-table">
                     <thead>
                         <tr>
-                            <th>{{ __('Item Type') }}</th>
-                            <th>{{ __('Items') }}</th>
-                            <th>{{ __('Quantity') }}</th>
-                            <th>{{ __('Price') }} </th>
-                            <th>{{ __('Discount') }}</th>
-                            <th>{{ __('Tax') }} (%)</th>
-                            <th class="text-end">{{ __('Amount') }} <br><small
-                                    class="text-danger font-weight-bold">{{ __('After discount & tax') }}</small></th>
+                            <th><?php echo e(__('Item Type')); ?></th>
+                            <th><?php echo e(__('Items')); ?></th>
+                            <th><?php echo e(__('Quantity')); ?></th>
+                            <th><?php echo e(__('Price')); ?> </th>
+                            <th><?php echo e(__('Discount')); ?></th>
+                            <th><?php echo e(__('Tax')); ?> (%)</th>
+                            <th class="text-end"><?php echo e(__('Amount')); ?> <br><small
+                                    class="text-danger font-weight-bold"><?php echo e(__('After discount & tax')); ?></small></th>
                             <th></th>
                         </tr>
                     </thead>
 
                     <tbody class="ui-sortable" data-repeater-item>
                         <tr>
-                            {{ Form::hidden('id', null, ['class' => 'form-control id']) }}
+                            <?php echo e(Form::hidden('id', null, ['class' => 'form-control id'])); ?>
+
                             <td  class="form-group pt-0">
-                                {{ Form::select('product_type', $product_type, null, ['class' => 'form-control product_type ', 'required' => 'required', 'placeholder' => '--']) }}
+                                <?php echo e(Form::select('product_type', $product_type, null, ['class' => 'form-control product_type ', 'required' => 'required', 'placeholder' => '--'])); ?>
+
                             </td>
                             <td width="25%" class="form-group pt-0 product_div">
-                                    <select name="item" class="form-control product_id item  js-searchBox" data-url="{{route('invoice.product')}}" required>
-                                        <option value="0">{{'--'}}</option>
-                                        @foreach ($product_services as $key =>$product_service)
-                                            <option value="{{$key}}">{{$product_service}}</option>
-                                        @endforeach
+                                    <select name="item" class="form-control product_id item  js-searchBox" data-url="<?php echo e(route('invoice.product')); ?>" required>
+                                        <option value="0"><?php echo e('--'); ?></option>
+                                        <?php $__currentLoopData = $product_services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key =>$product_service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($key); ?>"><?php echo e($product_service); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
-                                @if (empty($product_services_count))
-                                    <div class=" text-xs">{{ __('Please create Product first.') }}<a
-                                            href="{{ route('product-service.index') }}"><b>{{ __('Add Product') }}</b></a>
+                                <?php if(empty($product_services_count)): ?>
+                                    <div class=" text-xs"><?php echo e(__('Please create Product first.')); ?><a
+                                            href="<?php echo e(route('product-service.index')); ?>"><b><?php echo e(__('Add Product')); ?></b></a>
                                     </div>
-                                @endif
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <div class="form-group price-input input-group search-form">
-                                    {{ Form::text('quantity', '', ['class' => 'form-control quantity', 'required' => 'required', 'placeholder' => __('Qty'), 'required' => 'required']) }}
+                                    <?php echo e(Form::text('quantity', '', ['class' => 'form-control quantity', 'required' => 'required', 'placeholder' => __('Qty'), 'required' => 'required'])); ?>
+
                                     <span class="unit input-group-text bg-transparent"></span>
                                 </div>
                             </td>
                             <td>
                                 <div class="form-group price-input input-group search-form">
-                                    {{ Form::text('price', '', ['class' => 'form-control price', 'required' => 'required', 'placeholder' => __('Price'), 'required' => 'required']) }}
-                                    <span class="input-group-text bg-transparent">{{ company_setting('defult_currancy_symbol') }}</span>
+                                    <?php echo e(Form::text('price', '', ['class' => 'form-control price', 'required' => 'required', 'placeholder' => __('Price'), 'required' => 'required'])); ?>
+
+                                    <span class="input-group-text bg-transparent"><?php echo e(company_setting('defult_currancy_symbol')); ?></span>
                                 </div>
                             </td>
                             <td>
                                 <div class="form-group price-input input-group search-form">
-                                    {{ Form::text('discount', '', ['class' => 'form-control discount', 'required' => 'required', 'placeholder' => __('Discount')]) }}
+                                    <?php echo e(Form::text('discount', '', ['class' => 'form-control discount', 'required' => 'required', 'placeholder' => __('Discount')])); ?>
+
                                     <span
-                                        class="input-group-text bg-transparent">{{ company_setting('defult_currancy_symbol') }}</span>
+                                        class="input-group-text bg-transparent"><?php echo e(company_setting('defult_currancy_symbol')); ?></span>
                                 </div>
                             </td>
                             <td>
                                 <div class="form-group">
                                     <div class="input-group colorpickerinput">
                                         <div class="taxes"></div>
-                                        {{ Form::hidden('tax', '', ['class' => 'form-control tax text-dark']) }}
-                                        {{ Form::hidden('itemTaxPrice', '', ['class' => 'form-control itemTaxPrice']) }}
-                                        {{ Form::hidden('itemTaxRate', '', ['class' => 'form-control itemTaxRate']) }}
+                                        <?php echo e(Form::hidden('tax', '', ['class' => 'form-control tax text-dark'])); ?>
+
+                                        <?php echo e(Form::hidden('itemTaxPrice', '', ['class' => 'form-control itemTaxPrice'])); ?>
+
+                                        <?php echo e(Form::hidden('itemTaxRate', '', ['class' => 'form-control itemTaxRate'])); ?>
+
                                     </div>
                                 </div>
                             </td>
@@ -1356,7 +1365,8 @@
                         <tr>
                             <td colspan="2">
                                 <div class="form-group">
-                                    {{ Form::textarea('description', null, ['class' => 'form-control pro_description', 'rows' => '2', 'placeholder' => __('Description')]) }}
+                                    <?php echo e(Form::textarea('description', null, ['class' => 'form-control pro_description', 'rows' => '2', 'placeholder' => __('Description')])); ?>
+
                                 </div>
                             </td>
                             <td colspan="5"></td>
@@ -1369,8 +1379,9 @@
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td></td>
-                            <td><strong>{{ __('Sub Total') }}
-                                    ({{ company_setting('defult_currancy_symbol') }})</strong>
+                            <td><strong><?php echo e(__('Sub Total')); ?>
+
+                                    (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong>
                             </td>
                             <td class="text-end subTotal">0.00</td>
                             <td></td>
@@ -1381,8 +1392,9 @@
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td></td>
-                            <td><strong>{{ __('Discount') }}
-                                    ({{ company_setting('defult_currancy_symbol') }})</strong>
+                            <td><strong><?php echo e(__('Discount')); ?>
+
+                                    (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong>
                             </td>
                             <td class="text-end totalDiscount">0.00</td>
                             <td></td>
@@ -1393,7 +1405,7 @@
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td></td>
-                            <td><strong>{{ __('Tax') }} ({{ company_setting('defult_currancy_symbol') }})</strong>
+                            <td><strong><?php echo e(__('Tax')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong>
                             </td>
                             <td class="text-end totalTax">0.00</td>
                             <td></td>
@@ -1404,8 +1416,9 @@
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
-                            <td class="blue-text"><strong>{{ __('Total Amount') }}
-                                    ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                            <td class="blue-text"><strong><?php echo e(__('Total Amount')); ?>
+
+                                    (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                             <td class="text-end totalAmount blue-text">0.00</td>
                             <td></td>
                         </tr>
@@ -1414,16 +1427,18 @@
             </div>
         </div>
     </div>
-@elseif ($type == 'project')
-    <h5 class="h4 d-inline-block font-weight-400 mb-4 pro_name">{{ __('Project') }}</h5>
-            {{ Form::hidden('itemTaxRate', null, ['class' => 'form-control itemTaxRate']) }}
-            <div class="card repeater" @if ($acction == 'edit') data-value='{!! json_encode($invoice->items) !!}' @endif>
+<?php elseif($type == 'project'): ?>
+    <h5 class="h4 d-inline-block font-weight-400 mb-4 pro_name"><?php echo e(__('Project')); ?></h5>
+            <?php echo e(Form::hidden('itemTaxRate', null, ['class' => 'form-control itemTaxRate'])); ?>
+
+            <div class="card repeater" <?php if($acction == 'edit'): ?> data-value='<?php echo json_encode($invoice->items); ?>' <?php endif; ?>>
                 <div class="item-section py-4">
                     <div class="row justify-content-between align-items-center">
                         <div class="col-md-12 d-flex align-items-center justify-content-md-end px-5">
                             <a href="#" data-repeater-create="" class="btn btn-primary tax_get mr-2" data-toggle="modal"
                                 data-target="#add-bank">
-                                <i class="ti ti-plus"></i> {{ __('Add item') }}
+                                <i class="ti ti-plus"></i> <?php echo e(__('Add item')); ?>
+
                             </a>
                         </div>
                     </div>
@@ -1433,12 +1448,12 @@
                         <table class="table  mb-0 table-custom-style" data-repeater-list="items" id="sortable-table">
                             <thead>
                                 <tr>
-                                    <th>{{ __('Items') }}</th>
-                                    <th>{{ __('Price') }} </th>
-                                    <th>{{ __('Discount') }}</th>
-                                    <th width="200px">{{ __('Tax') }} (%)</th>
-                                    <th class="text-end">{{ __('Amount') }} <br><small
-                                            class="text-danger font-weight-bold">{{ __('After discount & tax') }}</small></th>
+                                    <th><?php echo e(__('Items')); ?></th>
+                                    <th><?php echo e(__('Price')); ?> </th>
+                                    <th><?php echo e(__('Discount')); ?></th>
+                                    <th width="200px"><?php echo e(__('Tax')); ?> (%)</th>
+                                    <th class="text-end"><?php echo e(__('Amount')); ?> <br><small
+                                            class="text-danger font-weight-bold"><?php echo e(__('After discount & tax')); ?></small></th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -1446,31 +1461,39 @@
                             <tbody class="ui-sortable" data-repeater-item>
                                 <tr>
                                     <td width="25%" class="form-group pt-0">
-                                        {{ Form::hidden('id', null, ['class' => 'form-control id']) }}
-                                        {{ Form::select('item', $tasks, null, ['class' => 'form-control item js-searchBox', 'required' => 'required']) }}
+                                        <?php echo e(Form::hidden('id', null, ['class' => 'form-control id'])); ?>
+
+                                        <?php echo e(Form::select('item', $tasks, null, ['class' => 'form-control item js-searchBox', 'required' => 'required'])); ?>
+
                                     </td>
                                     <td>
                                         <div class="form-group price-input input-group search-form">
-                                            {{ Form::text('price', '', ['class' => 'form-control price', 'required' => 'required', 'placeholder' => __('Price'), 'required' => 'required']) }}
+                                            <?php echo e(Form::text('price', '', ['class' => 'form-control price', 'required' => 'required', 'placeholder' => __('Price'), 'required' => 'required'])); ?>
+
                                             <span
-                                                class="input-group-text bg-transparent">{{ company_setting('defult_currancy_symbol') }}</span>
+                                                class="input-group-text bg-transparent"><?php echo e(company_setting('defult_currancy_symbol')); ?></span>
                                         </div>
                                     </td>
-                                    {{ Form::hidden('quantity',1, ['class' => 'form-control quantity', 'required' => 'required', 'placeholder' => __('Qty'), 'required' => 'required']) }}
+                                    <?php echo e(Form::hidden('quantity',1, ['class' => 'form-control quantity', 'required' => 'required', 'placeholder' => __('Qty'), 'required' => 'required'])); ?>
+
                                     <td>
                                         <div class="form-group price-input input-group search-form">
-                                            {{ Form::text('discount', '', ['class' => 'form-control discount', 'placeholder' => __('Discount')]) }}
+                                            <?php echo e(Form::text('discount', '', ['class' => 'form-control discount', 'placeholder' => __('Discount')])); ?>
+
                                             <span
-                                                class="input-group-text bg-transparent">{{ company_setting('defult_currancy_symbol') }}</span>
+                                                class="input-group-text bg-transparent"><?php echo e(company_setting('defult_currancy_symbol')); ?></span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <div class="taxes"></div>
-                                                {{ Form::hidden('tax', null, ['class' => 'form-control tax']) }}
-                                                {{ Form::hidden('itemTaxPrice', '', ['class' => 'form-control itemTaxPrice']) }}
-                                                {{ Form::hidden('itemTaxRate', '', ['class' => 'form-control itemTaxRate']) }}
+                                                <?php echo e(Form::hidden('tax', null, ['class' => 'form-control tax'])); ?>
+
+                                                <?php echo e(Form::hidden('itemTaxPrice', '', ['class' => 'form-control itemTaxPrice'])); ?>
+
+                                                <?php echo e(Form::hidden('itemTaxRate', '', ['class' => 'form-control itemTaxRate'])); ?>
+
                                             </div>
                                         </div>
                                     </td>
@@ -1486,7 +1509,8 @@
                                 <tr>
                                     <td colspan="2">
                                         <div class="form-group">
-                                            {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => '2', 'placeholder' => __('Description')]) }}
+                                            <?php echo e(Form::textarea('description', null, ['class' => 'form-control', 'rows' => '2', 'placeholder' => __('Description')])); ?>
+
                                         </div>
                                     </td>
                                     <td colspan="5"></td>
@@ -1498,8 +1522,9 @@
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td></td>
-                                    <td><strong>{{ __('Sub Total') }}
-                                            ({{ company_setting('defult_currancy_symbol') }})</strong>
+                                    <td><strong><?php echo e(__('Sub Total')); ?>
+
+                                            (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong>
                                     </td>
                                     <td class="text-end subTotal">0.00</td>
                                     <td></td>
@@ -1509,8 +1534,9 @@
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td></td>
-                                    <td><strong>{{ __('Discount') }}
-                                            ({{ company_setting('defult_currancy_symbol') }})</strong>
+                                    <td><strong><?php echo e(__('Discount')); ?>
+
+                                            (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong>
                                     </td>
                                     <td class="text-end totalDiscount">0.00</td>
                                     <td></td>
@@ -1520,7 +1546,7 @@
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td></td>
-                                    <td><strong>{{ __('Tax') }} ({{ company_setting('defult_currancy_symbol') }})</strong>
+                                    <td><strong><?php echo e(__('Tax')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong>
                                     </td>
                                     <td class="text-end totalTax">0.00</td>
                                     <td></td>
@@ -1530,8 +1556,9 @@
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
-                                    <td class="blue-text"><strong>{{ __('Total Amount') }}
-                                            ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                                    <td class="blue-text"><strong><?php echo e(__('Total Amount')); ?>
+
+                                            (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                                     <td class="text-end totalAmount blue-text">0.00</td>
                                     <td></td>
                                 </tr>
@@ -1540,8 +1567,8 @@
                     </div>
                 </div>
             </div>
-@elseif ($type == 'salesquote')
-    <!-- <h5 class="h4 d-inline-block font-weight-400 mb-4">{{ __('Sales Quote') }}</h5> -->
+<?php elseif($type == 'salesquote'): ?>
+    <!-- <h5 class="h4 d-inline-block font-weight-400 mb-4"><?php echo e(__('Sales Quote')); ?></h5> -->
     <div class="card">
         <div class="card-header p-3" style="background: #eee;">
             <!-- <div class="col-md-12 d-flex p-2"> -->
@@ -1550,35 +1577,35 @@
                     <!-- <a href="#" class="btn btn-primary subtotal" style="margin-right: 5px;">
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Subtotal </span>
                     </a> -->
-                    <a class="border-right subtotal_" title="{{ __('Create Subtotal two') }}" data-toggle="tooltip">
+                    <a class="border-right subtotal_" title="<?php echo e(__('Create Subtotal two')); ?>" data-toggle="tooltip">
                         <i class="ti ti-subtask"></i> <span class=""> Subtotal </span>
                     </a>
 
                     <!-- <a href="#"class="btn btn-primary mr-5 substop" style="margin-right: 5px;">
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Sub Stop </span>
                     </a> -->
-                    <a class="border-right mr-5 labor" data-ajax-popup="true" data-size="md" data-title="{{ __('Labor') }}" data-url="{{route('salesquote.getlaborwindow')}}" data-toggle="tooltip" title="{{ __('Labor') }}" >
+                    <a class="border-right mr-5 labor" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Labor')); ?>" data-url="<?php echo e(route('salesquote.getlaborwindow')); ?>" data-toggle="tooltip" title="<?php echo e(__('Labor')); ?>" >
                         <i class="ti ti-hammer"></i> <span class="hide-mob"> Labor </span>
                     </a>
-                    <!-- <a href="#"class="border-right mr-5 shipping" data-ajax-popup="true" data-size="md" data-title="{{ __('Shipping') }}" data-url="{{route('salesquote.addshippingfee')}}" data-toggle="tooltip" title="{{ __('Shipping Fee') }}" >
+                    <!-- <a href="#"class="border-right mr-5 shipping" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Shipping')); ?>" data-url="<?php echo e(route('salesquote.addshippingfee')); ?>" data-toggle="tooltip" title="<?php echo e(__('Shipping Fee')); ?>" >
                         <i class="ti ti-truck"></i> <span class="hide-mob"> Shipping </span>
                     </a> -->
                     <a class="border-right mr-5 subitem_add">
                         <i class="ti ti-brand-producthunt"></i> <span class="hide-mob"> Item </span>
                     </a>
-                    <a class="border-right mr-5 subcomment" data-ajax-popup="true" data-size="md" data-title="{{ __('Add Comment') }}" data-url="{{route('salesquote.addcomment')}}" data-toggle="tooltip" title="{{ __('Comment') }}">
+                    <a class="border-right mr-5 subcomment" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
                         <i class="ti ti-message-dots"></i> <span class="hide-mob"> Comment </span>
                     </a>
-                    <a class="border-right mr-5 subblank" title="{{ __('Create a blank row') }}" data-toggle="tooltip">
+                    <a class="border-right mr-5 subblank" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
                         <i class="ti ti-space"></i> <span class="hide-mob"> Blank Row </span>
                     </a>
-                    <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="{{ __('View Item Details') }}" data-url="{{route('salesquote.viewitemdetails')}}" data-toggle="tooltip" title="{{ __('View Item Details') }}">
+                    <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('View Item Details')); ?>" data-url="<?php echo e(route('salesquote.viewitemdetails')); ?>" data-toggle="tooltip" title="<?php echo e(__('View Item Details')); ?>">
                         <i class="ti ti-adjustments-plus"></i> <span class="hide-mob"> View Item Details </span>
                     </a>
-                    <a class="border-right mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="{{ __('Create New Custom Item') }}" data-url="{{route('salesquote.customitem')}}" data-toggle="tooltip" title="{{ __('Create') }}">
+                    <a class="border-right mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Create New Custom Item')); ?>" data-url="<?php echo e(route('salesquote.customitem')); ?>" data-toggle="tooltip" title="<?php echo e(__('Create')); ?>">
                         <i class="ti ti-adjustments-plus"></i> <span class="hide-mob"> Custom Item </span>
                     </a>
-                    <!-- <a href="#" class="btn btn-primary mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="{{ __('Create New Custom Item') }}" data-url="{{route('salesquote.customitem')}}" data-toggle="tooltip" title="{{ __('Create') }}" style="margin-right: 5px;">
+                    <!-- <a href="#" class="btn btn-primary mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Create New Custom Item')); ?>" data-url="<?php echo e(route('salesquote.customitem')); ?>" data-toggle="tooltip" title="<?php echo e(__('Create')); ?>" style="margin-right: 5px;">
                         <i class="ti ti-plus"></i>alvin Item
                     </a> -->
                 </div>
@@ -1616,52 +1643,52 @@
                     </tr>
                     <tr>
                         <td colspan="11"></td>
-                        <td class="text-end" width="10%"><strong>{{ __('Total Cost') }} ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                        <td class="text-end" width="10%"><strong><?php echo e(__('Total Cost')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                         <td width="10%"></td>
                         <td class="text-end totalcost" width="10%"> &nbsp; </td>
                     </tr>
                     <tr>
                         <td colspan="12"></td>
-                        <td class="text-end" width="10%"><strong>{{ __('Product') }} ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                        <td class="text-end" width="10%"><strong><?php echo e(__('Product')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                         <td class="text-end totalproduct" width="10%">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="12"></td>
-                        <td class="text-end" width="10%"><strong>{{ __('Shipping') }} ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                        <td class="text-end" width="10%"><strong><?php echo e(__('Shipping')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                         <td class="text-end totalshipping" width="10%">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="12"></td>
-                        <td class="text-end" width="10%"><strong>{{ __('Labor') }} ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                        <td class="text-end" width="10%"><strong><?php echo e(__('Labor')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                         <td class="text-end totallabor" width="10%">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="11"></td>
-                        <td class="text-end" width="10%"><strong>{{ __('Total Profit') }} ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                        <td class="text-end" width="10%"><strong><?php echo e(__('Total Profit')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                         <td width="10%"></td>
                         <td class="text-end totalprofit" width="10%">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="11"></td>
-                        <td class="text-end" width="10%"><strong>{{ __('GP%') }}</strong></td>
+                        <td class="text-end" width="10%"><strong><?php echo e(__('GP%')); ?></strong></td>
                         <td width="10%"></td>
                         <td class="text-end totalgp" width="10%">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="11"></td>
-                        <td class="text-end" width="10%"><strong>{{ __('Sub Total') }} ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                        <td class="text-end" width="10%"><strong><?php echo e(__('Sub Total')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                         <td width="10%"></td>
                         <td class="text-end maintotal" width="10%">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="11"></td>
-                        <td class="text-end" width="10%"><strong>{{ __('Tax') }} ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                        <td class="text-end" width="10%"><strong><?php echo e(__('Tax')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                         <td width="10%"></td>
                         <td class="text-end totalTax" width="10%">0.00</td>
                     </tr>
                     <tr>
                         <td colspan="11"></td>
-                        <td class="blue-text text-end" width="10%"><strong>{{ __('Total Amount') }} ({{ company_setting('defult_currancy_symbol') }})</strong></td>
+                        <td class="blue-text text-end" width="10%"><strong><?php echo e(__('Total Amount')); ?> (<?php echo e(company_setting('defult_currancy_symbol')); ?>)</strong></td>
                         <td width="10%"></td>
                         <td class="text-end totalAmount blue-text" width="10%">0.00</td>
                     </tr>
@@ -1670,4 +1697,5 @@
             </div>
         </div>
     </div>
-@endif
+<?php endif; ?>
+<?php /**PATH C:\xampp\htdocs\DSI_crm\resources\views/invoice/section.blade.php ENDPATH**/ ?>

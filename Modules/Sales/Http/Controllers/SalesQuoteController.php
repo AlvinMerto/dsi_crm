@@ -2033,6 +2033,44 @@ class SalesQuoteController extends Controller
             }
     }
 
+    function updatetax(Request $req) {
+        $item_id           = $req->input("id");
+        $istaxable         = $req->input("istaxable");
+
+     //   return response()->json($istaxable);
+
+        $quoteitems = SalesQuoteItem::leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
+                                     ->where("sales_quotes_items.id", $item_id)->get();
+
+        $values = $this->calculate_item([
+            "istaxable"    => $istaxable,
+            "shippingfee"  => $quoteitems[0]->shippingfee,
+            "ccost"        => $quoteitems[0]->purchase_price,
+            "markup"       => $quoteitems[0]->markup,
+            "qty"          => $quoteitems[0]->quantity
+        ]);
+
+        $update = SalesQuoteItem::where("id",$item_id)->update([
+            "tax"           => $values['tax_used'],
+            "itemtaxprice"  => $values['tax_in_dec'],
+            "itemtaxrate"   => $values['tax_value']
+        ]);
+
+        return response()->json( number_format($values['tax_value'],2));
+        /*
+            "markupvalue" => $markup_value,
+            "price"       => $price, // price
+            "tax_in_dec"  => $taxprice,
+            "tax_value"   => $tax_value,
+            "tax_used"    => $taxation_used,
+            "extended"    => $price,
+            "amount"      => $amount,
+            "profit"      => $profit,
+            "totalprofit" => $total_profit,
+            "ccost"       => $cost
+        */
+    }
+
     function fortest() {
         // $url = route("quote.displayquote", 77);
         // echo $url;

@@ -378,3 +378,6 @@ Route::post("salesquote/emailquote","SalesQuoteController@email_quote")->name("s
 
 // quote controller
 Route::get('/display/quote/{quote_id?}','QuoteController@displayquote')->name("quote.displayquote");
+
+// tax
+Route::post("/updatetax","SalesQuoteController@updatetax")->name("quote.updatetax");
