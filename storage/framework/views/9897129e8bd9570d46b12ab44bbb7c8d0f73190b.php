@@ -128,3 +128,4 @@
         <?php } ?>
 
     </tr>
+<?php /**PATH C:\xampp\htdocs\DSI_crm\Modules/Sales\Resources/views/salesquote/quote_item.blade.php ENDPATH**/ ?>
