@@ -173,7 +173,7 @@
         border: 1px solid #e0e0e0;
         color: #767575;
         padding: 7px 15px;
-        margin-right: -1px;
+        margin-right: -5px;
         background: #fff;
     }
 
@@ -295,12 +295,21 @@
                     d_id    = ui.item.data("rid");
                     
                     orig_id = ui.item.parent().data('tid');
-                    
+                   // console.log("leaving:"+orig_id);
+
+                    var data   = {
+                        "fld"     : "grp_id",
+                        "id"      : d_id,
+                        "theval"  : null,
+                        "table"   : "sales_quotes_items"
+                    };
+
+                    postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
+                        compute_subs(orig_id);
+                    });
                 },
                 stop: function (e, ui) {
                     var disitem = ui.item.parent().index();
-
-                    console.log(disitem);
 
                     t_id       = ui.item.parent().data('tid');
 
@@ -370,12 +379,20 @@
 
         function compute_subs(grp_id) {
             postAjax("<?php echo e(route('salesquote.compute_subtotal')); ?>", {grp_id:grp_id}, function(response){
-                // $(document).find("#"+grp_id+"_desc").val(response['subs']['0']->qty);
-                $(document).find("#"+grp_id+"_qty").val(response['subs'][0].qty);
-                $(document).find("#"+grp_id+"_price").val(response['subs'][0].price);
-                $(document).find("#"+grp_id+"_shippingfee").val(response['subs'][0].shippingfee);
-                $(document).find("#"+grp_id+"_amount").val(response['subs'][0].amount);
+
+                $(document).find("#"+grp_id+"_profit").html( numberWithCommas( response['subs'][0].profit) );
+                $(document).find("#"+grp_id+"_cost").html( numberWithCommas( response['subs'][0].cost) );
+                $(document).find("#"+grp_id+"_gp").html( numberWithCommas( response['subs'][0].gp)+"%" );
+                $(document).find("#"+grp_id+"_qty").val( numberWithCommas( response['subs'][0].qty) );
+
+                $(document).find("#"+grp_id+"_price").val( numberWithCommas( response['sales'][0].price) );
+                $(document).find("#"+grp_id+"_shippingfee").val( numberWithCommas( response['sales'][0].shippingfee) );
+                $(document).find("#"+grp_id+"_amount").val( numberWithCommas( response['sales'][0].extended) );
             });
+        }
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         }
 
         $(".subtotal").on("click",function () {
@@ -407,6 +424,11 @@
            // addthis_subitem
             var qid            = $(document).find("#qid").val();
 
+            if (trs.length == 0) {
+                alert("Item selection is empty. Please select one or two items."); 
+                return;
+            }
+
             postAjax("<?php echo e(route('salesquote.create_subtotal')); ?>", {ids : trs}, function(response){
                
                  $("#tblLocations").children().remove();
@@ -435,7 +457,6 @@
            // console.log(data); return;
 
             postAjax("<?php echo e(route('quote.updatetax')); ?>", data, function(response){
-                console.log(response);
                 $(document).find("#"+tr_id+"_tax_value").html(response);
                 get_computetotal( qt );
             });
@@ -508,6 +529,16 @@
             // }
         });
 
+        function get_no_value(id, somefunc = false) {
+            postAjax("<?php echo e(route('quote.getnovalue')); ?>", {item_id:id}, function(response){
+                appendTolist(response);
+                
+                if (somefunc != false) {
+                    somefunc();
+                }
+            });
+        }
+
         $(document).on("click","#savecomment",function(){
             var comment = $(document).find("#commenttxt").val();
 
@@ -527,7 +558,77 @@
                     "endoflife"              : null,
                     "markupstatus"           : "approved"
                 },"sales_quotes_item_info_more_flds");
+
+                get_no_value(id, function(){
+                    $('#commonModal').modal('hide');
+                });
             });
+        });
+
+         $(document).on("click","#savelabor", function(){
+            var laborval = $(document).find("#labortxt").val();
+            var qid      = $(document).find("#qid").val();
+            var markup   = $(document).find("#markupvalue_labor").val();
+            var qty      = $(document).find("#qtytxt_labor").val();
+            var price    = 0;
+            
+            var istaxable = null;
+
+            if ( $(document).find("#istaxable").is(":checked") ) {
+                istaxable = true;
+            } else {
+                istaxable = false;
+            }
+
+            var data = {
+                'qid'             : qid,
+                "productlineid"   : 1,
+                "type"            : "labor",
+                "description"     : "labor",
+                "cost"            : laborval,
+                "markup"          : markup,
+                "quantity"        : qty,
+                "shippingfee"     : 0,
+                "istaxable"       : istaxable,
+                "price"           : price,
+                "expiry"          : null,
+                "customerid"      : 0,
+                "cont_person"     : 0,
+                "issue_date"      : 0,
+                "quote_validity"  : 0,
+                "additional_info" : []
+            };
+
+            // $("#commonModal").modal("hide"); return;
+            // console.log(data);
+            postAjax("<?php echo e(route('salesquote.addcustomitem')); ?>",data, function(response) {
+                appendTolist(response, function(){
+                    get_computetotal( qid );
+                    $('#commonModal').modal('hide');
+                });
+            });
+            // savethis({
+            //         "type"              : "labor",
+            //         "ccost"             : laborval,
+            //         "quote_id"          : qid,
+            //         "item"              : "labor",
+            //         "markup"            : markup,
+            //         "quantity"          : qty,
+            //         "taxable"           : istaxable
+            //     },"sales_quotes_items", function(id){
+            //         savethis({
+            //             "itemid"                 : id,
+            //             "product_services_id"    : 1,
+            //             "shippingfee"            : 0,
+            //             "endoflife"              : null,
+            //             "markupstatus"           : "approved"
+            //         },"sales_quotes_item_info_more_flds");
+
+            //         get_no_value(id, function(){
+            //             $('#commonModal').modal('hide');
+            //         });
+
+            //     });
         });
 
         $(".subblank_-").on("click",function () {
@@ -568,6 +669,10 @@
                     "endoflife"              : null,
                     "markupstatus"           : "approved"
                 },"sales_quotes_item_info_more_flds");
+
+                get_no_value(id, function(){
+                    $('#commonModal').modal('hide');
+                });
             });
         });
 
@@ -637,12 +742,37 @@
         });
     });
 
-    $(document).find(".viewdetails").on("click",function(){
+    $(document).on("click","#addnewinformation", function(){
+        var itemid = $(this).data("r");
+        var data = {
+            title  : $(document).find("#texttitle").val(),
+            lbl    : $(document).find("#textlabel").val(),
+            desc   : $(document).find("#textdesc").val(),
+            itemid : itemid
+        };
+
+        postAjax("<?php echo e(route('salesquote.add_newinfo')); ?>", data, function(){
+            get_additional_info(itemid);
+        });
+
+    });
+
+    function get_additional_info(id) {
+        postAjax("<?php echo e(route('salesquote.get_add_info_ajax')); ?>", {itemid : id}, function(html){
+            $(document).find("#additional_info_tbody").html(html);
+        });
+    }
+
+    $(document).on("click",".viewdetails",function(){
         var id = trs[0];
         
-        postAjax("<?php echo e(route('salesquote.viewitemdetails')); ?>", { id : id}, function(){
-            
+        $("#commonModal .body").children().remove();
+        $("#commonModal").modal("show");
+
+        postAjax("<?php echo e(route('salesquote.viewitemdetails')); ?>", {id : id}, function(response){
+            $(response).appendTo("#commonModal .body");
         });
+
     });
 
     $(document).on('click','.btncutomitem',function (event) {
@@ -684,8 +814,27 @@
 
     $(document).on("blur",".edittext", function(){
         edittext($(this), "sales_quotes_items");
+
+        var grpid = $(this).data("grpid");
+        
+        if (grpid.length !== 0) {
+            compute_subs(grpid);
+        }
+
         get_computetotal( $(document).find("#qid").val() );
     });
+
+    $(document).on("blur",".edittext_ship", function(){
+        edittext($(this), "sales_quotes_items","sales_quotes_item_info_more_flds","itemid");
+
+        var grpid = $(this).data("grpid");
+        
+        if (grpid.length !== 0) {
+            compute_subs(grpid);
+        }
+
+        get_computetotal( $(document).find("#qid").val() );
+    })
 
     $(document).on("blur",".textsubtotal", function(){
         // update_fld
@@ -694,27 +843,71 @@
         var id      = $(this).data("id");
         var theval  = $(this).val();
 
+        var removecomma = $(this).data("removecomma");
+
         if (id.length == 0) {
             id = null;
         }
 
         var data   = {
-           "fld"     : fld,
-           "id"      : id,
-           "theval"  : theval,
-           "table"   : "salessubs",
-           "fk_fld"  : "grpid"
+           "fld"         : fld,
+           "id"          : id,
+           "theval"      : theval,
+           "table"       : "salessubs",
+           "fk_fld"      : "grpid",
+           "removecomma" : removecomma
         };
 
         // console.log(data);  
         var dis = $(this);
     
         postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
-            console.log(response);
+            get_computetotal( $(document).find("#qid").val() );
+            // $(document).find("#"+theid+"_amount").val(response[0].extended);
         });
 
-        get_computetotal( $(document).find("#qid").val() );
+        // get_computetotal( $(document).find("#qid").val() );
     });
+
+    $(document).on("blur","#theexpirydate", function(){
+        var qid = $(document).find("#qid").val();
+        
+        var data   = {
+           "fld"         : "endoflife",
+           "id"          : $(this).data('r'),
+           "theval"      : $(this).val(),
+           "id_fld"      : "itemid",
+           "table"       : "sales_quotes_item_info_more_flds",
+           "fk_fld"      : "grpid",
+           "removecomma" : false
+        };
+
+        postAjax("<?php echo e(route('salesquote.update_this')); ?>", data, function(response){
+            trs = [];
+            showquote_items(qid);
+        });
+    });
+
+    $(document).on("click",".removethis", function(){
+        var qid = $(document).find("#qid").val();
+        var tid = $(this).data('tid');
+
+        if (!confirm("Are you sure what to delete this?")) {
+            return;
+        }
+
+        var data = {
+            id    : $(this).data("r"),
+            idfld : "id",
+            tbl   : "sales_quotes_item_add_info"
+        }
+
+        postAjax("<?php echo e(route('salesquote.removethis')); ?>", data, function(){
+            // trs = [];
+            // showquote_items(qid);
+            get_additional_info(tid);
+        });
+    })
 
     $(document).on("change",".markupchange_subtotal", function(){
         var fld     = $(this).data('fld');
@@ -738,14 +931,13 @@
         var theid = dis.data("id");
     
         postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
-            get_computetotal( $(document).find("#qid").val() );
-            console.log(response[0].extended);
-            $(document).find("#"+theid+"_amount").val(response[0].extended);
+            // get_computetotal( $(document).find("#qid").val() );
+            // $(document).find("#"+theid+"_amount").val(response[0].extended);
         });
 
     });
 
-    function compute_subs(qty, dis) {
+    function compute_subs_notinuse(qty, dis) {
         var id    = dis.data("id");
         var price = $(document).find("#"+id+"_price").val();
 
@@ -754,31 +946,17 @@
         $(document).find("#"+id+"_price").val(total);
     }
 
-    $(document).on("click","#savelabor", function(){
-        savethis({
-                "type"              : "labor",
-                "ccost"             : $(document).find("#labortxt").val(),
-                "quote_id"          : $(document).find("#qid").val(),
-                "item"              : "labor",
-                "markup"            : $(document).find("#markup").val(),
-                "quantity"          : $(document).find("#qtytxt").val(),
-                "taxable"           : istaxable
-            },"sales_quotes_items", function(id){
-                savethis({
-                    "itemid"                 : id,
-                    "product_services_id"    : 1,
-                    "shippingfee"            : 0,
-                    "endoflife"              : null,
-                    "markupstatus"           : "approved"
-                },"sales_quotes_item_info_more_flds");
-            });
-    });
-
     $(document).on("change",".markupchange", function(){
         edittext($(this), "sales_quotes_items");
+
+        var grpid = $(this).data("grpid");
+        
+        if (grpid.length !== 0) {
+            compute_subs(grpid);
+        }
+
         get_computetotal( $(document).find("#qid").val() );
     });
-
 
 
     $(document).on("click","#saveshipping", function(){
@@ -809,6 +987,24 @@
         });
     });
 
+    $(document).on("blur",".otherinfo_text", function(){
+        var id  = $(this).data("id");
+        var fld = $(this).data("fld");
+        var tbl = "sales_quotes_item_add_info";
+
+
+        var data = {
+            "theval" : $(this).val(),
+            "fld"    : fld,
+            "id"     : id,
+            "table"  : tbl
+        };
+
+        postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
+            
+        });
+    });
+
     function savethis(values, table, somefunction = false) {
         postAjax("<?php echo e(route('salesquote.savethis')); ?>",{data:values, table:table}, function(response){
             if (somefunction != false) {
@@ -817,16 +1013,18 @@
         });
     }
 
-    function edittext(dis, table) {
+    function edittext(dis, table,update_tbl = false, itemkey = "id") {
         // id_profit
         // id_price
         // id_tax_value
 
         var data = {
-            "theval" : dis.val(),
-            "fld"    : dis.data("fld"),
-            "id"     : dis.data("id"),
-            "table"  : table
+            "theval"    : dis.val(),
+            "fld"       : dis.data("fld"),
+            "id"        : dis.data("id"),
+            "table"     : table,
+            "itemkey"   : itemkey,
+            "updatetbl" : update_tbl
         };
 
         var disid = dis.data('id');
@@ -861,6 +1059,7 @@
 
         postAjax("<?php echo e(route('salesquote.get_total')); ?>",data, function(response) {
             // console.log(response);
+            $(document).find(".totalcost").html("");
             $(document).find(".totalproduct").html( response['product'] );
             $(document).find(".totalshipping").html( response['shipping'] );
             $(document).find(".totallabor").html( response['labor'] );
@@ -916,6 +1115,7 @@
         var data = {
             'qid'             : qid,
             "productlineid"   : productline_id,
+            "type"            : "subcustomitem",
             "description"     : description,
             "cost"            : ccost,
             "markup"          : cmarkup,
@@ -935,6 +1135,8 @@
         // console.log(data);
         postAjax("<?php echo e(route('salesquote.addcustomitem')); ?>",data, function(response) {
             // $(response).appendTo('.add-list');
+            
+                console.log(response);
             appendTolist(response, function(){
                 $("#commonModal").modal("hide");
             });
@@ -1578,32 +1780,35 @@
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Subtotal </span>
                     </a> -->
                     <a class="border-right subtotal_" title="<?php echo e(__('Create Subtotal two')); ?>" data-toggle="tooltip">
-                        <i class="ti ti-subtask"></i> <span class=""> Subtotal </span>
+                        <i class="ti ti-subtask"></i> 
                     </a>
 
                     <!-- <a href="#"class="btn btn-primary mr-5 substop" style="margin-right: 5px;">
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Sub Stop </span>
                     </a> -->
                     <a class="border-right mr-5 labor" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Labor')); ?>" data-url="<?php echo e(route('salesquote.getlaborwindow')); ?>" data-toggle="tooltip" title="<?php echo e(__('Labor')); ?>" >
-                        <i class="ti ti-hammer"></i> <span class="hide-mob"> Labor </span>
+                        <i class="ti ti-hammer"></i> 
                     </a>
                     <!-- <a href="#"class="border-right mr-5 shipping" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Shipping')); ?>" data-url="<?php echo e(route('salesquote.addshippingfee')); ?>" data-toggle="tooltip" title="<?php echo e(__('Shipping Fee')); ?>" >
                         <i class="ti ti-truck"></i> <span class="hide-mob"> Shipping </span>
                     </a> -->
                     <a class="border-right mr-5 subitem_add">
-                        <i class="ti ti-brand-producthunt"></i> <span class="hide-mob"> Item </span>
+                        <i class="ti ti-brand-producthunt"></i>
                     </a>
                     <a class="border-right mr-5 subcomment" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
-                        <i class="ti ti-message-dots"></i> <span class="hide-mob"> Comment </span>
+                        <i class="ti ti-message-dots"></i> 
                     </a>
                     <a class="border-right mr-5 subblank" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
-                        <i class="ti ti-space"></i> <span class="hide-mob"> Blank Row </span>
+                        <i class="ti ti-space"></i> 
                     </a>
-                    <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('View Item Details')); ?>" data-url="<?php echo e(route('salesquote.viewitemdetails')); ?>" data-toggle="tooltip" title="<?php echo e(__('View Item Details')); ?>">
-                        <i class="ti ti-adjustments-plus"></i> <span class="hide-mob"> View Item Details </span>
+                    <!-- <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('View Item Details')); ?>" data-url="<?php echo e(route('salesquote.viewitemdetails')); ?>" data-toggle="tooltip" title="<?php echo e(__('View Item Details')); ?>">
+                        <i class="ti ti-eye"></i> <span class="hide-mob"> View Item Details </span>
+                    </a> -->
+                    <a style="display:none;" class="border-right mr-5 viewdetails" data-title="<?php echo e(__('View Item Details')); ?>" title="<?php echo e(__('View Item Details')); ?>">
+                        <i class="ti ti-eye"></i> <span class="hide-mob"> View Item Details </span>
                     </a>
-                    <a class="border-right mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Create New Custom Item')); ?>" data-url="<?php echo e(route('salesquote.customitem')); ?>" data-toggle="tooltip" title="<?php echo e(__('Create')); ?>">
-                        <i class="ti ti-adjustments-plus"></i> <span class="hide-mob"> Custom Item </span>
+                    <a class="border-right mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Create New Custom Item')); ?>" data-url="<?php echo e(route('salesquote.customitem')); ?>" data-toggle="tooltip" title="<?php echo e(__('Create Custom Item')); ?>">
+                        <i class="ti ti-adjustments-plus"></i>
                     </a>
                     <!-- <a href="#" class="btn btn-primary mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Create New Custom Item')); ?>" data-url="<?php echo e(route('salesquote.customitem')); ?>" data-toggle="tooltip" title="<?php echo e(__('Create')); ?>" style="margin-right: 5px;">
                         <i class="ti ti-plus"></i>alvin Item

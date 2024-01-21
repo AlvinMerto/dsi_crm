@@ -1305,10 +1305,10 @@
         <div class="col-md-12">
             <div style="display:flex; justify-content:space-between;" class="mb-3">
                 <div class="with_as" style="width: 100%;">
-                    <a class="border-right" id="email_quote"> <i class="ti ti-send"></i> Send Quotation </a>
-                    <a class="border-right"> <i class="ti ti-download"></i> Save Quotation </a>
-                    <a class="border-right"> <i class="ti ti-download"></i> Convert to Order </a>
-                    <a class="border-right"> <i class="ti ti-download"></i> Convert to sales </a>
+                    <a class="border-right" id="email_quote" title="Send Quotation"> <i class="ti ti-send"></i> Send Quotation </a>
+                    <a class="border-right" > <i class="ti ti-download"></i> Save Quotation </a>
+                    <a class="border-right"> <i class="ti ti-transform-filled"></i> Convert to Order </a>
+                    <a class="border-right"> <i class="ti ti-businessplan"></i> Convert to sales </a>
                     <a class="border-right"> <i class="ti ti-settings-2"></i> Quotation Settings </a>
                 </div>
             </div>
@@ -1478,9 +1478,13 @@
 </div>
 
 <style>
-    .edittext {
+    .edittext, .otherinfo_text, .edittext_ship {
         border:0px;
         outline:none;
+    }
+
+    .left-it {
+        text-align:left !important;
     }
 
     .reduceheight {
@@ -1512,6 +1516,15 @@
 
     .rem_pad_bot {
         padding-bottom:0px;
+    }
+
+    .removethis {
+        padding:10px;
+    }
+
+    .removethis:hover {
+        cursor:pointer;
+        color:red;
     }
 </style>
 

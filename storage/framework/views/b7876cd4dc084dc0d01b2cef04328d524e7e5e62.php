@@ -80,4 +80,4 @@
             </table>
         </div>
     </div>
-</div>
+</div><?php /**PATH C:\xampp\htdocs\DSI_crm\Modules/Sales\Resources/views/salesquote/itemdetails.blade.php ENDPATH**/ ?>
