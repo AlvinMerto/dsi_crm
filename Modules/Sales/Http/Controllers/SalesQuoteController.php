@@ -28,9 +28,9 @@ use Modules\Sales\Entities\SalesAccount;
 use Modules\Sales\Entities\Contact;
 use Modules\Sales\Events\CreateSalesOrderConvert;
 
-use Modules\Sales\Entities\itemadditionalinfo;
-use Modules\Sales\Entities\salessubs;
-use Modules\Sales\Entities\itemextensionflds;
+use Modules\Sales\Entities\Itemadditionalinfo as itemadditionalinfo;
+use Modules\Sales\Entities\Salessubs as Salessubs;
+use Modules\Sales\Entities\Itemextensionflds as itemextensionflds;
 
 use DB;
 
