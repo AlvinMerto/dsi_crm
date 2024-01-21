@@ -29,7 +29,7 @@ use Modules\Sales\Entities\Contact;
 use Modules\Sales\Events\CreateSalesOrderConvert;
 
 use Modules\Sales\Entities\Itemadditionalinfo as itemadditionalinfo;
-use Modules\Sales\Entities\Salessubs as Salessubs;
+use Modules\Sales\Entities\Salessubs as salessubs;
 use Modules\Sales\Entities\Itemextensionflds as itemextensionflds;
 
 use DB;
