@@ -1097,9 +1097,13 @@ class SalesQuoteController extends Controller
         $cost                    = $req->input("cost");
         $markup                  = $req->input("markup");
         $description             = $req->input("description");
+        $type                    = $req->input("type");
 
         $qid                     = $req->input("qid");
 
+        $additional_info         = (array) $req->input("additional_info");
+
+        // $additional_info         = ['title'=>"this is title","label"=>"this is label","description"=>"this is description"];
         // $istaxable               = "false";
         
         // $expiry                  = false;
@@ -1110,7 +1114,7 @@ class SalesQuoteController extends Controller
         // $cost                    = "100";
         // $markup                  = "65";
         // $description             = "Lorem ipsum dolor set amit consectitur adelpiscing";
-        // $qid                     = "77";
+        // $qid                     = "78";
 
         $values = $this->calculate_item([
             "istaxable"    => $istaxable,
@@ -1136,7 +1140,7 @@ class SalesQuoteController extends Controller
         $salesquoteproduct                                 = new SalesQuoteItem();
         $salesquoteproduct->quote_id                       = $qid;
         $salesquoteproduct->itemorder                      = 1;
-        $salesquoteproduct->type                           = "subcustomitem";
+        $salesquoteproduct->type                           = $type;
         $salesquoteproduct->profit                         = $values['profit'];
         $salesquoteproduct->totalmaincost                  = 0;
         $salesquoteproduct->markup                         = $markup;
@@ -1171,18 +1175,24 @@ class SalesQuoteController extends Controller
             $other_iteminfo->save();
 
         // // save to item additional information
-        $additional_info         = (array) $req->input("additional_info");
+        // 
+        $otherinfo               = (object)[];
 
-       foreach($additional_info as $ai) {
-            $ai = (array) $ai;
+        foreach($additional_info as $ai) {
+            $ai                                     = (array) $ai;
             $add_info                               = new itemadditionalinfo();
             $add_info->item_id                      = $salesquoteproduct->id;
             $add_info->title                        = $ai['title'];
             $add_info->label                        = $ai['label'];
             $add_info->description                  = $ai['description'];
             $add_info->save();
-       }
-      
+
+            $otherinfo->{"title"}       = $ai['title'];
+            $otherinfo->{"description"} = $ai['description'];
+            $otherinfo->{"label"}       = $ai['label'];
+        }
+
+        $values['otherinfo']    = (array) $otherinfo;
         $values['id']           = $salesquoteproduct->id;
        //  var_dump($values); return;
         $values['shippingfee']  = $shippingfee;
@@ -1193,25 +1203,61 @@ class SalesQuoteController extends Controller
         $datetoday             = date("Y-m-d");
     
         // 'values',"description","qty","markups","datetoday","count"
-        $show   = ["profit"        => true,
-                   "markup"        => true,
-                   "cost"          => true,
-                   "supplier"      => true,
-                   "supplier_num"  => true,
-                   "manu"          => true,
-                   "manu_num"      => true,
-                   "description"   => true,
-                   "qty"           => true,
-                   "shipping"      => true,
-                   "price"         => true,
-                   "extended"      => true,
-                   "tax"           => true,
-                   "sub"           => true,
-                   "subitem"       => true
-        ];
+        $showsettings   = ["profit"        => true,
+                            "markup"        => true,
+                            "cost"          => true,
+                            "supplier"      => true,
+                            "supplier_num"  => true,
+                            "manu"          => true,
+                            "manu_num"      => true,
+                            "description"   => true,
+                            "qty"           => true,
+                            "shipping"      => true,
+                            "price"         => true,
+                            "extended"      => true,
+                            "tax"           => true,
+                            "sub"           => true,
+                            "subitem"       => true
+                    ];
 
-        $html=view('sales::salesquote.quote_item', compact('values','description','qty','datetoday','markups','count',"show"))->render();
+        $intextbox = false;
+
+       // if ($values[''])
+       //  $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
+        $html      = view('sales::salesquote.quote_item', compact('values','description','qty','datetoday','markups','count',"showsettings","intextbox"))->render();
   
+        return response()->json($html);
+    }
+
+    public function getnovalue(Request $req) {
+        $item_id        = $req->input("item_id");
+        
+        $collection     = SalesQuoteItem::where("id",$item_id)->get();
+        $values = [
+            "id"    => $collection[0]->id
+        ];
+        $type           = $collection[0]->type;
+        $description    = $collection[0]->item;
+
+        $count          = 0;
+        $showsettings   = ["profit"        => true,
+                            "markup"        => true,
+                            "cost"          => true,
+                            "supplier"      => true,
+                            "supplier_num"  => true,
+                            "manu"          => true,
+                            "manu_num"      => true,
+                            "description"   => true,
+                            "qty"           => true,
+                            "shipping"      => true,
+                            "price"         => true,
+                            "extended"      => true,
+                            "tax"           => true,
+                            "sub"           => true,
+                            "subitem"       => true
+                        ];
+        
+        $html           = view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
         return response()->json($html);
     }
 
@@ -1405,7 +1451,7 @@ class SalesQuoteController extends Controller
                     }
 
                     if ($st['sales'][0]->quantity != null || strlen($st['sales'][0]->quantity) > 0) {
-                        $qty         = $st['sales'][0]->quantity;
+                        $qty         = 2; //$st['sales'][0]->quantity;
                     } else {
                         $qty         = 1; 
                     }
@@ -1423,7 +1469,7 @@ class SalesQuoteController extends Controller
                     }
 
                     if ($st['sales'][0]->extended != null || strlen($st['sales'][0]->extended) > 0) {
-                        $amount         = $st['sales'][0]->extended*$qty;
+                        $amount         = $st['sales'][0]->extended;
                     } else {
                         $amount         = $st['subs'][0]->extended*$qty;
                     }
@@ -1441,9 +1487,9 @@ class SalesQuoteController extends Controller
                     }
 
                     if ($st['sales'][0]->markup != null || strlen($st['sales'][0]->markup) > 0) {
-                        $totalmup = $st['sales'][0]->markup;
+                        $totalmup = $st['subs'][0]->gp; // $st['sales'][0]->markup; $st['subs'][0]->gp; //
                     } else {
-                        $totalmup = 65;
+                        $totalmup = 0;
                     }
 
                 } else {
@@ -1460,9 +1506,10 @@ class SalesQuoteController extends Controller
                        $html .= "<td> </td>";
 
                        if (isset($showsettings['profit'])) {
-                            $html .= "<td style='text-align:right;'> ";
+                            $html .= "<td style='text-align:right;' id='{$grpid}_profit'> ";
                                 if (!$intextbox) {
-                                    $html .= "<input id ='{$grpid}' data-id='{$grpid}' data-fld='totalprofit' style='text-align:right; font-weight: bold;' class='textsubtotal form-control bold-input' type='text' value='".number_format($totalprofit,2)."'/>";
+                                    $html .= "<strong>".number_format($totalprofit,2)."</strong>";
+                                    // $html .= "<input id ='{$grpid}' data-id='{$grpid}' data-fld='totalprofit' style='text-align:right; font-weight: bold;' class='textsubtotal form-control bold-input' type='text' value='".number_format($totalprofit,2)."'/>";
                                 } else {
                                     $html .= number_format($totalprofit,2);
                                 }
@@ -1470,20 +1517,21 @@ class SalesQuoteController extends Controller
                         }
 
                         if (isset($showsettings['markup'])) {
-                            $html .= "<td>";
+                            $html .= "<td style='text-align:center; font-weight:bold;' id='{$grpid}_gp'>";
                                 if (!$intextbox) {
-                                    $html .= "<select data-id='{$grpid}' data-fld='markup' class='markupchange_subtotal form-control' style='font-weight:bold; border:none;'>";
-                                                foreach($markups as $m) {
-                                                    $selected = null;
+                                    $html .= $totalmup."%";
+                                    // $html .= "<select data-id='{$grpid}' data-fld='markup' class='markupchange_subtotal form-control' style='font-weight:bold; border:none;'>";
+                                    //             foreach($markups as $m) {
+                                    //                 $selected = null;
                                                         
-                                                    if ($totalmup == $m) {
-                                                        $selected = "selected";
-                                                    } else {
-                                                        $selected = null;
-                                                    }
-                                                    $html .= "<option value='{$m}' {$selected}>{$m}</option>";
-                                                }
-                                    $html .= "</select>";
+                                    //                 if ($totalmup == $m) {
+                                    //                     $selected = "selected";
+                                    //                 } else {
+                                    //                     $selected = null;
+                                    //                 }
+                                    //                 $html .= "<option value='{$m}' {$selected}>{$m}</option>";
+                                    //             }
+                                    // $html .= "</select>";
                                 } else {
                                     $html .= $totalmup."%";
                                 }
@@ -1493,9 +1541,10 @@ class SalesQuoteController extends Controller
 
 
                         if (isset($showsettings['cost'])) {
-                            $html .= "<td style='text-align:right;'> ";
+                            $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_cost'> ";
                                 if (!$intextbox) {
-                                    $html .= "<input id ='{$grpid}' data-id='{$grpid}' data-fld='totalcost' style='text-align:right; font-weight: bold;' class='textsubtotal form-control bold-input' type='text' value='".number_format($totalcost,2)."'/>";
+                                    $html .= "<strong>".number_format($totalcost,2)."</strong>";
+                                    // $html .= "<input id ='{$grpid}' data-id='{$grpid}' data-fld='totalcost' style='text-align:right; font-weight: bold;' class='textsubtotal form-control bold-input' type='text' value='".number_format($totalcost,2)."'/>";
                                 } else {
                                     $html .= number_format($totalcost,2);
                                 }
@@ -1507,7 +1556,7 @@ class SalesQuoteController extends Controller
                         if (isset($showsettings['description'])) {
                             $html .= "<td class='number'>";
                                 if (!$intextbox) {
-                                    $html .= "<input id = '{$grpid}_desc' data-id='{$grpid}' data-fld='description' style='text-align:left; font-weight:bold;' class='textsubtotal form-control bold_input' type='text' value='{$desc}'/>";
+                                    $html .= "<input id = '{$grpid}_desc' data-id='{$grpid}' data-fld='description' data-removecomma = 'false' style='text-align:left; font-weight:bold;' class='textsubtotal form-control bold_input' type='text' value='{$desc}'/>";
                                 } else {
                                     $html .= $desc;
                                 }
@@ -1515,9 +1564,9 @@ class SalesQuoteController extends Controller
                         }
 
                         if (isset($showsettings['qty'])) {
-                            $html .= "<td style='text-align:center;'>";
+                            $html .= "<td style='text-align:center;' id='{$grpid}_qty'>";
                                 if (!$intextbox) {
-                                    $html .="<input id = '{$grpid}_qty' data-id='{$grpid}' data-fld='quantity' style='text-align:center; font-weight:bold;' class='textsubtotal form-control' type='text' value='{$qty}'/>";
+                                    $html .="<input id = '{$grpid}_qty' data-id='{$grpid}' data-fld='quantity' data-removecomma = 'true' style='text-align:center; font-weight:bold;' class='textsubtotal form-control' type='text' value='{$qty}'/>";
                                 } else {
                                     $html .= $qty;
                                 }
@@ -1527,9 +1576,9 @@ class SalesQuoteController extends Controller
                         if (isset($showsettings['shipping'])) {
                             $html .= "<td class='number'>";
                                 if (!$intextbox) {
-                                    $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
+                                    $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
                                 } else {
-                                    $html .= number_format($shippingfee,2);
+                                    $html .= $shippingfee;
                                 }
                             $html .= "</td>";
                         }
@@ -1537,9 +1586,9 @@ class SalesQuoteController extends Controller
                         if (isset($showsettings['price'])) {
                             $html .= "<td class='number'>";
                                 if (!$intextbox) {
-                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
+                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
                                 } else {
-                                    $html .= number_format($price,2);
+                                    $html .= $price;
                                 }
                             $html .= "</td>";
                         }
@@ -1547,9 +1596,9 @@ class SalesQuoteController extends Controller
                         if (isset($showsettings['extended'])) {
                             $html .= "<td class='number'>";
                                 if (!$intextbox) {
-                                    $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($amount,2)."'/>";
+                                    $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".$amount."'/>";
                                 } else {
-                                    $html .= number_format($amount,2); 
+                                    $html .= $amount; 
                                 }
                             $html .= "</td>";
                         }
@@ -1562,7 +1611,8 @@ class SalesQuoteController extends Controller
             $count     = 1;
 
             foreach($salesquoteitems as $si) {
-                
+                $other_info  = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
+
                 if ($si->grp_id === $aa) { 
                     $values          = [
                         "id"                => $si->itemid,
@@ -1576,7 +1626,8 @@ class SalesQuoteController extends Controller
                         'subtotal_gpr'      => $si->grp_id,
                         "expiry"            => $si->endoflife,
                         "price"             => $si->price,
-                        'itemorderid'       => $si->itemorder
+                        'itemorderid'       => $si->itemorder,
+                        'otherinfo'         => $other_info
                     ];
 
                     $description = $si->item;
@@ -1649,10 +1700,12 @@ class SalesQuoteController extends Controller
     }
 
     function blursave(Request $req) {
-        $fld    = $req->input("fld");
-        $id     = (int) $req->input("id");
-        $theval = $req->input("theval");
-        $table  = $req->input("table");
+        $fld        = $req->input("fld");
+        $id         = (int) $req->input("id");
+        $theval     = $req->input("theval");
+        $table      = $req->input("table");
+        $updatetbl  = $req->input("updatetbl");
+     //   $itemkey    = $req->input("itemkey");
 
         // $fld      = "purchase_price";
         // $id       = 208;
@@ -1671,6 +1724,7 @@ class SalesQuoteController extends Controller
         $item        = $vals[0]->item;
 
         // 
+        $saveshipping = false;
         switch($fld) {
             case "markup":         
                 $markup      = $theval; 
@@ -1688,7 +1742,8 @@ class SalesQuoteController extends Controller
                 $istaxable   = $theval;
                 break;
             case "shippingfee":
-                $shippingfee = str_replace(",","",$theval); 
+                $shippingfee  = str_replace(",","",$theval); 
+                $saveshipping = true;
                 break;
             // case for shippingfee
         }
@@ -1715,20 +1770,28 @@ class SalesQuoteController extends Controller
         */
         
         $valsss = [
-            'profit'                         => $values['profit'],
-            'markup'                         => $markup,
-            'purchase_price'                 => $ccost,
-            'item'                           => $item,
-            'quantity'                       => $qty,
-            'price'                          => $values['price'],
-            'extended'                       => $values['extended'],
-            'tax'                            => $values['tax_used'],
-            'itemTaxPrice'                   => $values['tax_in_dec'],
-            'itemTaxRate'                    => $values['tax_value'],
-            'amount'                         => $values['amount']
-        ];
-        
-        $up = DB::table($table)->where("id",$id)->update($valsss);
+                'profit'                         => $values['profit'],
+                'markup'                         => $markup,
+                'purchase_price'                 => $ccost,
+                'item'                           => $item,
+                'quantity'                       => $qty,
+                'price'                          => $values['price'],
+                'extended'                       => $values['extended'],
+                'tax'                            => $values['tax_used'],
+                'itemTaxPrice'                   => $values['tax_in_dec'],
+                'itemTaxRate'                    => $values['tax_value'],
+                'amount'                         => $values['amount']
+            ];
+            
+            $up = DB::table($table)->where("id",$id)->update($valsss);
+
+        if ($saveshipping) {
+            $s_vals = [
+                "shippingfee" => $shippingfee
+            ];
+
+            $saveship = DB::table("sales_quotes_item_info_more_flds")->where("itemid",$id)->update($s_vals);
+        }
 
         $valsss = [
             'profit'                         => number_format($values['profit'],2),
@@ -1747,11 +1810,25 @@ class SalesQuoteController extends Controller
         return response()->json($valsss);
     }
 
-    function compute_subtotal(Request $req) {
-        return response()->json($this->get_subtotal($req->input("grp_id")));
+    function compute_subtotal(Request $req) {           
+        $subs = $this->get_subtotal($req->input("grp_id"), true);
+
+        array_map(function($a) {
+            $a->cost   = number_format($a->cost,2);
+            $a->price  = number_format($a->price,2);
+            $a->profit = number_format($a->profit,2);
+
+            return $a;
+        }, $subs['subs']);
+
+        return response()->json($subs);
     }
 
-    function get_subtotal($grpid) {
+    function get_otherfields($item_id, $getwhat) {
+        return itemadditionalinfo::where("item_id",$item_id)->whereIn("title",$getwhat)->get();
+    }
+
+    function get_subtotal($grpid, $update_subs_first = false) {
         // qty
         // purchase price
         // shipping fee
@@ -1765,14 +1842,37 @@ class SalesQuoteController extends Controller
                         sum(extended) as extended,
                         sum(purchase_price) as cost,
                         sum(profit) as profit,
-                        sum(shippingfee) as shipping
+                        sum(shippingfee) as shipping,
+                        (((sum(price)-sum(purchase_price))/sum(price))*100) as gp
                     from sales_quotes_items as sqi
                         left join sales_quotes_item_info_more_flds as sqiimf on sqi.id = sqiimf.itemid
                         where grp_id = '{$grpid}'";
 
+        $subs = DB::select(DB::raw($sql));
+
+        array_map(function($a) {
+            $a->gp = number_format($a->gp,2);
+
+            return $a;
+        }, $subs);
+
+        if ($update_subs_first == true) {
+            // update subs here
+                if (count($subs) >= 0) {
+                    $update = salessubs::where("grpid",$grpid)->update([
+                        "price"        => $subs[0]->price,
+                        "extended"     => $subs[0]->extended,
+                        "shippingfee"  => $subs[0]->shipping,
+                        "totalprofit"  => $subs[0]->profit,
+                        "totalcost"    => $subs[0]->cost
+                    ]);
+                }
+            // end 
+        }
+
         $salessubs = salessubs::where("grpid",$grpid)->get();
         
-        return ["subs"  => DB::select(DB::raw($sql)),
+        return ["subs"  => $subs,
                 "sales" => $salessubs
                ];
         
@@ -1833,13 +1933,46 @@ class SalesQuoteController extends Controller
     }
 
     function viewitemdetails(Request $req) {
-        $itemid     = $req->input("id");
+        $itemid         = $req->input("id");
 
-        $quoteitems = SalesQuoteItem::leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
-                                     ->where("id", $itemid)->get();
+        $quoteitems     = SalesQuoteItem::leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
+                                     ->where("sales_quotes_items.id", $itemid)->get();
 
-        $html = view("Sales::salesquote.itemdetails", compact("quoteitems"))->render();
+        $additionalinfo = $this->getadd_info($itemid);
 
+        return view("sales::salesquote.itemdetails", compact("quoteitems","additionalinfo","itemid"));
+    }
+
+    function add_newinfo(Request $req) {
+        $title  = $req->input("title");
+        $lbl    = $req->input("lbl");
+        $desc   = $req->input("desc");
+        $itemid = $req->input("itemid");
+
+        $newitem              = new itemadditionalinfo();
+        $newitem->item_id     = $itemid;
+        $newitem->title       = $title;
+        $newitem->label       = $lbl;
+        $newitem->description = $desc;
+        $newitem->save();
+
+    //    $theid = $newitem->id;
+
+        return response()->json($newitem);
+    }
+    
+    function get_add_info_ajax(Request $req) {
+        $itemid = $req->input("itemid");
+
+        $html   = $this->getadd_info($itemid);
+        return response()->json($html);
+    }
+
+    function getadd_info($itemid) {
+        $additionalinfo = itemadditionalinfo::where("item_id",$itemid)->get();
+
+        $html           = view("sales::salesquote.addtionalinfo", compact('additionalinfo'))->render();
+        return $html;
     }
 
     function addshippingfee() {
@@ -1912,30 +2045,50 @@ class SalesQuoteController extends Controller
         $theval = $req->input("theval");
         $table  = $req->input("table");
 
+        $removecomma = $req->input("removecomma");
+
         $up     = false;
 
-        $ret    = [];
+        if ($removecomma) {
+            $theval = str_replace(",","",$theval); 
+        }
+
+        $ret        = [];
         if ($table == "salessubs") {
-            // if ($found) {
                 $up     = DB::table($table)
                               ->updateOrInsert(
                                 ["grpid" => $grpid],
                                 [$fld => $theval]
                                );
                 $ret = DB::table($table)->where("grpid",$grpid)->get()->toArray();
-            // }
         } else {
-            $up     = DB::table($table)->where("id",$id)->update([$fld=>$theval]);
-            $ret    = DB::table($table)->where("id",$id)->get()->toArray();
+            $up      = DB::table($table)->where("id",$id)->update([$fld=>$theval]);
+            $ret     = DB::table($table)->where("id",$id)->get()->toArray();
         }
 
-        // DB::table($table)
-        //         ->updateOrInsert(
-        //             [$fld => $id],
-        //             ['votes' => '2']
-        //         );
-
         return response()->json($ret);
+    }
+
+    function update_this(Request $req) {
+        $fld    = $req->input("fld");
+        $id     = (int) $req->input("id");
+        $id_fld = $req->input("id_fld");
+        $theval = $req->input("theval");
+        $table  = $req->input("table");
+
+        $up      = DB::table($table)->where($id_fld,$id)->update([$fld=>$theval]);
+        
+        return response()->json($up);
+    }
+
+    function removethis(Request $req) {
+        $id    = $req->input("id");
+        $tbl   = $req->input("tbl");
+        $idfld = $req->input("idfld");
+
+        $up  = DB::table($tbl)->where($idfld,$id)->delete();
+
+        return response()->json($up);
     }
 
     function get_markup() {
@@ -2071,7 +2224,25 @@ class SalesQuoteController extends Controller
         */
     }
 
-    function fortest() {
+    function fortest(Request $req) {
+        $subs  = $this->get_subtotal("3b15dd6ec9e138dcd3ec3d9f02942594", true);
+
+        array_map(function($a) {
+            $a->profit   = number_format($a->profit,2);
+            $a->price    = number_format($a->purchase_price,2);
+            $a->amount   = number_format($a->amount,2);
+            $a->cost     = number_format($a->cost,2);
+            $a->extended = number_format($a->extended,2);
+
+            return $a;
+        }, $subs['subs']);
+
+        var_dump($subs);
+        // $otherinfo = $this->get_otherfields(369, ["Manufacturer","Supplier"]);
+
+        // echo count($otherinfo);
+
+        // var_dump (  );
         // $url = route("quote.displayquote", 77);
         // echo $url;
         // $values = $this->calculate_item([

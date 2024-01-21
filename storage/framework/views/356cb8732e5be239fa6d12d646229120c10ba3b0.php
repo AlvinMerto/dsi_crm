@@ -38,4 +38,4 @@
             <button id="savelabor" class="btn btn-primary"> Save </button>
         </div>
     </div>
-</div>
+</div><?php /**PATH C:\xampp\htdocs\DSI_crm\Modules/Sales\Resources/views/salesquote/labor.blade.php ENDPATH**/ ?>

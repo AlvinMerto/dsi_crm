@@ -363,6 +363,9 @@ Route::post("salesquote/blursave", 'SalesQuoteController@blursave')->name("sales
 Route::get("salesquote/fortest", "SalesQuoteController@fortest")->name("salesquote.fortest");
 
 Route::post("salesquote/update_fld","SalesQuoteController@update_fld")->name("salesquote.update_fld");
+Route::post("/update_this","SalesQuoteController@update_this")->name("salesquote.update_this");
+Route::post("/removethis","SalesQuoteController@removethis")->name("salesquote.removethis");
+
 Route::post("salesquote/get_total", "SalesQuoteController@get_total")->name("salesquote.get_total");
 Route::post("salesquote/create_subtotal","SalesQuoteController@create_subtotal")->name("salesquote.create_subtotal");
 Route::get('salesquote/getlaborwindow', ['as' => 'salesquote.getlaborwindow', 'uses' => 'SalesQuoteController@getlaborwindow']);
@@ -373,7 +376,9 @@ Route::post("salesquote/savethis", "SalesQuoteController@savethis")->name("sales
 
 Route::post("salesquote/compute_subtotal","SalesQuoteController@compute_subtotal")->name("salesquote.compute_subtotal");
 
-Route::get("salesquote/viewitemdetails","SalesQuoteController@viewitemdetails")->name("salesquote.viewitemdetails");
+//Route::post("salesquote/viewitemdetails", ["as" => 'salesquote.viewitemdetails', 'uses' => "SalesQuoteController@viewitemdetails"]);
+Route::post("/viewitemdetails","SalesQuoteController@viewitemdetails")->name("salesquote.viewitemdetails");
+
 Route::post("salesquote/emailquote","SalesQuoteController@email_quote")->name("salesquote.emailquote");
 
 // quote controller
@@ -381,3 +386,8 @@ Route::get('/display/quote/{quote_id?}','QuoteController@displayquote')->name("q
 
 // tax
 Route::post("/updatetax","SalesQuoteController@updatetax")->name("quote.updatetax");
+Route::post("/getnovalue", "SalesQuoteController@getnovalue")->name("quote.getnovalue");
+
+// add new item
+Route::post("/add_newinfo","SalesQuoteController@add_newinfo")->name("salesquote.add_newinfo");
+Route::post("/get_add_info_ajax","SalesQuoteController@get_add_info_ajax")->name("salesquote.get_add_info_ajax");

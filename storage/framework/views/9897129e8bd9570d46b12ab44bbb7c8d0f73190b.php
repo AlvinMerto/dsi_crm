@@ -29,7 +29,7 @@
         <?php if (isset($showsettings['markup'])) { ?>
             <td> 
                 <?php if (!$intextbox) { ?>
-                    <select data-id="<?php echo $values['id']; ?>" data-fld="markup" class='markupchange form-control'>
+                    <select data-grpid="<?php echo $values['subtotal_gpr']; ?>" data-id="<?php echo $values['id']; ?>" data-fld="markup" class='markupchange form-control'>
                         <?php 
                             foreach($markups as $m) {
                                 $the_mup  = $values['markupvalue'];
@@ -56,27 +56,79 @@
                             data-fld="purchase_price" 
                             class='edittext form-control' 
                             type='text' 
+                            data-grpid="<?php echo $values['subtotal_gpr']; ?>"
                             value="<?php echo number_format($values['ccost'],2); ?>"/> 
                 <?php } else { ?>
                     <?php echo number_format($values['ccost'],2); ?>
                 <?php } ?>
             </td>
         <?php } ?>
-        <?php if (isset($showsettings['supplier'])) { ?>
-            <td> &nbsp; </td>
-        <?php } ?>
 
-        <?php if (isset($showsettings['supplier_num'])) { ?>
-            <td> &nbsp; </td>
-        <?php } ?>
+        <?php 
+            if (count($values['otherinfo']) > 0) {
+                if ($values['otherinfo'][0]->title =="Supplier") {
+                    echo "<td>";
+                        echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
+                    echo "</td>";
+                    echo "<td>";
+                        echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
+                    echo "</td>";
 
-        <?php if (isset($showsettings['manu'])) { ?>
-            <td> &nbsp; </td>
-        <?php } ?>
+                    if (isset($values['otherinfo'][1])) {
+                        if ($values['otherinfo'][1]->title == "Manufacturer") {
+                            echo "<td>";
+                                echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->description}</textarea>";
+                            echo "</td>";
+                            echo "<td>";
+                                echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->label}</textarea>";
+                            echo "</td>";
+                        }
+                    } else {
+                        echo "<td> &nbsp; </td>";
+                        echo "<td> &nbsp; </td>";
+                    }
+                } else if ($values['otherinfo'][0]->title == "Manufacturer") {
+                    if (isset($values['otherinfo'][1])) {
+                        if ($values['otherinfo'][1]->title == "Supplier") {
+                            echo "<td>";
+                                echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->description}</textarea>";
+                            echo "</td>";
+                            echo "<td>";
+                                echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->label}</textarea>";
+                            echo "</td>";
+                        }
+                    } else {
+                        echo "<td> &nbsp; </td>";
+                        echo "<td> &nbsp; </td>";
+                    }
 
-        <?php if (isset($showsettings['manu_num'])) { ?>
-            <td> &nbsp; </td> 
-        <?php } ?>
+                    echo "<td>";
+                        echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
+                    echo "</td>";
+                    echo "<td>";
+                        echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
+                    echo "</td>";
+                }
+
+               
+            } else {
+                if (isset($showsettings['supplier'])) {
+                    echo "<td> &nbsp; </td>";
+                }
+
+                if (isset($showsettings['supplier_num'])) { 
+                    echo "<td> &nbsp; </td>";
+                }
+
+                if (isset($showsettings['manu'])) {
+                    echo "<td> &nbsp; </td>";
+                }
+
+                if (isset($showsettings['manu_num'])) {
+                    echo "<td> &nbsp; </td>";
+                }
+            }
+        ?>
 
         <?php if (isset($showsettings['description'])) { ?>
             <td style='text-align:left;'>
@@ -91,7 +143,9 @@
         <?php if (isset($showsettings['qty'])) { ?>
             <td style='text-align:center;'>
                 <?php if (!$intextbox) {?>
-                    <input data-id="<?php echo $values['id']; ?>" data-fld="quantity" style="text-align:center;" class='edittext form-control' type='text' value="<?php echo $qty; ?>"/>
+                    <input data-id="<?php echo $values['id']; ?>" 
+                           data-grpid="<?php echo $values['subtotal_gpr']; ?>"
+                           data-fld="quantity" style="text-align:center;" class='edittext form-control' type='text' value="<?php echo $qty; ?>"/>
                 <?php } else { ?>
                     <?php echo $qty; ?>
                 <?php } ?> 
@@ -100,7 +154,14 @@
 
         <?php if (isset($showsettings['shipping'])) { ?>
             <td class="number"> 
-                <?php echo number_format($values['shippingfee'],2); ?> 
+                <?php if (!$intextbox) {?>
+                    <input data-id="<?php echo $values['id']; ?>" 
+                           data-grpid="<?php echo $values['subtotal_gpr']; ?>"
+                           data-fld="shippingfee" style="text-align:center;" class='edittext_ship form-control' type='text' value="<?php echo $values['shippingfee']; ?>"/>
+                <?php } else { ?>
+                    <?php echo number_format($values['shippingfee'],2); ?>
+                <?php } ?> 
+                <?php // echo number_format($values['shippingfee'],2); ?> 
             </td> 
         <?php } ?>
 
@@ -121,9 +182,16 @@
                 <?php echo number_format($values['tax_value'],2); ?> 
             </td>
             <td style="text-align:center;">
+                <?php
+                    $ischecked = "checked";
+
+                    if ($values['tax_value'] == 0) {
+                        $ischecked = null;
+                    }
+                ?>
                 <input type='checkbox' 
                        data-id="<?php echo $values['id']; ?>"
-                       class='taxcheck'/>
+                       class='taxcheck' <?php echo $ischecked; ?>/>
             </td>
         <?php } ?>
 

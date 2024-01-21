@@ -1,14 +1,15 @@
 <form id="customitem">
 <div class="modal-body">
     <div class="text-end">
-        @if (module_is_active('AIAssistant'))
-            @include('aiassistant::ai.generate_ai_btn',['template_module' => 'product','module'=>'ProductService'])
-        @endif
+        <?php if(module_is_active('AIAssistant')): ?>
+            <?php echo $__env->make('aiassistant::ai.generate_ai_btn',['template_module' => 'product','module'=>'ProductService'], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php endif; ?>
     </div>
     <input type="hidden" name="data_id" value="">
     <div class="row">
         <!-- <div class="form-group col-md-12">
-            {{ Form::label('ProductLine', __('Product Line'),['class'=>'form-label']) }}
+            <?php echo e(Form::label('ProductLine', __('Product Line'),['class'=>'form-label'])); ?>
+
             <select class="form-control" id="productlineid">
                 <optgroup label="Product Line">
                     <option value="1"> 3CX </option>
@@ -20,21 +21,25 @@
             </select>
         </div> -->
         <div class="form-group col-md-12">
-            {{ Form::label('description', __('Description'), ['class' => 'form-label']) }}
-            {!! Form::textarea('description', null, ['class' => 'form-control', 'rows' => '2','id'=>'cdescription']) !!}
+            <?php echo e(Form::label('description', __('Description'), ['class' => 'form-label'])); ?>
+
+            <?php echo Form::textarea('description', null, ['class' => 'form-control', 'rows' => '2','id'=>'cdescription']); ?>
+
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                {{ Form::label('purchase_price', __('Cost'), ['class' => 'form-label']) }}<span
+                <?php echo e(Form::label('purchase_price', __('Cost'), ['class' => 'form-label'])); ?><span
                         class="text-danger">*</span>
                 <div class="form-icon-user">
-                    {{ Form::number('purchase_price', '', ['class' => 'form-control', 'required' => 'required', 'step' => '0.01','id'=> 'ccost']) }}
+                    <?php echo e(Form::number('purchase_price', '', ['class' => 'form-control', 'required' => 'required', 'step' => '0.01','id'=> 'ccost'])); ?>
+
                 </div>
             </div>
         </div>
         <div class="form-group col-md-6">
-            {{ Form::label('markup', __('MarkUp'), ['class' => 'form-label']) }}
-            {{--            <span class="text-danger">*</span>--}}
+            <?php echo e(Form::label('markup', __('MarkUp'), ['class' => 'form-label'])); ?>
+
+            
             <select class="form-control" id="cmarkup">
                 <optgroup label="Pre-inputted Mark up">
                     <option value="65"> 65% </option>
@@ -45,58 +50,66 @@
                 </optgroup>
             </select>
             <!--
-            {{ Form::number('markup', null, ['class' => 'form-control', 'min'=>'0','id'=>'cmarkup']) }} 
+            <?php echo e(Form::number('markup', null, ['class' => 'form-control', 'min'=>'0','id'=>'cmarkup'])); ?> 
             -->
         </div>
 
         <div class="form-group col-md-4">
-            {{ Form::label('quantity', __('Quantity'), ['class' => 'form-label']) }}
-            {{--            <span class="text-danger">*</span>--}}
-            {{ Form::number('quantity', null, ['class' => 'form-control', 'min'=>'0','id'=>'cquantity']) }}
+            <?php echo e(Form::label('quantity', __('Quantity'), ['class' => 'form-label'])); ?>
+
+            
+            <?php echo e(Form::number('quantity', null, ['class' => 'form-control', 'min'=>'0','id'=>'cquantity'])); ?>
+
         </div>
 
         <div class="col-md-4">
             <div class="form-group">
-                {{ Form::label('deliveryfee', __('Shipping Fee'), ['class' => 'form-label']) }}
+                <?php echo e(Form::label('deliveryfee', __('Shipping Fee'), ['class' => 'form-label'])); ?>
+
                 <input type='number' class="form-control" id="deliveryfee_text"/>
             </div>  
         </div>
 
         <div class="col-md-4">
             <div class="form-group">
-               {{ Form::label('istaxable', __('Taxable'), ['class' => 'form-label']) }}
+               <?php echo e(Form::label('istaxable', __('Taxable'), ['class' => 'form-label'])); ?>
+
                <br/>
-               <input type='checkbox' id="istaxable"/> {{ Form::label('istaxable', __('is Taxable'), ['class' => 'form-label']) }}
+               <input type='checkbox' id="istaxable"/> <?php echo e(Form::label('istaxable', __('is Taxable'), ['class' => 'form-label'])); ?>
+
             </div>
         </div>
 
         <div class="col-md-12">
             <div class="form-group">
-                {{ Form::label('sale_price', __('Price'), ['class' => 'form-label']) }}<span
+                <?php echo e(Form::label('sale_price', __('Price'), ['class' => 'form-label'])); ?><span
                         class="text-danger">*</span>
                 <div class="form-icon-user">
-                    {{ Form::number('sale_price', '', ['class' => 'form-control', 'required' => 'required', 'step' => '0.01','id' => 'cprice']) }}
+                    <?php echo e(Form::number('sale_price', '', ['class' => 'form-control', 'required' => 'required', 'step' => '0.01','id' => 'cprice'])); ?>
+
                 </div>
             </div>
         </div>
 
-{{--        <div class="form-group col-md-6">--}}
-{{--            {{ Form::label('tax_id', __('Tax'), ['class' => 'form-label']) }}--}}
-{{--            {{ Form::select('tax_id[]', $tax, null, ['class' => 'form-control choices', 'id' => 'choices-multiple1', 'multiple']) }}--}}
-{{--        </div>--}}
+
+
+
+
 
         <div class="col-md-12">
             <div class="form-group">
-                {{ Form::label('expiry', __('Expiry'), ['class' => 'form-label']) }}
+                <?php echo e(Form::label('expiry', __('Expiry'), ['class' => 'form-label'])); ?>
+
                 <br/>
-                <input type='checkbox' id="expiry"/> {{ Form::label('expiry', __('Add Expiry Date'), ['class' => 'form-label']) }}
+                <input type='checkbox' id="expiry"/> <?php echo e(Form::label('expiry', __('Add Expiry Date'), ['class' => 'form-label'])); ?>
+
                 <input type='date' class="form-control" id="expirydate_text" style="display:none;"/>
             </div>
         </div>
 
         <div id="addnewinformation" class="col-md-12">
             <div class="form-group">
-                {{ Form::label('additionalinformation', __('Additional Information'), ['class' => 'form-label']) }} 
+                <?php echo e(Form::label('additionalinformation', __('Additional Information'), ['class' => 'form-label'])); ?> 
                 <div class="flex spantab">
                     <span id="tab_nav_info"> 
                         <span class="btn btn-sm btn-primary open_info" data-tab="manu_info"> Manufacturer </span>
@@ -109,19 +122,19 @@
             <div class="row" style="display:none;" id="info_tab">
                 <div class="col-md-6">
                     <div class="form-group">
-                        {{ Form::label('info_title', __('Title'), ['class' => 'form-label']) }} 
+                        <?php echo e(Form::label('info_title', __('Title'), ['class' => 'form-label'])); ?> 
                         <input type="text" class="form-control" id="info_title"/>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        {{ Form::label('info_label', __('Information Label'), ['class' => 'form-label','id'=>'infolabel']) }} 
+                        <?php echo e(Form::label('info_label', __('Information Label'), ['class' => 'form-label','id'=>'infolabel'])); ?> 
                         <input type="text" class="form-control" id="info_label"/>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        {{ Form::label('info_desc', __('Information Description'), ['class' => 'form-label','id'=>'infodesc']) }} 
+                        <?php echo e(Form::label('info_desc', __('Information Description'), ['class' => 'form-label','id'=>'infodesc'])); ?> 
                         <textarea class="form-control" id="info_desc"></textarea>
                     </div>
                 </div>
@@ -132,24 +145,32 @@
         </div> 
           <!--
             <div class="form-group col-md-6 manufacturer_part_number">
-                {{ Form::label('manufacturer_part_number', __('Manufacturer Part Number'), ['class' => 'form-label']) }}
-                {{--            <span class="text-danger">*</span>--}}
-                {{ Form::text('manufacturer_part_number', null, ['class' => 'form-control','required' => 'required','id'=>'cmanufacturer_part_number']) }}
+                <?php echo e(Form::label('manufacturer_part_number', __('Manufacturer Part Number'), ['class' => 'form-label'])); ?>
+
+                
+                <?php echo e(Form::text('manufacturer_part_number', null, ['class' => 'form-control','required' => 'required','id'=>'cmanufacturer_part_number'])); ?>
+
             </div>
             <div class="form-group col-md-6 manufacturer_name">
-                {{ Form::label('manufacturer_name', __('Manufacturer Name'), ['class' => 'form-label']) }}
-                {{--            <span class="text-danger">*</span>--}}
-                {{ Form::text('manufacturer_name', null, ['class' => 'form-control','required' => 'required','id'=>'cmanufacturer_name']) }}
+                <?php echo e(Form::label('manufacturer_name', __('Manufacturer Name'), ['class' => 'form-label'])); ?>
+
+                
+                <?php echo e(Form::text('manufacturer_name', null, ['class' => 'form-control','required' => 'required','id'=>'cmanufacturer_name'])); ?>
+
             </div>
             <div class="form-group col-md-6 supplier_part_number">
-                {{ Form::label('supplier_part_number', __('Supplier Part Number'), ['class' => 'form-label','required' => 'required']) }}
-                {{--            <span class="text-danger">*</span>--}}
-                {{ Form::text('supplier_part_number', null, ['class' => 'form-control','required' => 'required','id'=>'csupplier_part_number']) }}
+                <?php echo e(Form::label('supplier_part_number', __('Supplier Part Number'), ['class' => 'form-label','required' => 'required'])); ?>
+
+                
+                <?php echo e(Form::text('supplier_part_number', null, ['class' => 'form-control','required' => 'required','id'=>'csupplier_part_number'])); ?>
+
             </div>
             <div class="form-group col-md-6 supplier_name">
-                {{ Form::label('supplier_name', __('Supplier Name'), ['class' => 'form-label']) }}
-                {{--            <span class="text-danger">*</span>--}}
-                {{ Form::text('supplier_name', null, ['class' => 'form-control','required' => 'required','id'=>'csupplier_name']) }}
+                <?php echo e(Form::label('supplier_name', __('Supplier Name'), ['class' => 'form-label'])); ?>
+
+                
+                <?php echo e(Form::text('supplier_name', null, ['class' => 'form-control','required' => 'required','id'=>'csupplier_name'])); ?>
+
             </div>
             -->
         
@@ -162,7 +183,7 @@
 <div class="modal-footer">
     <!-- <a href="#" id="openaddinformation"><i class="ti ti-circle-plus"></i> Add Information </a> -->
 
-    <input type="button" value="{{ __('Cancel') }}" class="btn  btn-light" data-bs-dismiss="modal">
+    <input type="button" value="<?php echo e(__('Cancel')); ?>" class="btn  btn-light" data-bs-dismiss="modal">
     <p class="btn  btn-primary btncutomitem_new"> Create </p>
 </div>
 </form>
@@ -206,3 +227,4 @@
 
 </script>
 
+<?php /**PATH C:\xampp\htdocs\DSI_crm\Modules/Sales\Resources/views/salesquote/customitem.blade.php ENDPATH**/ ?>
