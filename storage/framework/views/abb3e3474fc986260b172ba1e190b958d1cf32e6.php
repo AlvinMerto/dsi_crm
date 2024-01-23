@@ -794,12 +794,14 @@
             "idfld"  : "id"
         };
 
+        var qid            = $(document).find("#qid").val();
+
         postAjax("<?php echo e(route('salesquote.deletethis')); ?>", data , function(response){
             if (response) {
                 alert("Items are deleted");
 
                 trs                = [];
-                var qid            = $(document).find("#qid").val();
+                $("#tblLocations").children().remove();
                 showquote_items(qid);
             }
         });
@@ -935,6 +937,7 @@
         postAjax("<?php echo e(route('salesquote.removethis')); ?>", data, function(){
             // trs = [];
             // showquote_items(qid);
+            $(document).find("#additional_info_tbody").children().remove();
             get_additional_info(tid);
         });
     })
