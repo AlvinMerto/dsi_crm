@@ -1197,6 +1197,7 @@ class SalesQuoteController extends Controller
        //  var_dump($values); return;
         $values['shippingfee']  = $shippingfee;
         $values['itemorderid']  = 1;
+        $values['subtotal_gpr'] = null;
 
         $markups               = $this->get_markup();
         $count                 = 1;
