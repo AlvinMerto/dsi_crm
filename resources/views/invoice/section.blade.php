@@ -801,7 +801,7 @@
                 alert("Items are deleted");
 
                 trs                = [];
-                $("#tblLocations").children().remove();
+                $(document).find("#tblLocations").children().remove();
                 showquote_items(qid);
             }
         });
