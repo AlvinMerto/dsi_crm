@@ -391,3 +391,6 @@ Route::post("/getnovalue", "SalesQuoteController@getnovalue")->name("quote.getno
 // add new item
 Route::post("/add_newinfo","SalesQuoteController@add_newinfo")->name("salesquote.add_newinfo");
 Route::post("/get_add_info_ajax","SalesQuoteController@get_add_info_ajax")->name("salesquote.get_add_info_ajax");
+
+// delete this 
+Route::post("/bulkremove","SalesQuoteController@bulkremove")->name("salesquote.deletethis");

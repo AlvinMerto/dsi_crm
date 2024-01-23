@@ -264,12 +264,14 @@
 
                     $(this).removeClass("selectedTr");
                     $(document).find(".viewdetails").hide();
+                    $(document).find(".deletethis").hide();
                 } else if (state == false || state == "false") {
                     
                     trs.push( id );
                      
                     $(this).addClass("selectedTr");
                     $(document).find(".viewdetails").show();
+                    $(document).find(".deletethis").show();
                 }
 
                 if (trs.length > 1 || trs.length == 0) {
@@ -277,7 +279,12 @@
                 } else if (trs.length == 1 ) {
                     $(document).find(".viewdetails").show();
                 }
-
+                
+                if (trs.length > 0) {
+                    $(document).find(".deletethis").show();
+                } else if (trs.length == 0) {
+                    $(document).find(".deletethis").hide();
+                }
             });
 
             var d_id    = null; // item ID
@@ -775,6 +782,29 @@
 
     });
 
+    $(document).on("click",".deletethis", function(){
+
+        if (!confirm("Are you sure you want to delete this?")) {
+            return;
+        }
+
+        var data = {
+            "id"     : trs,
+            "tbl"    : "sales_quotes_items",
+            "idfld"  : "id"
+        };
+
+        postAjax("{{route('salesquote.deletethis')}}", data , function(response){
+            if (response) {
+                alert("Items are deleted");
+
+                trs                = [];
+                var qid            = $(document).find("#qid").val();
+                showquote_items(qid);
+            }
+        });
+    }); 
+
     $(document).on('click','.btncutomitem',function (event) {
         event.preventDefault();
         var formData = $("#customitem").serialize();
@@ -1098,6 +1128,21 @@
         var issue_date     = $(document).find("#issue_date").val();
         var quote_validity = $(document).find("#quote_validity").val();
 
+        if (cquantity.length == 0) {
+            alert("Quantity cannot be empty");
+            return;
+        }
+
+        if ( cmarkup.length == 0 ) {
+            alert("Markup cannot be empty");
+            return;
+        }
+
+        if ( shippingfee.length == 0 ) {
+            alert("Shipping fee cannot be empty");
+            return;
+        }
+
         if ( $("#commonModal form").find("#istaxable").is(":checked") ){
             istaxable = true;
         } else {
@@ -1132,7 +1177,7 @@
         };
 
         // $("#commonModal").modal("hide"); return;
-        // console.log(data);
+        // console.log(data); 
         postAjax("{{route('salesquote.addcustomitem')}}",data, function(response) {
             // $(response).appendTo('.add-list');
             
@@ -1779,6 +1824,9 @@
                     </a> -->
                     <a style="display:none;" class="border-right mr-5 viewdetails" data-title="{{ __('View Item Details') }}" title="{{ __('View Item Details') }}">
                         <i class="ti ti-eye"></i> <span class="hide-mob"> View Item Details </span>
+                    </a>
+                    <a style="display:none;" class="border-right mr-5 deletethis" data-title="{{ __('Delete') }}" title="{{ __('Delete') }}">
+                        <i class="ti ti-trash"></i> <span class="hide-mob"> Delete </span>
                     </a>
                     <a class="border-right mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="{{ __('Create New Custom Item') }}" data-url="{{route('salesquote.customitem')}}" data-toggle="tooltip" title="{{ __('Create Custom Item') }}">
                         <i class="ti ti-adjustments-plus"></i>

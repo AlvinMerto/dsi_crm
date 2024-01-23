@@ -2092,6 +2092,19 @@ class SalesQuoteController extends Controller
         return response()->json($up);
     }
 
+    function bulkremove(Request $req) {
+        $id    = (array) $req->input("id");
+        $tbl   = $req->input("tbl");
+        $idfld = $req->input("idfld");
+
+        $del   = false;
+        foreach($id as $i) {
+            $del  = DB::table($tbl)->where($idfld,$i)->delete();
+        }
+
+        return response()->json($del);
+    }
+
     function get_markup() {
         return [
             "65","75"

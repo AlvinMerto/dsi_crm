@@ -75,12 +75,9 @@
                         <td> 
                             <input type='button' class='btn btn-primary' value="Add Information" id="addnewinformation" data-r="<?php echo $itemid; ?>"/> 
                         </td>
-                        <!-- <td> 
-                            <input type='button' class='btn btn-danger' value='Delete this item' id='deletethis'/>
-                        </td> -->
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-</div>
+</div><?php /**PATH C:\xampp\htdocs\dsi_crm\Modules/Sales\Resources/views/salesquote/itemdetails.blade.php ENDPATH**/ ?>
