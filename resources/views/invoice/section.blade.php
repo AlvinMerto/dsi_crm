@@ -935,6 +935,7 @@
         postAjax("{{route('salesquote.removethis')}}", data, function(){
             // trs = [];
             // showquote_items(qid);
+            $("#tblLocations").children().remove();
             get_additional_info(tid);
         });
     })
