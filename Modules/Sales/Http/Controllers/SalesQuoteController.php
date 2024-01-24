@@ -1167,12 +1167,20 @@ class SalesQuoteController extends Controller
         // save to item info
         // use Modules\Sales\Entities\itemadditionalinfo;
         // use Modules\Sales\Entities\itemextensionflds;
+        $markups = $this->get_markup();
+
+        $status  = "for approval";
+
+        if (in_array($markup, $markups)) {
+            $status = "approved";
+        }
+
             $other_iteminfo                         = new itemextensionflds();
             $other_iteminfo->itemid                 = $salesquoteproduct->id;
             $other_iteminfo->product_services_id    = 1;
             $other_iteminfo->shippingfee            = $shippingfee;
             $other_iteminfo->endoflife              = ($expiry==false)?null:$expiry;
-            $other_iteminfo->markupstatus           = "approved";
+            $other_iteminfo->markupstatus           = $status;
             $other_iteminfo->save();
 
         // // save to item additional information
@@ -1199,8 +1207,10 @@ class SalesQuoteController extends Controller
         $values['shippingfee']  = $shippingfee;
         $values['itemorderid']  = 1;
         $values['subtotal_gpr'] = null;
+        $values['status']       = $status;
 
-        $markups               = $this->get_markup();
+       // $markups               = $this->get_markup();
+        array_push($markups,$markup);
         $count                 = 1;
         $datetoday             = date("Y-m-d");
     
@@ -1343,6 +1353,32 @@ class SalesQuoteController extends Controller
         return response()->json($html);  
     }
 
+    public function check_markup($quote_id) {
+        $salesquoteitems = SalesQuoteItem::where(['quote_id'=>$quote_id, "markupstatus" => "for approval"])
+                                            ->orWhere("markupstatus","declined")
+                                            ->leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
+                                            ->orderBy("itemorder","ASC")
+                                            ->get();
+        
+        return count($salesquoteitems);
+    }
+
+    public function check_item_status(Request $req) {
+        $itemid = $req->input("itemid");
+
+        $collection = itemextensionflds::where("itemid",$itemid)->get();
+
+        if (count($collection) > 0) {
+            if ($collection[0]->markupstatus == "approved") {
+                return response()->json("approved");
+            } else {
+                return response()->json("for approval");
+            }
+        } else {
+            return response()->json("nofound");
+        }
+    }
+
     public function get_quote_item($qid, $showsettings = null, $intextbox = false) {
         $salesquoteitems = SalesQuoteItem::where('quote_id',$qid)
                                             ->leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
@@ -1350,8 +1386,7 @@ class SalesQuoteController extends Controller
                                             ->get();
         
         $html            = "";
-        $markups         = $this->get_markup();
-
+        
         $a               = [];
 
         foreach ($salesquoteitems as $sqi) {
@@ -1424,6 +1459,7 @@ class SalesQuoteController extends Controller
         $html .= "</thead>";
 
         foreach($a as $aa) {
+           
             $html .= "<tbody data-tid={$aa}>";
 
             if ($aa !== null) {
@@ -1613,6 +1649,7 @@ class SalesQuoteController extends Controller
             $count     = 1;
 
             foreach($salesquoteitems as $si) {
+                $markups         = $this->get_markup();
                 $other_info  = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
 
                 if ($si->grp_id === $aa) { 
@@ -1629,8 +1666,13 @@ class SalesQuoteController extends Controller
                         "expiry"            => $si->endoflife,
                         "price"             => $si->price,
                         'itemorderid'       => $si->itemorder,
+                        'status'            => $si->markupstatus,
                         'otherinfo'         => $other_info
                     ];
+
+                    if (!in_array($si->markup, $markups)) {
+                        array_push($markups,$si->markup);
+                    }
 
                     $description = $si->item;
                     $qty         = $si->quantity;
@@ -2113,8 +2155,14 @@ class SalesQuoteController extends Controller
     }
 
     function email_quote(Request $req) {
-        // $quote_id      = $req->input("quote_id");
-        $quote_id      = 77;
+        $quote_id      = $req->input("quote_id");
+        // $quote_id      = 78;
+        
+        // check mark up
+            if ( $this->check_markup($quote_id) > 0 ) {
+                return response()->json("markup_error");
+            }
+        // end
 
         $quote_details = SalesQuote::where("id",$quote_id)->get();
         $customer      = contact::find($quote_details[0]->contact_person);
