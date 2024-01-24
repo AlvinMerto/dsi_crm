@@ -1,5 +1,6 @@
     <?php 
-        $exp = null;
+        $exp    = null;
+        $status = null;
 
         if (isset($values['expiry'])) {
             if ($values['expiry'] != null) {
@@ -8,7 +9,15 @@
                 }
             }
         }
-    
+
+        if (isset($values['status'])) {
+            if ($values['status'] == "for approval") {
+                $status = "fapproval";
+            } else if ($values['status'] == "declined") {
+                $status = "declined";
+            }
+        }
+   
     ?>
 
     <tr class="subitem" data-rid="<?php echo $values['id']; ?>" data-itemorder="<?php echo $values['itemorderid']; ?>">
@@ -19,6 +28,13 @@
                 if ($exp == "expired_item") {
                     echo " <i class='expired_item ti ti-timeline-event-x'></i>";
                 }
+
+                if ($status == "fapproval") {
+                    echo "<i class='ti ti-loader-2' style='color:red; font-size: 25px;'></i>";
+                } else if ($status == "declined") {
+                    echo "<i class='ti ti-thumb-down' style='color:red; font-size: 25px;'></i>";
+                }
+
             ?> 
         </td>
         <?php if (isset($showsettings['profit'])) { ?>

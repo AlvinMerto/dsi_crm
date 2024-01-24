@@ -1517,6 +1517,10 @@
         cursor:pointer;
         color:red;
     }
+
+    #customtext_m_up{
+       
+    }
 </style>
 
 <script>
@@ -1541,7 +1545,11 @@
         dis.html("Sending Quotation.. please wait").attr("disabled","disabled");
 
         postAjax("{{route('salesquote.emailquote')}}", {quote_id : quote_id }, function(data){
-            dis.html("<i class='ti ti-send'></i> Send Quotation </a>").removeAttr("disabled");
+            if (data == "markup_error") {
+                alert("Please ask for the approval of some of the items to continue sending the quote.");
+            } else {
+                dis.html("<i class='ti ti-send'></i> Send Quotation </a>").removeAttr("disabled");
+            }
         }); 
     });
 </script>

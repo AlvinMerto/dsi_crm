@@ -41,9 +41,10 @@
                     <option value="75"> 75% </option>
                 </optgroup>
                 <optgroup label="Custom Markup">
-                    <option> Enter New Markup </option>
+                    <option value='custom_mup_sel'> Enter New Markup </option>
                 </optgroup>
             </select>
+            <input type='number' id='customtext_m_up' class="form-control" style="display:none; margin-top: 1px;"/>
             <!--
             {{ Form::number('markup', null, ['class' => 'form-control', 'min'=>'0','id'=>'cmarkup']) }} 
             -->
@@ -182,10 +183,21 @@
     });
 
 
-        $('#cmarkup, #ccost, #cquantity').on('input', function() {
-
+        $('#ccost, #cquantity, #customtext_m_up, #cmarkup').on('input', function() {
+            // #cmarkup,
             // Get the values from the input fields
-            var markup = parseFloat($('#cmarkup').val());
+
+            var val = $(document).find("#cmarkup").val();
+
+            if (val == "custom_mup_sel") {
+                $(document).find("#customtext_m_up").show();
+                $(document).find("#customtext_m_up").focus();
+            } else {
+                $(document).find("#customtext_m_up").hide();
+                $(document).find("#customtext_m_up").val( val );
+            }
+            
+            var markup = parseFloat($('#customtext_m_up').val());
             var cost = parseFloat($('#ccost').val());
             var quantity = parseInt($('#cquantity').val());
 

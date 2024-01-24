@@ -1119,13 +1119,19 @@
 
     var additional_info = {};
 
+    // $(document).on("change","#cmarkup", function(){
+
+       
+
+    // });
+
     $(document).on("click",".btncutomitem_new", function(){
         var qid            = $(document).find("#qid").val();
 
         var productline_id = $("#commonModal form").find("#productlineid").val();
         var description    = $('#commonModal form').find('#cdescription').val();
         var ccost          = $('#commonModal form').find('#ccost').val();
-        var cmarkup        = $('#commonModal form').find('#cmarkup').val();
+        var cmarkup        = $('#commonModal form').find("#customtext_m_up").val(); //$('#commonModal form').find('#cmarkup').val();
         var cquantity      = $('#commonModal form').find('#cquantity').val();
         var shippingfee    = $('#commonModal form').find('#deliveryfee_text').val();
         var istaxable      = false;
