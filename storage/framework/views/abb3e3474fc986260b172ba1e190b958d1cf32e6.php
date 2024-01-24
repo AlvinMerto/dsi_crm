@@ -795,14 +795,18 @@
         };
 
         var qid            = $(document).find("#qid").val();
+        var tblloc         = $(document).find("#tblLocations");
+        var doc            = $(this);
 
         postAjax("<?php echo e(route('salesquote.deletethis')); ?>", data , function(response){
             if (response) {
                 alert("Items are deleted");
 
-                trs                = [];
-                $("#tblLocations").children().remove();
+                tblloc.children().remove();
                 showquote_items(qid);
+                trs                = [];
+
+                doc.hide();
             }
         });
     }); 

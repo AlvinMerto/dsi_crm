@@ -1070,7 +1070,8 @@ class SalesQuoteController extends Controller
         // profit    = price - purchase price
         // extended  = :: same with price
         // amount    = (purchase price * qty) + shipping fee
-    
+        
+        $price       = $price*$qty;
         return [
             "markupvalue" => $markup,
             "price"       => $price, 

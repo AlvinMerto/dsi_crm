@@ -796,6 +796,7 @@
 
         var qid            = $(document).find("#qid").val();
         var tblloc         = $(document).find("#tblLocations");
+        var doc            = $(this);
 
         postAjax("{{route('salesquote.deletethis')}}", data , function(response){
             if (response) {
@@ -804,6 +805,8 @@
                 tblloc.children().remove();
                 showquote_items(qid);
                 trs                = [];
+
+                doc.hide();
             }
         });
     }); 
