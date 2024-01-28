@@ -2,6 +2,16 @@
     var selector = "body";
     var trs      = []; // array for the list of tr
 
+    $.fn.isInViewport = function() {
+        var elementTop = $(this).offset().top;
+        var elementBottom = elementTop + $(this).outerHeight();
+
+        var viewportTop = $(window).scrollTop();
+        var viewportBottom = viewportTop + $(window).height();
+
+        return elementBottom > viewportTop && elementTop < viewportBottom;
+    };
+
     if ($(selector + " .repeater").length) {
         var $dragAndDrop = $("body .repeater tbody").sortable({
             handle: '.sort-handler'
@@ -203,6 +213,18 @@
         border-radius: 0px 8px 8px 0px;
     }
 
+    .floatit_nav{
+        position: fixed;
+        top: 10px;
+        width: 77%;
+        background: #ebebeb;
+        padding: 10px 5px;
+        z-index: 1000;
+        border-radius: 7px;
+        box-shadow: 0px 3px 6px #00000057;
+        border: 1px solid #d2cfcf;
+    }
+
 </style>
     <script>
         function replaceKeyAtIndex(originalName, newPosition, newKey) {
@@ -252,6 +274,8 @@
         });
         
         $(function () {
+            var qid = $(document).find("#qid").val();
+
             $(document).on("click","#tblLocations tbody tr.subitem", function(){
 
                 var id = $(this).data("rid");
@@ -264,6 +288,7 @@
 
                     $(this).removeClass("selectedTr");
                     $(document).find(".viewdetails").hide();
+                    $(document).find(".copythis").hide();
                     $(document).find(".deletethis").hide();
                 } else if (state == false || state == "false") {
                     
@@ -272,12 +297,15 @@
                     $(this).addClass("selectedTr");
                     $(document).find(".viewdetails").show();
                     $(document).find(".deletethis").show();
+                    $(document).find(".copythis").show();
                 }
 
                 if (trs.length > 1 || trs.length == 0) {
                     $(document).find(".viewdetails").hide();
+                    $(document).find(".copythis").hide();
                 } else if (trs.length == 1 ) {
                     $(document).find(".viewdetails").show();
+                    $(document).find(".copythis").show();
                 }
                 
                 if (trs.length > 0) {
@@ -290,6 +318,21 @@
             var d_id    = null; // item ID
             var t_id    = null; // group id :: under the field 'type'
             var orig_id = null;
+            var orig_order = null;
+            
+            $("#tblLocations").sortable({
+                items : 'tbody.sub_tbody',
+                cursor: "pointer",
+                axis: "y",
+                dropOnEmpty: false,
+                placeholder: "ui-state-highlight",
+                start: function (e, ui) {
+                    ui.item.addClass("selected");
+                },
+                stop : function(e,ui) {
+
+                }
+            });
 
             $("#tblLocations").sortable({
                 items: 'tbody tr.subitem',
@@ -302,7 +345,6 @@
                     d_id    = ui.item.data("rid");
                     
                     orig_id = ui.item.parent().data('tid');
-                   // console.log("leaving:"+orig_id);
 
                     var data   = {
                         "fld"     : "grp_id",
@@ -316,6 +358,20 @@
                     });
                 },
                 stop: function (e, ui) {
+                    var order_to_use = ui.item.eq().prevObject[0].rowIndex;
+
+                    var updateorder = {
+                        "quote_id"      : qid,
+                        "order_to_use"  : order_to_use,
+                        "item_id"       : d_id 
+                    };
+
+                    console.log(order_to_use);
+
+                    postAjax("{{route('salesquote.set_order')}}", updateorder, function(response){
+                        console.log(response);
+                    });
+
                     var disitem = ui.item.parent().index();
 
                     t_id       = ui.item.parent().data('tid');
@@ -843,9 +899,23 @@
         });
     });
 
+        $(window).on('resize scroll', function() {
+            if (!$(document).find('#thesmallbtn').isInViewport()) {
+                if ( $(document).find("#thesmallbtn").hasClass("floatit_nav") ) {
+
+                } else {
+                    $(document).find('#thesmallbtn').addClass("floatit_nav");
+                }
+            }
+
+            if ($(document).find('#bigbtn_div').isInViewport()) {
+                $(document).find('#thesmallbtn').removeClass("floatit_nav");
+            }
+         });
+
     $(document).ready(function(){
         var qid            = $(document).find("#qid").val();
-        showquote_items(qid);
+        showquote_items(qid);    
     });
 
     $(document).on("blur",".edittext", function(){
@@ -1806,7 +1876,7 @@
         <div class="card-header p-3" style="background: #eee;">
             <!-- <div class="col-md-12 d-flex p-2"> -->
             <div class="card-tools">
-                <div class="with_as">
+                <div class="with_as" id="thesmallbtn">
                     <!-- <a href="#" class="btn btn-primary subtotal" style="margin-right: 5px;">
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Subtotal </span>
                     </a> -->
@@ -1840,6 +1910,9 @@
                     </a>
                     <a style="display:none;" class="border-right mr-5 deletethis" data-title="{{ __('Delete') }}" title="{{ __('Delete') }}">
                         <i class="ti ti-trash"></i> <span class="hide-mob"> Delete </span>
+                    </a>
+                    <a style="display:none;" class="border-right mr-5 copythis" data-title="{{ __('Delete') }}" title="{{ __('Delete') }}">
+                        <i class="ti ti-copy"></i> <span class="hide-mob"> Copy </span>
                     </a>
                     <a class="border-right mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="{{ __('Create New Custom Item') }}" data-url="{{route('salesquote.customitem')}}" data-toggle="tooltip" title="{{ __('Create Custom Item') }}">
                         <i class="ti ti-adjustments-plus"></i>

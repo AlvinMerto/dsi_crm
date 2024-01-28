@@ -394,3 +394,5 @@ Route::post("/get_add_info_ajax","SalesQuoteController@get_add_info_ajax")->name
 
 // delete this 
 Route::post("/bulkremove","SalesQuoteController@bulkremove")->name("salesquote.deletethis");
+
+Route::post("/set_order","SalesQuoteController@set_order")->name("salesquote.set_order");

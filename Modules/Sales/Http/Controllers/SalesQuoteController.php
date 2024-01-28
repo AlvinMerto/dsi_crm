@@ -1379,6 +1379,44 @@ class SalesQuoteController extends Controller
         }
     }
 
+    public function set_order(Request $req) {
+        $quote_id       = $req->input("quote_id");
+        $order_to_use   = $req->input("order_to_use");
+        $item_id        = $req->input("item_id");
+        
+        $update         = $this->update_order($quote_id, $order_to_use, $item_id);
+        return response()->json( $update );
+    }
+
+    public function update_order($quote_id, $order_to_use, $item_id) {
+        
+        $origorderid        = SalesQuoteItem::where("id",$item_id)->get("itemorder")[0]->itemorder;
+
+        $condition          = null;
+        $where              = null;
+
+        if ($origorderid < $order_to_use) {
+            // minus
+            $condition = "(itemorder-1)";
+            $where     = "itemorder >= {$origorderid} and itemorder <= {$order_to_use}";
+        } else if ($origorderid > $order_to_use) {
+            // plus
+            $condition = "(itemorder+1)";
+            $where     = "itemorder <= ($origorderid-$order_to_use)";
+        }
+
+        // update sales_quotes_items set itemorder = (itemorder+1) where itemorder <= (3-1) and quote_id = 78
+        // update sales_quotes_items set itemorder = (itemorder-1) where itemorder >= 3 and itemorder <= 5 and quote_id = 78
+
+        $move_orderid_sql   = "update sales_quotes_items set itemorder = {$condition} where {$where} and quote_id = {$quote_id}";
+        // $update             = DB::select(DB::raw($move_orderid_sql));
+
+        // $update             = SalesQuoteItem::where("id",$item_id)->update(["itemorder"=>$order_to_use]);
+
+        // return $update;
+        return [$move_orderid_sql,"orig_id"=>$origorderid,"order to use" => $order_to_use];
+    }
+
     public function get_quote_item($qid, $showsettings = null, $intextbox = false) {
         $salesquoteitems = SalesQuoteItem::where('quote_id',$qid)
                                             ->leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
@@ -1457,9 +1495,13 @@ class SalesQuoteController extends Controller
 
                 $html .= "</tr>";
         $html .= "</thead>";
+        
+        // $html .= "<tbody data-tid=''> 
+        //             <tr>  <td colspan=20> &nbsp; </td> </tr>
+        //         </tbody>";
 
         foreach($a as $aa) {
-           
+            
             $html .= "<tbody data-tid={$aa}>";
 
             if ($aa !== null) {
@@ -1650,7 +1692,7 @@ class SalesQuoteController extends Controller
 
             foreach($salesquoteitems as $si) {
                 $markups         = $this->get_markup();
-                $other_info  = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
+                $other_info      = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
 
                 if ($si->grp_id === $aa) { 
                     $values          = [
