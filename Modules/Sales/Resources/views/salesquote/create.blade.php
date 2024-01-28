@@ -1301,9 +1301,9 @@
     ?>
         <div class="col-md-12">
             <div style="display:flex; justify-content:space-between;" class="mb-3">
-                <div class="with_as" style="width: 100%;">
+                <div class="with_as" id="bigbtn_div" style="width: 100%;">
                     <a class="border-right" id="email_quote" title="Send Quotation"> <i class="ti ti-send"></i> Send Quotation </a>
-                    <a class="border-right" > <i class="ti ti-download"></i> Save Quotation </a>
+                    <a class="border-right" > <i class="ti ti-download"></i> Download Quotation </a>
                     <a class="border-right"> <i class="ti ti-transform-filled"></i> Convert to Order </a>
                     <a class="border-right"> <i class="ti ti-businessplan"></i> Convert to sales </a>
                     <a class="border-right"> <i class="ti ti-settings-2"></i> Quotation Settings </a>
