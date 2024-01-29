@@ -1140,7 +1140,8 @@ class SalesQuoteController extends Controller
 
         $salesquoteproduct                                 = new SalesQuoteItem();
         $salesquoteproduct->quote_id                       = $qid;
-        $salesquoteproduct->itemorder                      = 1;
+        $salesquoteproduct->itemorder                      = $salesquoteproduct->create_order_number($qid);
+        $salesquoteproduct->inside_sub_order               = null;
         $salesquoteproduct->type                           = $type;
         $salesquoteproduct->profit                         = $values['profit'];
         $salesquoteproduct->totalmaincost                  = 0;
@@ -1390,31 +1391,33 @@ class SalesQuoteController extends Controller
 
     public function update_order($quote_id, $order_to_use, $item_id) {
         
-        $origorderid        = SalesQuoteItem::where("id",$item_id)->get("itemorder")[0]->itemorder;
+        $collection        = SalesQuoteItem::where("id",$item_id)->get(["itemorder","grp_id"]);
+        $origorderid       = $collection[0]->itemorder;
+        $grpid             = $collection[0]->grp_id;
 
-        $condition          = null;
-        $where              = null;
+        // if outside subtotal 
+            // update the orderid using the order_to_use
+        // if inside subtotal
+            // update the orderid using the origorderid 
+            // update inside_sub_order using the order_to_use
+        // update the groupid using the grpid
+        
+        // $condition          = null;
+        // $where              = null;
 
-        if ($origorderid < $order_to_use) {
-            // minus
-            $condition = "(itemorder-1)";
-            $where     = "itemorder >= {$origorderid} and itemorder <= {$order_to_use}";
-        } else if ($origorderid > $order_to_use) {
-            // plus
-            $condition = "(itemorder+1)";
-            $where     = "itemorder <= ($origorderid-$order_to_use)";
-        }
+        // if ($origorderid < $order_to_use) {
+        //     // minus
+        //     $condition = "(itemorder-1)";
+        //     $where     = "itemorder >= {$origorderid} and itemorder <= {$order_to_use}";
+        // } else if ($origorderid > $order_to_use) {
+        //     // plus
+        //     $condition = "(itemorder+1)";
+        //     $where     = "itemorder <= ($origorderid-$order_to_use)";
+        // }
 
-        // update sales_quotes_items set itemorder = (itemorder+1) where itemorder <= (3-1) and quote_id = 78
-        // update sales_quotes_items set itemorder = (itemorder-1) where itemorder >= 3 and itemorder <= 5 and quote_id = 78
+        // $move_orderid_sql   = "update sales_quotes_items set itemorder = {$condition} where {$where} and quote_id = {$quote_id}";
 
-        $move_orderid_sql   = "update sales_quotes_items set itemorder = {$condition} where {$where} and quote_id = {$quote_id}";
-        // $update             = DB::select(DB::raw($move_orderid_sql));
-
-        // $update             = SalesQuoteItem::where("id",$item_id)->update(["itemorder"=>$order_to_use]);
-
-        // return $update;
-        return [$move_orderid_sql,"orig_id"=>$origorderid,"order to use" => $order_to_use];
+        // return [$move_orderid_sql,"orig_id"=>$origorderid,"order to use" => $order_to_use];
     }
 
     public function get_quote_item($qid, $showsettings = null, $intextbox = false) {
@@ -1422,116 +1425,112 @@ class SalesQuoteController extends Controller
                                             ->leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
                                             ->orderBy("itemorder","ASC")
                                             ->get();
-        
-        $html            = "";
-        
-        $a               = [];
 
-        foreach ($salesquoteitems as $sqi) {
-            if (!in_array($sqi->grp_id, $a)) {
-                array_push($a,$sqi->grp_id);
-            }
-        }
-     
-        date_default_timezone_set('UTC');
-        $datetoday = date("Y-m-d");
+            $html            = "";
+            $markups         = $this->get_markup();
 
-        $html  = "<thead>";
+            date_default_timezone_set('UTC');
+            $datetoday = date("Y-m-d");
+
+            $html  = "<thead>";
             $html .= "<tr>";
-                $html .= "<th style='min-width: 5%;'>*</th>";
+            $html .= "<th style='min-width: 5%;'>*</th>";
 
-                if (isset($showsettings['profit'])) {
-                    $html .= "<th style='min-width: 5%; text-align:right;'>Profit</th>";
-                }
+            if (isset($showsettings['profit'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Profit</th>";
+            }
 
-                if (isset($showsettings['markup'])) {
-                    $html .= "<th style='min-width: 5%; text-align:center;'>Mark-Up</th>";
-                }
+            if (isset($showsettings['markup'])) {
+                $html .= "<th style='min-width: 5%; text-align:center;'>Mark-Up</th>";
+            }
 
-                if (isset($showsettings['cost'])) {
-                    $html .= "<th style='min-width: 5%; text-align:right;'>Cost</th>";
-                }
+            if (isset($showsettings['cost'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Cost</th>";
+            }
 
-                if (isset($showsettings['supplier'])) {
-                    $html .= "<th style='min-width: 5%;'>Supplier</th>";
-                }
+            if (isset($showsettings['supplier'])) {
+                $html .= "<th style='min-width: 5%;'>Supplier</th>";
+            }
 
-                if (isset($showsettings['supplier_num'])) {
-                    $html .= "<th style='min-width: 5%;'>Supplier #</th>";
-                }
+            if (isset($showsettings['supplier_num'])) {
+                $html .= "<th style='min-width: 5%;'>Supplier #</th>";
+            }
 
-                if (isset($showsettings['manu'])) {
-                    $html .= "<th style='min-width: 5%;'>MFG</th>";
-                }
+            if (isset($showsettings['manu'])) {
+                $html .= "<th style='min-width: 5%;'>MFG</th>";
+            }
 
-                if (isset($showsettings['manu_num'])) {
-                    $html .= "<th style='min-width: 5%;'>MFG #</th>";
-                }
+            if (isset($showsettings['manu_num'])) {
+                $html .= "<th style='min-width: 5%;'>MFG #</th>";
+            }
 
-                if (isset($showsettings['description'])) {
-                    $html .= "<th>Description</th>";
-                }
+            if (isset($showsettings['description'])) {
+                $html .= "<th>Description</th>";
+            }
 
-                if (isset($showsettings['qty'])) {
-                    $html .= "<th style='min-width: 5%; text-align:center;'>QTY</th>";
-                }
+            if (isset($showsettings['qty'])) {
+                $html .= "<th style='min-width: 5%; text-align:center;'>QTY</th>";
+            }
 
-                if (isset($showsettings['shipping'])) {
-                    $html .= "<th style='min-width: 5%; text-align:right;'>Shipping</th>";
-                }
+            if (isset($showsettings['shipping'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Shipping</th>";
+            }
 
-                if (isset($showsettings['price'])) {
-                    $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
-                }
+            if (isset($showsettings['price'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
+            }
 
-                if (isset($showsettings['extended'])) {
-                    $html .= "<th style='min-width: 5%; text-align:right;'>Extended</th>";
-                }
+            if (isset($showsettings['extended'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Extended</th>";
+            }
 
-                if (isset($showsettings['tax'])) {
-                    $html .= "<th style='min-width: 5%; text-align:right;'>Tax</th>";
-                    $html .= "<th> </th>";
-                }
+            if (isset($showsettings['tax'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Tax</th>";
+                $html .= "<th> </th>";
+            }
 
-                $html .= "</tr>";
-        $html .= "</thead>";
-        
-        // $html .= "<tbody data-tid=''> 
-        //             <tr>  <td colspan=20> &nbsp; </td> </tr>
-        //         </tbody>";
+            $html .= "</tr>";
+            $html .= "</thead>";
 
-        foreach($a as $aa) {
-            
-            $html .= "<tbody data-tid={$aa}>";
+            $postedgroup = [];
+            $postedid    = [];
 
-            if ($aa !== null) {
-                $st          = $this->get_subtotal($aa);
-                
-                $grpid       = $aa;
-                $desc        = null;
-                $qty         = 1;
-                $price       = $st['subs'][0]->price;
+            foreach($salesquoteitems as $aa) {
 
-                $shippingfee = 0; 
-                $amount      = $st['subs'][0]->extended; 
+                if ($aa->grp_id !== null) {
 
-                $profit      = $st['subs'][0]->profit;
-                $cost        = $st['subs'][0]->cost;
-                $markup      = 0;
+                if (!in_array($aa->grp_id,$postedgroup)) {
+                    $html .= "<tbody data-tid={$aa->grp_id}>";
+                    // if not posted yet
+                    array_push($postedgroup,$aa->grp_id);
 
-                $totalprofit = 0;
-                $totalcost   = 0;
-                $totalmup    = 0;
+                    $st          = $this->get_subtotal($aa->grp_id);
 
-                if (count($st['sales']) > 0) {
+                    $grpid       = $aa->grp_id;
+                    $desc        = null;
+                    $qty         = 1;
+                    $price       = $st['subs'][0]->price;
+
+                    $shippingfee = 0; 
+                    $amount      = $st['subs'][0]->extended; 
+
+                    $profit      = $st['subs'][0]->profit;
+                    $cost        = $st['subs'][0]->cost;
+                    $markup      = 0;
+
+                    $totalprofit = 0;
+                    $totalcost   = 0;
+                    $totalmup    = 0;
+
+                    if (count($st['sales']) > 0) {
                     $grpid       = $st['sales'][0]->grpid;
-            
+
                     if ($st['sales'][0]->description != null) {
                         $desc        = $st['sales'][0]->description;  
                     }
 
                     if ($st['sales'][0]->quantity != null || strlen($st['sales'][0]->quantity) > 0) {
-                        $qty         = 2; //$st['sales'][0]->quantity;
+                        $qty         = 2;
                     } else {
                         $qty         = 1; 
                     }
@@ -1567,220 +1566,275 @@ class SalesQuoteController extends Controller
                     }
 
                     if ($st['sales'][0]->markup != null || strlen($st['sales'][0]->markup) > 0) {
-                        $totalmup = $st['subs'][0]->gp; // $st['sales'][0]->markup; $st['subs'][0]->gp; //
+                        $totalmup = $st['subs'][0]->gp; 
                     } else {
                         $totalmup = 0;
                     }
 
-                } else {
-                    $amount = $amount*$qty;
-                }
-
-                if (isset($showsettings['sub'])) {
-                    $colspan = 4;
-                    if ($intextbox) {
-                        $colspan = 1;
+                    } else {
+                        $amount = $amount*$qty;
                     }
-                    $html .= "<tr class='substart_click' data-tid='{$grpid}'>";
-                       // $html .= "<td> </td>";
-                       $html .= "<td> </td>";
 
-                       if (isset($showsettings['profit'])) {
+                    if (isset($showsettings['sub'])) {
+                        $colspan = 4;
+
+                        if ($intextbox) {
+                            $colspan = 1;
+                        }
+
+                        $html .= "<tr class='substart_click' data-tid='{$grpid}'>";
+                        $html .= "<td> </td>";
+
+                        if (isset($showsettings['profit'])) {
                             $html .= "<td style='text-align:right;' id='{$grpid}_profit'> ";
-                                if (!$intextbox) {
-                                    $html .= "<strong>".number_format($totalprofit,2)."</strong>";
-                                    // $html .= "<input id ='{$grpid}' data-id='{$grpid}' data-fld='totalprofit' style='text-align:right; font-weight: bold;' class='textsubtotal form-control bold-input' type='text' value='".number_format($totalprofit,2)."'/>";
-                                } else {
-                                    $html .= number_format($totalprofit,2);
-                                }
+                            if (!$intextbox) {
+                                $html .= "<strong>".number_format($totalprofit,2)."</strong>";
+                            } else {
+                                $html .= number_format($totalprofit,2);
+                            }
                             $html .= "</td>";
                         }
 
                         if (isset($showsettings['markup'])) {
                             $html .= "<td style='text-align:center; font-weight:bold;' id='{$grpid}_gp'>";
-                                if (!$intextbox) {
-                                    $html .= $totalmup."%";
-                                    // $html .= "<select data-id='{$grpid}' data-fld='markup' class='markupchange_subtotal form-control' style='font-weight:bold; border:none;'>";
-                                    //             foreach($markups as $m) {
-                                    //                 $selected = null;
-                                                        
-                                    //                 if ($totalmup == $m) {
-                                    //                     $selected = "selected";
-                                    //                 } else {
-                                    //                     $selected = null;
-                                    //                 }
-                                    //                 $html .= "<option value='{$m}' {$selected}>{$m}</option>";
-                                    //             }
-                                    // $html .= "</select>";
-                                } else {
-                                    $html .= $totalmup."%";
-                                }
+                            if (!$intextbox) {
+                                $html .= $totalmup."%";
+                            } else {
+                                $html .= $totalmup."%";
+                            }
                             $html .= "</td>";
                         }
-                        
-
 
                         if (isset($showsettings['cost'])) {
                             $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_cost'> ";
-                                if (!$intextbox) {
-                                    $html .= "<strong>".number_format($totalcost,2)."</strong>";
-                                    // $html .= "<input id ='{$grpid}' data-id='{$grpid}' data-fld='totalcost' style='text-align:right; font-weight: bold;' class='textsubtotal form-control bold-input' type='text' value='".number_format($totalcost,2)."'/>";
-                                } else {
-                                    $html .= number_format($totalcost,2);
-                                }
+                            if (!$intextbox) {
+                                $html .= "<strong>".number_format($totalcost,2)."</strong>";
+                            } else {
+                                $html .= number_format($totalcost,2);
+                            }
                             $html .= "</td>";
                         }
-                    
+
                         $html .= "<td colspan='{$colspan}' style='text-align:right;'> <i> Sub Start </i> &nbsp; </td>";
 
                         if (isset($showsettings['description'])) {
                             $html .= "<td class='number'>";
-                                if (!$intextbox) {
-                                    $html .= "<input id = '{$grpid}_desc' data-id='{$grpid}' data-fld='description' data-removecomma = 'false' style='text-align:left; font-weight:bold;' class='textsubtotal form-control bold_input' type='text' value='{$desc}'/>";
-                                } else {
-                                    $html .= $desc;
-                                }
+                            if (!$intextbox) {
+                                $html .= "<input id = '{$grpid}_desc' data-id='{$grpid}' data-fld='description' data-removecomma = 'false' style='text-align:left; font-weight:bold;' class='textsubtotal form-control bold_input' type='text' value='{$desc}'/>";
+                            } else {
+                                $html .= $desc;
+                            }
                             $html .= "</td>";
                         }
 
                         if (isset($showsettings['qty'])) {
                             $html .= "<td style='text-align:center;' id='{$grpid}_qty'>";
-                                if (!$intextbox) {
-                                    $html .="<input id = '{$grpid}_qty' data-id='{$grpid}' data-fld='quantity' data-removecomma = 'true' style='text-align:center; font-weight:bold;' class='textsubtotal form-control' type='text' value='{$qty}'/>";
-                                } else {
-                                    $html .= $qty;
-                                }
+                            if (!$intextbox) {
+                                $html .="<input id = '{$grpid}_qty' data-id='{$grpid}' data-fld='quantity' data-removecomma = 'true' style='text-align:center; font-weight:bold;' class='textsubtotal form-control' type='text' value='{$qty}'/>";
+                            } else {
+                                $html .= $qty;
+                            }
                             $html .= "</td>";
                         }
 
                         if (isset($showsettings['shipping'])) {
                             $html .= "<td class='number'>";
-                                if (!$intextbox) {
-                                    $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
-                                } else {
-                                    $html .= $shippingfee;
-                                }
+                            if (!$intextbox) {
+                                $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
+                            } else {
+                                $html .= $shippingfee;
+                            }
                             $html .= "</td>";
                         }
 
                         if (isset($showsettings['price'])) {
                             $html .= "<td class='number'>";
-                                if (!$intextbox) {
-                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
-                                } else {
-                                    $html .= $price;
-                                }
+                            if (!$intextbox) {
+                                $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
+                            } else {
+                                $html .= $price;
+                            }
                             $html .= "</td>";
                         }
 
                         if (isset($showsettings['extended'])) {
                             $html .= "<td class='number'>";
-                                if (!$intextbox) {
-                                    $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".$amount."'/>";
-                                } else {
-                                    $html .= $amount; 
-                                }
+                            if (!$intextbox) {
+                                $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".$amount."'/>";
+                            } else {
+                                $html .= $amount; 
+                            }
                             $html .= "</td>";
                         }
-                        $html .= "<td> &nbsp; </td>";
-                        $html .= "<td> &nbsp; </td>";
-                    $html .= "</tr>";
-                }
-            }
-         
-            $count     = 1;
 
-            foreach($salesquoteitems as $si) {
-                $markups         = $this->get_markup();
-                $other_info      = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
-
-                if ($si->grp_id === $aa) { 
-                    $values          = [
-                        "id"                => $si->itemid,
-                        "profit"            => $si->profit,
-                        "markupvalue"       => $si->markup,
-                        "ccost"             => $si->purchase_price,
-                        "extended"          => $si->extended,
-                        "amount"            => $si->amount,
-                        "tax_value"         => $si->itemtaxrate,
-                        "shippingfee"       => number_format($si->shippingfee,2),
-                        'subtotal_gpr'      => $si->grp_id,
-                        "expiry"            => $si->endoflife,
-                        "price"             => $si->price,
-                        'itemorderid'       => $si->itemorder,
-                        'status'            => $si->markupstatus,
-                        'otherinfo'         => $other_info
-                    ];
-
-                    if (!in_array($si->markup, $markups)) {
-                        array_push($markups,$si->markup);
+                            $html .= "<td> &nbsp; </td>";
+                            $html .= "<td> &nbsp; </td>";
+                            $html .= "</tr>";
                     }
 
-                    $description = $si->item;
-                    $qty         = $si->quantity;
-                    
-                    if ($si->type == "comment" || $si->type == "blank") {
-                        $type      = $si->type;
-                        $include   = true;
+                    $count     = 1;
 
-                        if ($aa !== null) {
-                            if (isset($showsettings['subitem'])) {
-                                $include = true;
+                        foreach($salesquoteitems as $si) {
+                            $other_info      = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
+
+                            if ($si->grp_id === $aa->grp_id) { 
+                                $values          = [
+                                "id"                => $si->itemid,
+                                "profit"            => $si->profit,
+                                "markupvalue"       => $si->markup,
+                                "ccost"             => $si->purchase_price,
+                                "extended"          => $si->extended,
+                                "amount"            => $si->amount,
+                                "tax_value"         => $si->itemtaxrate,
+                                "shippingfee"       => number_format($si->shippingfee,2),
+                                'subtotal_gpr'      => $si->grp_id,
+                                "expiry"            => $si->endoflife,
+                                "price"             => $si->price,
+                                'itemorderid'       => $si->itemorder,
+                                'status'            => $si->markupstatus,
+                                'otherinfo'         => $other_info
+                                ];
+
+                                if (!in_array($si->markup, $markups)) {
+                                    array_push($markups,$si->markup);
+                                }
+
+                                $description = $si->item;
+                                $qty         = $si->quantity;
+
+                                if ($si->type == "comment" || $si->type == "blank") {
+                                    $type      = $si->type;
+                                    $include   = true;
+
+                                    if ($aa->grp_id !== null) {
+                                        if (isset($showsettings['subitem'])) {
+                                            $include = true;
+                                        } else {
+                                            $include = false;
+                                        }
+                                    } else {
+                                        $include = true;
+                                    }
+
+                                    if ($include) {
+                                        $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
+                                    }
+
+                                } else {
+                                    $include   = true;
+
+                                    if ($aa->grp_id !== null) {
+                                        if (isset($showsettings['subitem'])) {
+                                            $include = true;
+                                        } else {
+                                            $include = false;
+                                        }
+                                    } else {
+                                        $include = true;
+                                    }
+
+                                    if ($include) {
+                                        $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox"))->render();
+                                    }
+                                }
+                            }
+
+                        $count++;
+                    }
+
+                        if ($aa->grp_id !== null) {
+                            if (isset($showsettings['sub'])) {
+                                $colspan = 8;
+                                
+                                if ($intextbox) {
+                                    $colspan = 1;
+                                }
+
+                                $html .= "<tr>";
+                                $html .= "<td colspan='{$colspan}' style='text-align:right; padding-top:4px; padding-bottom:4px;'> <i> Sub Stop </i> &nbsp; </td>";
+                                $html .= "<td> </td>";
+                                $html .= "<td> </td>";
+                                $html .= "<td> </td>";
+                                $html .= "<td> </td>";
+                                $html .= "<td> </td>";
+                                $html .= "<td> </td>";
+                                $html .= "<td> &nbsp; </td>";
+                                $html .= "</tr>";
+                            }
+                        }
+                        $html .= "</tbody>";
+                    }
+                } else {
+                    if (!in_array($aa->itemid,$postedid)) {
+                        $html .= "<tbody data-tid={$aa->grp_id}>";
+                        array_push($postedid,$aa->itemid);
+
+                        $count = 1;
+                        $other_info      = $this->get_otherfields($aa->itemid, ["Manufacturer","Supplier"]);
+
+                        $values          = [
+                            "id"                => $aa->itemid,
+                            "profit"            => $aa->profit,
+                            "markupvalue"       => $aa->markup,
+                            "ccost"             => $aa->purchase_price,
+                            "extended"          => $aa->extended,
+                            "amount"            => $aa->amount,
+                            "tax_value"         => $aa->itemtaxrate,
+                            "shippingfee"       => number_format($aa->shippingfee,2),
+                            'subtotal_gpr'      => $aa->grp_id,
+                            "expiry"            => $aa->endoflife,
+                            "price"             => $aa->price,
+                            'itemorderid'       => $aa->itemorder,
+                            'status'            => $aa->markupstatus,
+                            'otherinfo'         => $other_info
+                        ];
+
+                        if (!in_array($aa->markup, $markups)) {
+                            array_push($markups,$aa->markup);
+                        }
+
+                        $description = $aa->item;
+                        $qty         = $aa->quantity;
+
+                        if ($aa->type == "comment" || $aa->type == "blank") {
+                            $type      = $aa->type;
+                            $include   = true;
+
+                            if ($aa->grp_id !== null) {
+                                if (isset($showsettings['subitem'])) {
+                                    $include = true;
+                                } else {
+                                    $include = false;
+                                }
                             } else {
-                                $include = false;
+                                $include = true;
+                            }
+
+                            if ($include) {
+                                $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
                             }
                         } else {
-                            $include = true;
-                        }
+                            $include   = true;
 
-                        if ($include) {
-                            $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
-                        }
-                    } else {
-                        $include   = true;
-
-                        if ($aa !== null) {
-                             if (isset($showsettings['subitem'])) {
+                            if ($aa->grp_id !== null) {
+                                if (isset($showsettings['subitem'])) {
+                                    $include = true;
+                                } else {
+                                    $include = false;
+                                }
+                            } else {
                                 $include = true;
-                             } else {
-                                $include = false;
-                             }
-                        } else {
-                            $include = true;
-                        }
+                            }
 
-                        if ($include) {
-                            $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox"))->render();
+                            if ($include) {
+                                $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox"))->render();
+                            }
+
                         }
+                        $html .= "</tbody>";
                     }
                 }
-
-                $count++;
             }
-
-                if ($aa !== null) {
-                    if (isset($showsettings['sub'])) {
-                        $colspan = 8;
-                        if ($intextbox) {
-                            $colspan = 1;
-                        }
-
-                        $html .= "<tr>";
-                            $html .= "<td colspan='{$colspan}' style='text-align:right; padding-top:4px; padding-bottom:4px;'> <i> Sub Stop </i> &nbsp; </td>";
-                            $html .= "<td> </td>";
-                            $html .= "<td> </td>";
-                            $html .= "<td> </td>";
-                            $html .= "<td> </td>";
-                            $html .= "<td> </td>";
-                            $html .= "<td> </td>";
-                            $html .= "<td> &nbsp; </td>";
-                        $html .= "</tr>";
-                    }
-                }
-
-                $html .= "</tbody>";
-        
-        }
 
         return $html;
     }
@@ -2073,12 +2127,23 @@ class SalesQuoteController extends Controller
     function create_subtotal(Request $req) {
         $ids         = (array) $req->input("ids");
 
-        // $subtotal_id = substr( md5(date("mdyhisa")),0,8 );
         $subtotal_id = md5( date("mdyhisa") );
         
         $updated     = false;
+        $first       = true;
+
+        $original_itemorder = null;
+
         foreach($ids as $i) {
-            $updated = SalesQuoteItem::where("id",$i)->update(["grp_id"=>$subtotal_id]);
+            $newsales     = new SalesQuoteItem();
+
+            if ($first) {
+                $original_itemorder = $newsales->get_the_current_itemorder($i);
+                $first = false;
+            }
+
+            $inside_num   = $newsales->create_inner_number($subtotal_id);
+            $updated      = SalesQuoteItem::where("id",$i)->update(["grp_id"=>$subtotal_id,"inside_sub_order"=>$inside_num,"itemorder"=>$original_itemorder]);
         }
 
         return response()->json($updated);
@@ -2448,4 +2513,443 @@ class SalesQuoteController extends Controller
 
         return $ip['origin'];
     }
+
+    public function test_quote() {
+        $show   = ["profit"        => true,
+                    "markup"        => true,
+                    "cost"          => true,
+                    "supplier"      => true,
+                    "supplier_num"  => true,
+                    "manu"          => true,
+                    "manu_num"      => true,
+                    "description"   => true,
+                    "qty"           => true,
+                    "shipping"      => true,
+                    "price"         => true,
+                    "extended"      => true,
+                    "tax"           => true,
+                    "sub"           => true,
+                    "subitem"       => true
+            ];
+
+        return "<html><body><table>".$this->get_quote_item_test(78, $show )."</table></body></html>";
+    }
+
+public function get_quote_item_test($qid, $showsettings = null, $intextbox = false) {
+    $salesquoteitems = SalesQuoteItem::where('quote_id',$qid)
+                                        ->leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
+                                        ->orderBy("itemorder","ASC")
+                                        ->get();
+    
+    $html            = "";
+    $markups         = $this->get_markup();
+
+    date_default_timezone_set('UTC');
+    $datetoday = date("Y-m-d");
+
+    $html  = "<thead>";
+        $html .= "<tr>";
+            $html .= "<th style='min-width: 5%;'>*</th>";
+
+            if (isset($showsettings['profit'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Profit</th>";
+            }
+
+            if (isset($showsettings['markup'])) {
+                $html .= "<th style='min-width: 5%; text-align:center;'>Mark-Up</th>";
+            }
+
+            if (isset($showsettings['cost'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Cost</th>";
+            }
+
+            if (isset($showsettings['supplier'])) {
+                $html .= "<th style='min-width: 5%;'>Supplier</th>";
+            }
+
+            if (isset($showsettings['supplier_num'])) {
+                $html .= "<th style='min-width: 5%;'>Supplier #</th>";
+            }
+
+            if (isset($showsettings['manu'])) {
+                $html .= "<th style='min-width: 5%;'>MFG</th>";
+            }
+
+            if (isset($showsettings['manu_num'])) {
+                $html .= "<th style='min-width: 5%;'>MFG #</th>";
+            }
+
+            if (isset($showsettings['description'])) {
+                $html .= "<th>Description</th>";
+            }
+
+            if (isset($showsettings['qty'])) {
+                $html .= "<th style='min-width: 5%; text-align:center;'>QTY</th>";
+            }
+
+            if (isset($showsettings['shipping'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Shipping</th>";
+            }
+
+            if (isset($showsettings['price'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
+            }
+
+            if (isset($showsettings['extended'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Extended</th>";
+            }
+
+            if (isset($showsettings['tax'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Tax</th>";
+                $html .= "<th> </th>";
+            }
+
+            $html .= "</tr>";
+    $html .= "</thead>";
+
+    $postedgroup = [];
+    $postedid    = [];
+
+    foreach($salesquoteitems as $aa) {
+        
+        $html .= "<tbody data-tid={$aa->grp_id}>";
+
+        if ($aa->grp_id !== null) {
+
+            if (!in_array($aa->grp_id,$postedgroup)) {
+
+                // if not posted yet
+                array_push($postedgroup,$aa->grp_id);
+
+                $st          = $this->get_subtotal($aa->grp_id);
+                
+                $grpid       = $aa->grp_id;
+                $desc        = null;
+                $qty         = 1;
+                $price       = $st['subs'][0]->price;
+
+                $shippingfee = 0; 
+                $amount      = $st['subs'][0]->extended; 
+
+                $profit      = $st['subs'][0]->profit;
+                $cost        = $st['subs'][0]->cost;
+                $markup      = 0;
+
+                $totalprofit = 0;
+                $totalcost   = 0;
+                $totalmup    = 0;
+
+                if (count($st['sales']) > 0) {
+                    $grpid       = $st['sales'][0]->grpid;
+            
+                    if ($st['sales'][0]->description != null) {
+                        $desc        = $st['sales'][0]->description;  
+                    }
+
+                    if ($st['sales'][0]->quantity != null || strlen($st['sales'][0]->quantity) > 0) {
+                        $qty         = 2;
+                    } else {
+                        $qty         = 1; 
+                    }
+
+                    if ($st['sales'][0]->price != null || strlen($st['sales'][0]->price) > 0) {
+                        $price       = $st['sales'][0]->price;
+                    } else {
+                        $price       = $st['subs'][0]->price;
+                    }
+
+                    if ($st['sales'][0]->shippingfee != null || strlen($st['sales'][0]->shippingfee) > 0) {
+                        $shippingfee = $st['sales'][0]->shippingfee;
+                    } else {
+                        $shippingfee = $st['subs'][0]->shipping; 
+                    }
+
+                    if ($st['sales'][0]->extended != null || strlen($st['sales'][0]->extended) > 0) {
+                        $amount         = $st['sales'][0]->extended;
+                    } else {
+                        $amount         = $st['subs'][0]->extended*$qty;
+                    }
+
+                    if ($st['sales'][0]->totalcost != null || strlen($st['sales'][0]->totalcost) > 0) {
+                        $totalcost = $st['sales'][0]->totalcost;
+                    } else {
+                        $totalcost = $st['subs'][0]->cost;
+                    }
+
+                    if ($st['sales'][0]->totalprofit != null || strlen($st['sales'][0]->totalprofit) > 0) {
+                        $totalprofit = $st['sales'][0]->totalprofit;
+                    } else {
+                        $totalprofit = $st['subs'][0]->profit;
+                    }
+
+                    if ($st['sales'][0]->markup != null || strlen($st['sales'][0]->markup) > 0) {
+                        $totalmup = $st['subs'][0]->gp; 
+                    } else {
+                        $totalmup = 0;
+                    }
+
+                } else {
+                    $amount = $amount*$qty;
+                }
+
+                if (isset($showsettings['sub'])) {
+                    $colspan = 4;
+                    if ($intextbox) {
+                        $colspan = 1;
+                    }
+                    $html .= "<tr class='substart_click' data-tid='{$grpid}'>";
+                    $html .= "<td> </td>";
+
+                    if (isset($showsettings['profit'])) {
+                            $html .= "<td style='text-align:right;' id='{$grpid}_profit'> ";
+                                if (!$intextbox) {
+                                    $html .= "<strong>".number_format($totalprofit,2)."</strong>";
+                                } else {
+                                    $html .= number_format($totalprofit,2);
+                                }
+                            $html .= "</td>";
+                        }
+
+                        if (isset($showsettings['markup'])) {
+                            $html .= "<td style='text-align:center; font-weight:bold;' id='{$grpid}_gp'>";
+                                if (!$intextbox) {
+                                    $html .= $totalmup."%";
+                                } else {
+                                    $html .= $totalmup."%";
+                                }
+                            $html .= "</td>";
+                        }
+                        
+
+
+                        if (isset($showsettings['cost'])) {
+                            $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_cost'> ";
+                                if (!$intextbox) {
+                                    $html .= "<strong>".number_format($totalcost,2)."</strong>";
+                                } else {
+                                    $html .= number_format($totalcost,2);
+                                }
+                            $html .= "</td>";
+                        }
+                    
+                        $html .= "<td colspan='{$colspan}' style='text-align:right;'> <i> Sub Start </i> &nbsp; </td>";
+
+                        if (isset($showsettings['description'])) {
+                            $html .= "<td class='number'>";
+                                if (!$intextbox) {
+                                    $html .= "<input id = '{$grpid}_desc' data-id='{$grpid}' data-fld='description' data-removecomma = 'false' style='text-align:left; font-weight:bold;' class='textsubtotal form-control bold_input' type='text' value='{$desc}'/>";
+                                } else {
+                                    $html .= $desc;
+                                }
+                            $html .= "</td>";
+                        }
+
+                        if (isset($showsettings['qty'])) {
+                            $html .= "<td style='text-align:center;' id='{$grpid}_qty'>";
+                                if (!$intextbox) {
+                                    $html .="<input id = '{$grpid}_qty' data-id='{$grpid}' data-fld='quantity' data-removecomma = 'true' style='text-align:center; font-weight:bold;' class='textsubtotal form-control' type='text' value='{$qty}'/>";
+                                } else {
+                                    $html .= $qty;
+                                }
+                            $html .= "</td>";
+                        }
+
+                        if (isset($showsettings['shipping'])) {
+                            $html .= "<td class='number'>";
+                                if (!$intextbox) {
+                                    $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
+                                } else {
+                                    $html .= $shippingfee;
+                                }
+                            $html .= "</td>";
+                        }
+
+                        if (isset($showsettings['price'])) {
+                            $html .= "<td class='number'>";
+                                if (!$intextbox) {
+                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
+                                } else {
+                                    $html .= $price;
+                                }
+                            $html .= "</td>";
+                        }
+
+                        if (isset($showsettings['extended'])) {
+                            $html .= "<td class='number'>";
+                                if (!$intextbox) {
+                                    $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".$amount."'/>";
+                                } else {
+                                    $html .= $amount; 
+                                }
+                            $html .= "</td>";
+                        }
+                        $html .= "<td> &nbsp; </td>";
+                        $html .= "<td> &nbsp; </td>";
+                    $html .= "</tr>";
+                }
+
+                $count     = 1;
+
+                foreach($salesquoteitems as $si) {
+                    $other_info      = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
+
+                    if ($si->grp_id === $aa->grp_id) { 
+                        $values          = [
+                            "id"                => $si->itemid,
+                            "profit"            => $si->profit,
+                            "markupvalue"       => $si->markup,
+                            "ccost"             => $si->purchase_price,
+                            "extended"          => $si->extended,
+                            "amount"            => $si->amount,
+                            "tax_value"         => $si->itemtaxrate,
+                            "shippingfee"       => number_format($si->shippingfee,2),
+                            'subtotal_gpr'      => $si->grp_id,
+                            "expiry"            => $si->endoflife,
+                            "price"             => $si->price,
+                            'itemorderid'       => $si->itemorder,
+                            'status'            => $si->markupstatus,
+                            'otherinfo'         => $other_info
+                        ];
+
+                        if (!in_array($si->markup, $markups)) {
+                            array_push($markups,$si->markup);
+                        }
+
+                        $description = $si->item;
+                        $qty         = $si->quantity;
+                        
+                        if ($si->type == "comment" || $si->type == "blank") {
+                            $type      = $si->type;
+                            $include   = true;
+
+                            if ($aa->grp_id !== null) {
+                                if (isset($showsettings['subitem'])) {
+                                    $include = true;
+                                } else {
+                                    $include = false;
+                                }
+                            } else {
+                                $include = true;
+                            }
+
+                            if ($include) {
+                                $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
+                            }
+                        } else {
+                            $include   = true;
+
+                            if ($aa->grp_id !== null) {
+                                if (isset($showsettings['subitem'])) {
+                                    $include = true;
+                                } else {
+                                    $include = false;
+                                }
+                            } else {
+                                $include = true;
+                            }
+
+                            if ($include) {
+                                $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox"))->render();
+                            }
+                        }
+                    }
+
+                    $count++;
+                }
+
+                if ($aa->grp_id !== null) {
+                    if (isset($showsettings['sub'])) {
+                        $colspan = 8;
+                        if ($intextbox) {
+                            $colspan = 1;
+                        }
+
+                        $html .= "<tr>";
+                            $html .= "<td colspan='{$colspan}' style='text-align:right; padding-top:4px; padding-bottom:4px;'> <i> Sub Stop </i> &nbsp; </td>";
+                            $html .= "<td> </td>";
+                            $html .= "<td> </td>";
+                            $html .= "<td> </td>";
+                            $html .= "<td> </td>";
+                            $html .= "<td> </td>";
+                            $html .= "<td> </td>";
+                            $html .= "<td> &nbsp; </td>";
+                        $html .= "</tr>";
+                    }
+                }
+
+            }
+        } else {
+            if (!in_array($aa->itemid,$postedid)) {
+                
+                array_push($postedid,$aa->itemid);
+
+                $count = 1;
+                $other_info      = $this->get_otherfields($aa->itemid, ["Manufacturer","Supplier"]);
+
+                        $values          = [
+                            "id"                => $aa->itemid,
+                            "profit"            => $aa->profit,
+                            "markupvalue"       => $aa->markup,
+                            "ccost"             => $aa->purchase_price,
+                            "extended"          => $aa->extended,
+                            "amount"            => $aa->amount,
+                            "tax_value"         => $aa->itemtaxrate,
+                            "shippingfee"       => number_format($aa->shippingfee,2),
+                            'subtotal_gpr'      => $aa->grp_id,
+                            "expiry"            => $aa->endoflife,
+                            "price"             => $aa->price,
+                            'itemorderid'       => $aa->itemorder,
+                            'status'            => $aa->markupstatus,
+                            'otherinfo'         => $other_info
+                        ];
+
+                        if (!in_array($aa->markup, $markups)) {
+                            array_push($markups,$aa->markup);
+                        }
+
+                        $description = $aa->item;
+                        $qty         = $aa->quantity;
+                        
+                        if ($aa->type == "comment" || $aa->type == "blank") {
+                            $type      = $aa->type;
+                            $include   = true;
+
+                            if ($aa->grp_id !== null) {
+                                if (isset($showsettings['subitem'])) {
+                                    $include = true;
+                                } else {
+                                    $include = false;
+                                }
+                            } else {
+                                $include = true;
+                            }
+
+                            if ($include) {
+                                $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
+                            }
+                        } else {
+                            $include   = true;
+
+                            if ($aa->grp_id !== null) {
+                                if (isset($showsettings['subitem'])) {
+                                    $include = true;
+                                } else {
+                                    $include = false;
+                                }
+                            } else {
+                                $include = true;
+                            }
+
+                            if ($include) {
+                                $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox"))->render();
+                            }
+                        }
+            }
+            $html .= "</tbody>";
+        }
+    }
+
+    return $html;
+}
+
 }

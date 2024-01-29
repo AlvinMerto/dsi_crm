@@ -12,6 +12,7 @@ class SalesQuoteItem extends Model
     protected $fillable = [
         'quote_id',
         'itemorder',
+        'inside_sub_order',
         'type',
         'profit',
         'totalmaincost',
@@ -40,6 +41,28 @@ class SalesQuoteItem extends Model
     protected static function newFactory()
     {
         return \Modules\Sales\Database\factories\SalesQuoteItemFactory::new();
+    }
+
+    public function create_grp() {
+
+    }
+
+    public function create_order_number($qid) {
+        $max = SalesQuoteItem::where("quote_id", $qid)->max("itemorder");
+        return $max+1;
+    }
+
+    public function create_inner_number($grppid) {
+        $max = SalesQuoteItem::where(["grp_id"=>$grppid])->max("inside_sub_order");
+        return $max+1;
+    }
+
+    public function get_the_current_itemorder($itemid) {
+        return SalesQuoteItem::where("id",$itemid)->get("itemorder")[0]->itemorder;
+    }
+
+    public function re_order_itemorders($quote_id, $grpid) {
+        
     }
 
     public function taxes()
