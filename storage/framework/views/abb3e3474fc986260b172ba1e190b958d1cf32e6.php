@@ -1908,14 +1908,14 @@
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Subtotal </span>
                     </a> -->
                     <a class="border-right subtotal_" title="<?php echo e(__('Create Subtotal two')); ?>" data-toggle="tooltip">
-                        <i class="ti ti-subtask"></i> 
+                        <i class="ti ti-subtask"></i>
                     </a>
 
                     <!-- <a href="#"class="btn btn-primary mr-5 substop" style="margin-right: 5px;">
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Sub Stop </span>
                     </a> -->
                     <a class="border-right mr-5 labor" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Labor')); ?>" data-url="<?php echo e(route('salesquote.getlaborwindow')); ?>" data-toggle="tooltip" title="<?php echo e(__('Labor')); ?>" >
-                        <i class="ti ti-hammer"></i> 
+                        <i class="ti ti-hammer"></i>
                     </a>
                     <!-- <a href="#"class="border-right mr-5 shipping" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Shipping')); ?>" data-url="<?php echo e(route('salesquote.addshippingfee')); ?>" data-toggle="tooltip" title="<?php echo e(__('Shipping Fee')); ?>" >
                         <i class="ti ti-truck"></i> <span class="hide-mob"> Shipping </span>
@@ -1924,10 +1924,10 @@
                         <i class="ti ti-brand-producthunt"></i>
                     </a>
                     <a class="border-right mr-5 subcomment" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
-                        <i class="ti ti-message-dots"></i> 
+                        <i class="ti ti-message-dots"></i>
                     </a>
                     <a class="border-right mr-5 subblank" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
-                        <i class="ti ti-space"></i> 
+                        <i class="ti ti-space"></i>
                     </a>
                     <!-- <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('View Item Details')); ?>" data-url="<?php echo e(route('salesquote.viewitemdetails')); ?>" data-toggle="tooltip" title="<?php echo e(__('View Item Details')); ?>">
                         <i class="ti ti-eye"></i> <span class="hide-mob"> View Item Details </span>

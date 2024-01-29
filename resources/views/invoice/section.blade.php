@@ -358,20 +358,6 @@
                     });
                 },
                 stop: function (e, ui) {
-                    var order_to_use = ui.item.eq().prevObject[0].rowIndex;
-
-                    var updateorder = {
-                        "quote_id"      : qid,
-                        "order_to_use"  : order_to_use,
-                        "item_id"       : d_id 
-                    };
-
-                    console.log(order_to_use);
-
-                    postAjax("{{route('salesquote.set_order')}}", updateorder, function(response){
-                        console.log(response);
-                    });
-
                     var disitem = ui.item.parent().index();
 
                     t_id       = ui.item.parent().data('tid');
@@ -387,55 +373,21 @@
                         "table"   : "sales_quotes_items"
                     };
 
-                    //  console.log(data);
-                    
-                    postAjax("{{route('salesquote.update_fld')}}", data, function(response){
-                        // console.log(response);
-                        compute_subs(t_id);
-                    });
+                    //  console.log(data);  
+                    var order_to_use = ui.item.eq().prevObject[0].rowIndex;
 
-                    // console.log(d_id);
-                    // console.log(ui.item.parent().data("tid"));
+                    var updateorder = {
+                        "quote_id"      : qid,
+                        "order_to_use"  : order_to_use,
+                        "item_id"       : d_id,
+                        "grp_id"        : t_id
+                    };
 
-                    // ui.item.removeClass("selected");
-                    // $(this).find("tr").each(function (index) {
-                        // if (index > 0) {
-                        //     $(this).find("td").eq(2).html(index);
-                        // }
-                    // });
-                    // setTimeout(function () {
-                    //     var data_id=parseInt(0);
-                    //     var sub_id=parseInt(0);
-                    //     $('.add-sublist').each(function () {
-                    //         if($(this).data('id'))
-                    //         {
-                    //             data_id=$(this).data('id');
-                    //             sub_id=parseInt(0);
-                    //         }
-                    //         $(this).attr('main-data',data_id);
-                    //         if($(this).attr('sub-data-id'))
-                    //         {
-                    //             $(this).attr('sub-data-id',data_id);
-                    //         }
-                    //         $(this).attr('data-sub-id',sub_id);
-
-                    //         $(this).find('*').each(function () {
-                    //             var elementType = this.tagName.toLowerCase();
-
-                    //             if (elementType == 'input') {
-                    //                 var name=$(this).attr('name');
-                    //                 var newName = replaceKeyAtIndexs(name,0,1,data_id,sub_id);
-                    //                 $(this).attr('name', newName);
-                    //             } else if (elementType === 'select') {
-                    //                 var name=$(this).attr('name');
-                    //                 var newName = replaceKeyAtIndexs(name,0,1,data_id,sub_id);
-                    //                 $(this).attr('name', newName);
-                    //             }
-                    //         });
-                    //         sub_id=sub_id+parseInt(1);
-                    //     });
-                    //     $(".item").trigger('change');
-                    // }, 0);
+                    //postAjax("{{route('salesquote.update_fld')}}", data, function(response){
+                        postAjax("{{route('salesquote.set_order')}}", updateorder, function(response){
+                            compute_subs(t_id);
+                        });
+                    //});
                 }
             });
         });
@@ -1881,14 +1833,14 @@
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Subtotal </span>
                     </a> -->
                     <a class="border-right subtotal_" title="{{ __('Create Subtotal two') }}" data-toggle="tooltip">
-                        <i class="ti ti-subtask"></i> 
+                        <i class="ti ti-subtask"></i>
                     </a>
 
                     <!-- <a href="#"class="btn btn-primary mr-5 substop" style="margin-right: 5px;">
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Sub Stop </span>
                     </a> -->
                     <a class="border-right mr-5 labor" data-ajax-popup="true" data-size="md" data-title="{{ __('Labor') }}" data-url="{{route('salesquote.getlaborwindow')}}" data-toggle="tooltip" title="{{ __('Labor') }}" >
-                        <i class="ti ti-hammer"></i> 
+                        <i class="ti ti-hammer"></i>
                     </a>
                     <!-- <a href="#"class="border-right mr-5 shipping" data-ajax-popup="true" data-size="md" data-title="{{ __('Shipping') }}" data-url="{{route('salesquote.addshippingfee')}}" data-toggle="tooltip" title="{{ __('Shipping Fee') }}" >
                         <i class="ti ti-truck"></i> <span class="hide-mob"> Shipping </span>
@@ -1897,10 +1849,10 @@
                         <i class="ti ti-brand-producthunt"></i>
                     </a>
                     <a class="border-right mr-5 subcomment" data-ajax-popup="true" data-size="md" data-title="{{ __('Add Comment') }}" data-url="{{route('salesquote.addcomment')}}" data-toggle="tooltip" title="{{ __('Comment') }}">
-                        <i class="ti ti-message-dots"></i> 
+                        <i class="ti ti-message-dots"></i>
                     </a>
                     <a class="border-right mr-5 subblank" title="{{ __('Create a blank row') }}" data-toggle="tooltip">
-                        <i class="ti ti-space"></i> 
+                        <i class="ti ti-space"></i>
                     </a>
                     <!-- <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="{{ __('View Item Details') }}" data-url="{{route('salesquote.viewitemdetails')}}" data-toggle="tooltip" title="{{ __('View Item Details') }}">
                         <i class="ti ti-eye"></i> <span class="hide-mob"> View Item Details </span>
