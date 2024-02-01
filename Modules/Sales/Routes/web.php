@@ -360,7 +360,6 @@ Route::get("salesquote/showquote/{id}",'SalesQuoteController@showquote')->name("
 Route::post("salesquote/getquote_items",'SalesQuoteController@getquote_items')->name("salesquote.getquote_items");
 
 Route::post("salesquote/blursave", 'SalesQuoteController@blursave')->name("salesquote.blursave");
-Route::get("salesquote/fortest", "SalesQuoteController@fortest")->name("salesquote.fortest");
 
 Route::post("salesquote/update_fld","SalesQuoteController@update_fld")->name("salesquote.update_fld");
 Route::post("/update_this","SalesQuoteController@update_this")->name("salesquote.update_this");
@@ -398,3 +397,7 @@ Route::post("/bulkremove","SalesQuoteController@bulkremove")->name("salesquote.d
 Route::post("/set_order","SalesQuoteController@set_order")->name("salesquote.set_order");
 
 Route::get("/test_quote","SalesQuoteController@test_quote")->name("salesquote.test_quote");
+
+Route::post("/copythis","SalesQuoteController@copythis")->name("salesquote.copythis");
+
+Route::get("salesquote/fortest", "SalesQuoteController@fortest")->name("salesquote.fortest");

@@ -302,16 +302,18 @@
 
                 if (trs.length > 1 || trs.length == 0) {
                     $(document).find(".viewdetails").hide();
-                    $(document).find(".copythis").hide();
+                    // $(document).find(".copythis").hide();
                 } else if (trs.length == 1 ) {
                     $(document).find(".viewdetails").show();
-                    $(document).find(".copythis").show();
+                    // $(document).find(".copythis").show();
                 }
                 
                 if (trs.length > 0) {
                     $(document).find(".deletethis").show();
+                    $(document).find(".copythis").show();
                 } else if (trs.length == 0) {
                     $(document).find(".deletethis").hide();
+                    $(document).find(".copythis").hide();
                 }
             });
 
@@ -320,6 +322,7 @@
             var orig_id = null;
             var orig_order = null;
             
+            var dis     = null;
             $("#tblLocations").sortable({
                 items : 'tbody.sub_tbody',
                 cursor: "pointer",
@@ -338,7 +341,7 @@
                 items: 'tbody tr.subitem',
                 cursor: 'pointer',
                 axis: 'y',
-                dropOnEmpty: false,
+                dropOnEmpty: true,
                 placeholder: "ui-state-highlight",
                 start: function (e, ui) {
                     ui.item.addClass("selected");
@@ -353,17 +356,36 @@
                         "table"   : "sales_quotes_items"
                     };
 
-                    postAjax("{{route('salesquote.update_fld')}}", data, function(response){
-                        compute_subs(orig_id);
-                    });
+                    dis = ui.item.parent();
+                    //postAjax("{{route('salesquote.update_fld')}}", data, function(response){
+                        // compute_subs(orig_id);
+                    //});
                 },
                 stop: function (e, ui) {
+                    var $sortable = $( "#tablelist > tbody" );
+                    parameters = $sortable.sortable( "toArray" );
+
+                    console.log(parameters);
+
+                    t_id        = ui.item.parent().data('tid');
+
+                    if (dis.children().length == 2) {
+                        if (t_id !== undefined) {
+                            remove_tbody(dis);
+                        }
+                    }
+                
                     var disitem = ui.item.parent().index();
 
-                    t_id       = ui.item.parent().data('tid');
+                    
 
-                    if (t_id == null) {
-                        t_id = orig_id;
+                    // rowIndex
+                    var order_to_use = ui.item.eq().prevObject[0].rowIndex;
+                    var order_to_use_ = ui.item.eq().prevObject[0].sectionRowIndex;
+
+                    if ( undefined === t_id ) {
+                        t_id         = orig_id;
+                        // order_to_use = ui.item.eq().prevObject[0].rowIndex;
                     }
 
                     var data   = {
@@ -373,9 +395,6 @@
                         "table"   : "sales_quotes_items"
                     };
 
-                    //  console.log(data);  
-                    var order_to_use = ui.item.eq().prevObject[0].rowIndex;
-
                     var updateorder = {
                         "quote_id"      : qid,
                         "order_to_use"  : order_to_use,
@@ -383,14 +402,22 @@
                         "grp_id"        : t_id
                     };
 
-                    //postAjax("{{route('salesquote.update_fld')}}", data, function(response){
-                        postAjax("{{route('salesquote.set_order')}}", updateorder, function(response){
-                            compute_subs(t_id);
-                        });
-                    //});
+                    // console.log(ui.item.eq());
+                     console.log(order_to_use+"_"+order_to_use_);
+                    
+                    // postAjax("{{route('salesquote.update_fld')}}", data, function(response){
+                    //     postAjax("{{route('salesquote.set_order')}}", updateorder, function(response){
+                    //         console.log(response);
+                    //         compute_subs(t_id);
+                    //     });
+                    // });
                 }
             });
         });
+
+        function remove_tbody(dis) {
+            dis.remove();
+        }
 
         function compute_subs(grp_id) {
             postAjax("{{route('salesquote.compute_subtotal')}}", {grp_id:grp_id}, function(response){
@@ -445,7 +472,6 @@
             }
 
             postAjax("{{route('salesquote.create_subtotal')}}", {ids : trs}, function(response){
-               
                  $("#tblLocations").children().remove();
                  showquote_items(qid);
 
@@ -819,6 +845,23 @@
         });
     }); 
 
+    $(document).on("click",".copythis", function(){
+        var qid = $(document).find("#qid").val();
+
+        postAjax("{{route('salesquote.copythis')}}", {ids : trs}, function(response){
+            appendTolist(response);
+
+            // var grpid = $(this).data("grpid");
+        
+            // if (grpid.length !== 0) {
+            //     compute_subs(grpid);
+            // }
+
+             get_computetotal( qid );
+            
+        });
+    });
+
     $(document).on('click','.btncutomitem',function (event) {
         event.preventDefault();
         var formData = $("#customitem").serialize();
@@ -1132,7 +1175,7 @@
 
     function appendTolist(html, somefunc = false) {
     //  $("<tbody class='add-list'> </tbody>").appendTo("#tblLocations");
-        $(html).prependTo("#tblLocations");
+        $(html).appendTo("#tblLocations");
 
         if (somefunc != false) {
             somefunc();
@@ -1216,10 +1259,10 @@
         postAjax("{{route('salesquote.addcustomitem')}}",data, function(response) {
             // $(response).appendTo('.add-list');
             
-                console.log(response);
             appendTolist(response, function(){
                 $("#commonModal").modal("hide");
             });
+            get_computetotal(qid);
         });
     });
 </script>
@@ -1824,7 +1867,7 @@
             </div>
 @elseif ($type == 'salesquote')
     <!-- <h5 class="h4 d-inline-block font-weight-400 mb-4">{{ __('Sales Quote') }}</h5> -->
-    <div class="card">
+    <div class="card" style="box-shadow: 0px -5px 9px #b5b5b5;">
         <div class="card-header p-3" style="background: #eee;">
             <!-- <div class="col-md-12 d-flex p-2"> -->
             <div class="card-tools">
@@ -1832,7 +1875,7 @@
                     <!-- <a href="#" class="btn btn-primary subtotal" style="margin-right: 5px;">
                         <i class="ti ti-circle-plus"></i> <span class="hide-mob"> Subtotal </span>
                     </a> -->
-                    <a class="border-right subtotal_" title="{{ __('Create Subtotal two') }}" data-toggle="tooltip">
+                    <a class="border-right subtotal_" title="{{ __('Create Subtotal') }}" data-toggle="tooltip">
                         <i class="ti ti-subtask"></i>
                     </a>
 
