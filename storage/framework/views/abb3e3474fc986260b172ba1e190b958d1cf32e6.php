@@ -1050,6 +1050,9 @@
 
     $(document).on("change",".markupchange", function(){
         edittext($(this), "sales_quotes_items");
+        
+        //     function edittext(dis, table,update_tbl = false, itemkey = "id", theval = false, fld = false) {
+    //    edittext($(this), "sales_quotes_item_info_more_flds",false,false,"approved","markupstatus");
 
         var grpid = $(this).data("grpid");
         
@@ -1115,14 +1118,30 @@
         });
     }
 
-    function edittext(dis, table,update_tbl = false, itemkey = "id") {
+    function edittext(dis, table,update_tbl = false, itemkey = "id", theval = false, fld = false) {
         // id_profit
         // id_price
         // id_tax_value
 
+        var d_val = null;
+
+        if (theval == false) {
+            d_val = dis.val();
+        } else {
+            d_val = theval;
+        }
+
+        var d_fld = null;
+
+        if (fld == false) {
+            d_fld = dis.data("fld");
+        } else {
+            d_fld = fld;
+        }
+
         var data = {
-            "theval"    : dis.val(),
-            "fld"       : dis.data("fld"),
+            "theval"    : d_val,
+            "fld"       : d_fld,
             "id"        : dis.data("id"),
             "table"     : table,
             "itemkey"   : itemkey,

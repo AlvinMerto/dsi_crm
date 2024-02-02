@@ -2038,6 +2038,20 @@ class SalesQuoteController extends Controller
         switch($fld) {
             case "markup":         
                 $markup      = $theval; 
+
+                // update markup status
+                $markupstatus     = "approved";
+
+                if (!in_array($theval, $this->get_markup())) {
+                    $markupstatus = "for approval";
+                }
+
+                $s_vals = [
+                    "markupstatus" => $markupstatus
+                ];
+    
+                $saveship = DB::table("sales_quotes_item_info_more_flds")->where("itemid",$id)->update($s_vals);
+
                 break;
             case "purchase_price": 
                 $ccost       = str_replace(",","",$theval); 
@@ -2054,6 +2068,10 @@ class SalesQuoteController extends Controller
             case "shippingfee":
                 $shippingfee  = str_replace(",","",$theval); 
                 $saveshipping = true;
+                break;
+            case "markupstatus":
+                $markupstatus = $theval;
+                $savemarkupstatus = true;
                 break;
             // case for shippingfee
         }
