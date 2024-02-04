@@ -1385,14 +1385,17 @@ class SalesQuoteController extends Controller
         $quote_id       = $req->input("quote_id");
         $order_to_use   = $req->input("order_to_use");
         $item_id        = $req->input("item_id");
+
+        // update inside tbody 
+        $inside_tbody   = $req->input("order_to_use_");
         
-        $update         = $this->update_order($quote_id, $order_to_use, $item_id);
+        $update         = $this->update_order($quote_id, $order_to_use, $item_id,"itemorder");
         return response()->json( $update );
     }
 
-    public function update_order($quote_id, $order_to_use, $item_id) {
-        
-        $collection        = SalesQuoteItem::where("id",$item_id)->get(["itemorder","grp_id"]);
+    public function update_order($quote_id, $order_to_use, $item_id, $inside_tbody = false) {
+        $itemorder         = "itemorder";
+        $collection        = SalesQuoteItem::where("id",$item_id)->get([$itemorder,"grp_id"]);
         $origorderid       = $collection[0]->itemorder;
         $grpid             = $collection[0]->grp_id;
 
@@ -1409,16 +1412,19 @@ class SalesQuoteController extends Controller
 
         if ($origorderid < $order_to_use) {
             $min      = $origorderid + 1;
-            $update   = "itemorder = '(itemorder-1)'";
-            $where    = "where itemorder >= {$min} and itemorder <= {$order_to_use}";
+            $update   = "{$itemorder} = ({$itemorder}-1)";
+            // $where    = "where itemorder >= {$min} and itemorder <= {$order_to_use}";
+            $where    = "where {$itemorder} between {$min} and {$order_to_use}";
         } else if ($origorderid > $order_to_use) {
             $min    = $origorderid - 1;
-            $update = "itemorder = '(itemorder+1)'";
-            $where  = "where itemorder >= {$order_to_use} and itemorder = {$min}";
+            $update = "{$itemorder} = ({$itemorder}+1)";
+            // $where  = "where itemorder >= {$order_to_use} and itemorder = {$min}";
+            $where  = "where {$itemorder} between {$order_to_use} and {$min}";
         }
 
-        // $up    = DB::select(DB::raw("update sales_quotes_items set {$update} {$where} and quote_id='{$quote_id}'"));
-        // $up    = DB::select(DB::raw("update sales_quotes_items set itemorder = '{$order_to_use}' where id = '{$item_id}'"));
+         $up    = DB::select(DB::raw("update sales_quotes_items set {$update} {$where} and quote_id='{$quote_id}'"));
+         $up    = DB::select(DB::raw("update sales_quotes_items set {$itemorder} = '{$order_to_use}' where id = '{$item_id}'"));
+
 
         if ($grpid != null) {
            //  $andwhere = "and grp_id = {$grpid}";
@@ -1426,7 +1432,7 @@ class SalesQuoteController extends Controller
 
         //  return $up;
          return ["update sales_quotes_items set {$update} {$where} and quote_id='{$quote_id}' {$andwhere}",
-                 "update sales_quotes_items set itemorder = '{$order_to_use}' where id = '{$item_id}'"];
+                 "update sales_quotes_items set {$itemorder} = '{$order_to_use}' where id = '{$item_id}'"];
     }
 
     public function get_quote_item($qid, $showsettings = null, $intextbox = false) {
@@ -1504,12 +1510,14 @@ class SalesQuoteController extends Controller
             $postedgroup = [];
             $postedid    = [];
 
+            $hollow_row  = [];
             // $html .= "<tbody> <tr> <td colspan=10> </td> </tr> </tbody>";
             foreach($salesquoteitems as $aa) {
 
                 if ($aa->grp_id !== null) {
 
                     if (!in_array($aa->grp_id,$postedgroup)) {
+
                         $html .= "<tbody data-tid={$aa->grp_id}>";
                         // if not posted yet
                         array_push($postedgroup,$aa->grp_id);
@@ -1594,7 +1602,7 @@ class SalesQuoteController extends Controller
                                 $colspan = 1;
                             }
 
-                            $html .= "<tr class='substart_click' data-tid='{$grpid}'>";
+                            $html .= "<tr class='substart_click hollow_row' data-tid='{$grpid}'>";
                             $html .= "<td> </td>";
 
                             if (isset($showsettings['profit'])) {
@@ -1762,7 +1770,7 @@ class SalesQuoteController extends Controller
                                         $colspan = 1;
                                     }
 
-                                    $html .= "<tr>";
+                                    $html .= "<tr class='hollow_row'>";
                                     $html .= "<td colspan='{$colspan}' style='text-align:right; padding-top:4px; padding-bottom:4px;'> <i> Sub Stop </i> &nbsp; </td>";
                                     $html .= "<td> </td>";
                                     $html .= "<td> </td>";
@@ -1848,10 +1856,10 @@ class SalesQuoteController extends Controller
                 }
             }
 
-             if (count($salesquoteitems) == 0) {
+            if (count($salesquoteitems) == 0) {
                 $html .= "<tbody> </tbody>";
                 // $html .= "<tbody> <tr> <td> &nbsp; </td> <td> &nbsp; </td> <td> &nbsp; </td> <td> &nbsp; </td> <td> &nbsp; </td> <td> &nbsp; </td> <td> &nbsp; </td> <td> &nbsp; </td> <td> &nbsp; </td> <td> &nbsp; </td> </tr> </tbody>";
-             }
+            }
         return $html;
     }
 
@@ -2154,6 +2162,10 @@ class SalesQuoteController extends Controller
 
     function get_otherfields($item_id, $getwhat) {
         return itemadditionalinfo::where("item_id",$item_id)->whereIn("title",$getwhat)->get();
+    }
+
+    function get_inside_items($grpid) {
+        return SalesQuoteItem::where("grp_id", $grpid)->orderBy("inside_sub_order","ASC")->get();
     }
 
     function get_subtotal($grpid, $update_subs_first = false) {
@@ -3001,8 +3013,9 @@ public function get_quote_item_test($qid, $showsettings = null, $intextbox = fal
                 }
 
                 $count     = 1;
-
-                foreach($salesquoteitems as $si) {
+                
+                //get_inside_items($grpid)
+                foreach($this->get_inside_items($aa->grp_id) as $si) {
                     $other_info      = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
 
                     if ($si->grp_id === $aa->grp_id) { 

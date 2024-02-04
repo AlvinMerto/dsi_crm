@@ -357,15 +357,15 @@
                     };
 
                     dis = ui.item.parent();
-                    //postAjax("{{route('salesquote.update_fld')}}", data, function(response){
-                        // compute_subs(orig_id);
-                    //});
+                    postAjax("{{route('salesquote.update_fld')}}", data, function(response){
+                        compute_subs(orig_id);
+                    });
                 },
                 stop: function (e, ui) {
                     var $sortable = $( "#tablelist > tbody" );
                     parameters = $sortable.sortable( "toArray" );
 
-                    console.log(parameters);
+                    //console.log(parameters);
 
                     t_id        = ui.item.parent().data('tid');
 
@@ -381,6 +381,8 @@
 
                     // rowIndex
                     var order_to_use = ui.item.eq().prevObject[0].rowIndex;
+
+                    // inside tbody
                     var order_to_use_ = ui.item.eq().prevObject[0].sectionRowIndex;
 
                     if ( undefined === t_id ) {
@@ -395,22 +397,38 @@
                         "table"   : "sales_quotes_items"
                     };
 
+                    // get the hollow rows
+                    var hr = $(document).find("#tblLocations tr.hollow_row");
+                    var len = hr.length-1;
+
+                    var hollow_row = 0;
+
+                    for(var i=0;i<=len;i++) {
+                        var therow = hr[i].rowIndex;
+                        
+                        if (order_to_use > therow) {
+                            hollow_row += 1;
+                        }
+                    }
+
+                    order_to_use = (order_to_use - hollow_row);
+                    
                     var updateorder = {
                         "quote_id"      : qid,
                         "order_to_use"  : order_to_use,
                         "item_id"       : d_id,
-                        "grp_id"        : t_id
+                        "grp_id"        : t_id,
+                        "inside_order"  : order_to_use_
                     };
 
-                    // console.log(ui.item.eq());
-                     console.log(order_to_use+"_"+order_to_use_);
+                    // console.log(order_to_use);
                     
-                    // postAjax("{{route('salesquote.update_fld')}}", data, function(response){
-                    //     postAjax("{{route('salesquote.set_order')}}", updateorder, function(response){
-                    //         console.log(response);
-                    //         compute_subs(t_id);
-                    //     });
-                    // });
+                    postAjax("{{route('salesquote.update_fld')}}", data, function(response){
+                        postAjax("{{route('salesquote.set_order')}}", updateorder, function(response){
+                            console.log(response);
+                            compute_subs(t_id);
+                        });
+                    });
                 }
             });
         });
