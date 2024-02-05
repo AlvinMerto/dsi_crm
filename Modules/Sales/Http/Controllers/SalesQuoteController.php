@@ -1389,11 +1389,11 @@ class SalesQuoteController extends Controller
         // update inside tbody 
         $inside_tbody   = $req->input("order_to_use_");
         
-        $update         = $this->update_order($quote_id, $order_to_use, $item_id,"itemorder");
+        $update         = $this->update_order($quote_id, $order_to_use, $item_id,$inside_tbody);
         return response()->json( $update );
     }
 
-    public function update_order($quote_id, $order_to_use, $item_id, $inside_tbody = false) {
+    public function update_order($quote_id, $order_to_use, $item_id, $inside_tbody = "false") {
         $itemorder         = "itemorder";
         $collection        = SalesQuoteItem::where("id",$item_id)->get([$itemorder,"grp_id"]);
         $origorderid       = $collection[0]->itemorder;
