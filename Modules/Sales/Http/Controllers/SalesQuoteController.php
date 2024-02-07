@@ -1232,7 +1232,7 @@ class SalesQuoteController extends Controller
         //                     "sub"           => true,
         //                     "subitem"       => true
         //             ];
-        $showsettings = $this->showsettings();
+         $showsettings = $this->showsettings();
 
         $intextbox = false;
 
@@ -1254,22 +1254,23 @@ class SalesQuoteController extends Controller
         $description    = $collection[0]->item;
 
         $count          = 0;
-        $showsettings   = ["profit"        => true,
-                            "markup"        => true,
-                            "cost"          => true,
-                            "supplier"      => true,
-                            "supplier_num"  => true,
-                            "manu"          => true,
-                            "manu_num"      => true,
-                            "description"   => true,
-                            "qty"           => true,
-                            "shipping"      => true,
-                            "price"         => true,
-                            "extended"      => true,
-                            "tax"           => true,
-                            "sub"           => true,
-                            "subitem"       => true
-                        ];
+        // $showsettings   = ["profit"        => true,
+        //                     "markup"        => true,
+        //                     "cost"          => true,
+        //                     "supplier"      => true,
+        //                     "supplier_num"  => true,
+        //                     "manu"          => true,
+        //                     "manu_num"      => true,
+        //                     "description"   => true,
+        //                     "qty"           => true,
+        //                     "shipping"      => true,
+        //                     "price"         => true,
+        //                     "extended"      => true,
+        //                     "tax"           => true,
+        //                     "sub"           => true,
+        //                     "subitem"       => true
+        //                 ];
+        $showsettings = $this->showsettings();
         
         $html           = view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
         return response()->json($html);
@@ -1422,9 +1423,10 @@ class SalesQuoteController extends Controller
             $where  = "where {$itemorder} between {$order_to_use} and {$min}";
         }
 
-         $up    = DB::select(DB::raw("update sales_quotes_items set {$update} {$where} and quote_id='{$quote_id}'"));
-         $up    = DB::select(DB::raw("update sales_quotes_items set {$itemorder} = '{$order_to_use}' where id = '{$item_id}'"));
-
+        if ($origorderid != $order_to_use) {
+            $up    = DB::select(DB::raw("update sales_quotes_items set {$update} {$where} and quote_id='{$quote_id}'"));
+            $up    = DB::select(DB::raw("update sales_quotes_items set {$itemorder} = '{$order_to_use}' where id = '{$item_id}'"));
+        }
 
         if ($grpid != null) {
            //  $andwhere = "and grp_id = {$grpid}";
@@ -1921,7 +1923,7 @@ class SalesQuoteController extends Controller
                
                         $salesquoteid = DB::table($ts)->insertGetId($get);
 
-                        $showsettings    = $this->showsettings();
+                        // $showsettings    = $this->showsettings();
                         $other_info      = $this->get_otherfields($salesquoteid, ["Manufacturer","Supplier"]);
                         $markups         = $this->get_markup();
                         $count           = 1;
@@ -1998,23 +2000,61 @@ class SalesQuoteController extends Controller
         return $html;
     }
 
-    function showsettings() {
-        return ["profit"        => true,
-                "markup"        => true,
-                "cost"          => true,
-                "supplier"      => true,
-                "supplier_num"  => true,
-                "manu"          => true,
-                "manu_num"      => true,
-                "description"   => true,
-                "qty"           => true,
-                "shipping"      => true,
-                "price"         => true,
-                "extended"      => true,
-                "tax"           => true,
-                "sub"           => true,
-                "subitem"       => true
-            ];
+    function showsettings($qid = false) {
+        $defaults = ["profit"        => true,
+                    "markup"        => true,
+                    "cost"          => true,
+                    "supplier"      => true,
+                    "supplier_num"  => true,
+                    "manu"          => true,
+                    "manu_num"      => true,
+                    "description"   => true,
+                    "qty"           => true,
+                    "shipping"      => true,
+                    "price"         => true,
+                    "extended"      => true,
+                    "tax"           => true,
+                    "sub"           => true,
+                    "subitem"       => true
+                ];
+        
+        if ($qid == false) {
+            return $defaults;
+        }
+        
+        $qs         = new SalesQuoteSetting();
+        $settings   = $qs->salesquotesetting($qid);
+
+        return $settings;
+    }
+    
+    function settings() {
+        $qs     = new SalesQuoteSetting();
+        $data   = $qs->salesquotesetting('78');
+
+        return view("sales::salesquote.settings", compact("data"));
+    }
+
+    function saveview_sets(Request $req) {
+        $qid    = $req->input('qid');
+        $data   = $req->input("data");
+
+        $save   = false;
+
+        // delete
+        $delete = SalesQuoteSetting::where("qid",$qid)->delete();
+
+        // save again
+        foreach($data as $d) {
+            $qs             = new SalesQuoteSetting();
+            $qs->key        = $d;
+            $qs->qid        = $qid;
+            $qs->value      = "on";
+            $qs->created_by = Auth::id();
+            $save           = $qs->save();
+        }
+        
+        return response()->json($save);
     }
 
     function blursave(Request $req) {
@@ -2379,7 +2419,10 @@ class SalesQuoteController extends Controller
         $val  = (array) $data;
 
         if ($table == "sales_quotes_items") {
-            
+
+            $itemorder = $val['itemorder'];
+            $grp_id    = (isset($val['grp_id'])?$val['grp_id']:null);
+
             $values = $this->calculate_item([
                  "istaxable"    => $val['taxable'],
                  "shippingfee"  => 0,
@@ -2399,6 +2442,8 @@ class SalesQuoteController extends Controller
                 'price'                          => $values['price'],
                 'extended'                       => $values['extended'],
                 'tax'                            => $values['tax_used'],
+                "grp_id"                         => $grp_id,
+                'itemorder'                      => $itemorder,
                 'itemTaxPrice'                   => $values['tax_in_dec'],
                 'itemTaxRate'                    => $values['tax_value'],
                 'amount'                         => $values['amount'],
@@ -2527,7 +2572,7 @@ class SalesQuoteController extends Controller
         $tax           = 0;
         $shipping_prov = "test";
         $desc          = "test";
-        $account        = 0;
+        $account       = 0;
 
  // var_dump($comp_details[0]->shipping_postalcode); return;
       
@@ -2618,7 +2663,11 @@ class SalesQuoteController extends Controller
     }
 
     function fortest(Request $req) {
-        return $this->make_a_copy([376,377,379]);
+        $qs     = new SalesQuoteSetting();
+        $data   = $qs->salesquotesetting('78');
+
+        var_dump($data);
+        // return $this->make_a_copy([376,377,379]);
         // $subs  = $this->get_subtotal("3b15dd6ec9e138dcd3ec3d9f02942594", true);
 
         // array_map(function($a) {

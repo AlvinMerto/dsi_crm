@@ -15,6 +15,7 @@ class SalesQuoteSetting extends Model
         'id',
         'key',
         'value',
+        'qid',
         'workspace',
         'created_by'
     ];
@@ -24,24 +25,37 @@ class SalesQuoteSetting extends Model
         return \Modules\Sales\Database\factories\SalesQuoteSettingFactory::new();
     }
 
-    public static function salesquotesetting()
+    public function salesquotesetting($qid = false)
     {
 
         $data = \DB::table('sales_quotes_setting');
 
-            $data = $data->where('workspace', '=', getActiveWorkSpace())->get();
+        // $data = $data->where('workspace', '=', getActiveWorkSpace())->get();
+        $data    = $data->where("qid",$qid)->get();
 
-        $settings = [
-            'supplier_part_number'=>"off",
-            'manufacturer_part_number'=>"off",
-            'subtotal'=>"off",
-            'labor_total'=>"off",
-            'shipping_total'=>"off",
-            'grand_total'=>"off",
-        ];
+        $settings = ["profit"        => true,
+                     "markup"        => true,
+                     "cost"          => true,
+                     "supplier"      => true,
+                     "supplier_num"  => true,
+                     "manu"          => true,
+                     "manu_num"      => true,
+                     "description"   => true,
+                     "qty"           => true,
+                     "shipping"      => true,
+                     "price"         => true,
+                     "extended"      => true,
+                     "tax"           => true,
+                     "sub"           => true,
+                     "subitem"       => true
+                ];
+            
+        if (count($data) > 0) {
+            $settings = [];
+        }
 
         foreach ($data as $row) {
-            $settings[$row->name] = $row->value;
+            $settings[$row->key] = true;
         }
 
         return $settings;

@@ -1205,22 +1205,23 @@ class QuoteController extends Controller
         {
             $id    = $quote_id;
 
-            $show   = [// "profit"        => true,
-                       // "markup"        => true,
-                       // "cost"          => true,
-                       // "supplier"      => true,
-                       // "supplier_num"  => true,
-                       // "manu"          => true,
-                       // "manu_num"      => true,
-                    "description"   => true,
-                    "qty"           => true,
-                    "shipping"      => true,
-                      //"price"         => true,
-                    "extended"      => true,
-                    "tax"           => true,
-                    "sub"           => true,
-                    "subitem"       => true
-            ];
+            // $show   = [// "profit"        => true,
+            //            // "markup"        => true,
+            //            // "cost"          => true,
+            //            // "supplier"      => true,
+            //            // "supplier_num"  => true,
+            //            // "manu"          => true,
+            //            // "manu_num"      => true,
+            //         "description"   => true,
+            //         "qty"           => true,
+            //         "shipping"      => true,
+            //           //"price"         => true,
+            //         "extended"      => true,
+            //         "tax"           => true,
+            //         "sub"           => true,
+            //         "subitem"       => true
+            // ];
+            $show  = (new SalesQuoteController)->showsettings($id);
 
             $quote = (new SalesQuoteController)->get_quote_item($id, $show, true);
 

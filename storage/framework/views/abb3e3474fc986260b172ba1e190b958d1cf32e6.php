@@ -126,8 +126,38 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 
 <style>
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 20px !important;
+        height: 20px !important;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+    }
+
+    /* Safari */
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .hidethis {
+        display:none;
+    }
+
+    #tblLocations thead tr th {
+        border:1px solid #333;
+        background:#c0c0c0;
+    }
+
     #tblLocations tbody tr td {
-        border:1px solid #ccc;
+        border:1px solid #333;
         padding-left:3px !important;
         padding-right:3px !important;
     }
@@ -197,6 +227,15 @@
     .selectedTr {
         background:#eee !important;
     }
+
+    #bigbtn_div a:hover > span {
+        display:none;
+    }
+
+    #bigbtn_div a span{
+        display:none;
+    }
+
 
     .with_as a:hover {
         cursor:pointer;
@@ -287,24 +326,34 @@
                     trs.splice(indx,1);
 
                     $(this).removeClass("selectedTr");
+
                     $(document).find(".viewdetails").hide();
+                    $(document).find(".subcomment").hide();
+                    $(document).find(".subblank").hide();
                     $(document).find(".copythis").hide();
                     $(document).find(".deletethis").hide();
+
                 } else if (state == false || state == "false") {
                     
                     trs.push( id );
                      
                     $(this).addClass("selectedTr");
                     $(document).find(".viewdetails").show();
+                    $(document).find(".subcomment").show();
+                    $(document).find(".subblank").show();
                     $(document).find(".deletethis").show();
                     $(document).find(".copythis").show();
                 }
 
                 if (trs.length > 1 || trs.length == 0) {
                     $(document).find(".viewdetails").hide();
+                    $(document).find(".subcomment").hide();
+                    $(document).find(".subblank").hide();
                     // $(document).find(".copythis").hide();
                 } else if (trs.length == 1 ) {
                     $(document).find(".viewdetails").show();
+                    $(document).find(".subcomment").show();
+                    $(document).find(".subblank").show();
                     // $(document).find(".copythis").show();
                 }
                 
@@ -316,6 +365,10 @@
                     $(document).find(".copythis").hide();
                 }
             });
+
+            function toggle_buttons_visibility(dis) {
+
+            }
 
             var d_id    = null; // item ID
             var t_id    = null; // group id :: under the field 'type'
@@ -386,7 +439,7 @@
                     var order_to_use_ = ui.item.eq().prevObject[0].sectionRowIndex;
 
                     if ( undefined === t_id ) {
-                        t_id         = orig_id;
+                        // t_id         = orig_id;
                         // order_to_use = ui.item.eq().prevObject[0].rowIndex;
                     }
 
@@ -398,18 +451,7 @@
                     };
 
                     // get the hollow rows
-                    var hr = $(document).find("#tblLocations tr.hollow_row");
-                    var len = hr.length-1;
-
-                    var hollow_row = 0;
-
-                    for(var i=0;i<=len;i++) {
-                        var therow = hr[i].rowIndex;
-                        
-                        if (order_to_use > therow) {
-                            hollow_row += 1;
-                        }
-                    }
+                    var hollow_row = get_ordertouse(order_to_use);
 
                     order_to_use = (order_to_use - hollow_row);
                     
@@ -421,7 +463,7 @@
                         "inside_order"  : order_to_use_
                     };
 
-                    // console.log(order_to_use);
+                    console.log(t_id+"_"+order_to_use+"-"+hollow_row);
                     
                     postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
                         postAjax("<?php echo e(route('salesquote.set_order')); ?>", updateorder, function(response){
@@ -432,6 +474,22 @@
                 }
             });
         });
+
+        function get_ordertouse(order_to_use) {
+            var hr         = $(document).find("#tblLocations tr.hollow_row");
+            var len        = hr.length-1;
+
+            var hollow_row = 0;
+
+            for(var i=0;i<=len;i++) {
+                var therow = hr[i].rowIndex;
+                        
+                if (order_to_use > therow) {
+                    hollow_row += 1;
+                }
+            }
+            return hollow_row;
+        }
 
         function remove_tbody(dis) {
             dis.remove();
@@ -588,39 +646,119 @@
             // }
         });
 
-        function get_no_value(id, somefunc = false) {
+        function get_no_value(id, somefunc = false, thistr) {
             postAjax("<?php echo e(route('quote.getnovalue')); ?>", {item_id:id}, function(response){
-                appendTolist(response);
-                
+                // appendTolist(response);
+                $(response).insertAfter(thistr);
+
                 if (somefunc != false) {
                     somefunc();
                 }
             });
         }
 
-        $(document).on("click","#savecomment",function(){
-            var comment = $(document).find("#commenttxt").val();
+        // $(document).on("click",".subblank", function(){
+        //     savethis({
+        //         "type"              : "blank",
+        //         "ccost"             : 0,
+        //         "quote_id"          : $(document).find("#qid").val(),
+        //         "item"              : "--- blank ---",
+        //         "markup"            : 0,
+        //         "quantity"          : 0,
+        //         "taxable"           : false
+        //     },"sales_quotes_items", function(id){
+        //         savethis({
+        //             "itemid"                 : id,
+        //             "product_services_id"    : 1,
+        //             "shippingfee"            : 0,
+        //             "endoflife"              : null,
+        //             "markupstatus"           : "approved"
+        //         },"sales_quotes_item_info_more_flds");
+
+        //         get_no_value(id, function(){
+        //             $('#commonModal').modal('hide');
+        //         });
+        //     });
+        // });
+
+        $(document).on("click","#savecomment,#subblank",function(e){
+            $(document).find("#theloader").removeClass("hidethis");
+
+            var item         = null;
+            var itemtype     = null;
+
+            var id           = e.target.id;
+            
+            if (id == "savecomment") {
+                item        = $(document).find("#commenttxt").val();
+                itemtype    = "comment";
+            } else if (id == "subblank") {
+                item        = "--- blank ---";
+                itemtype    = "blank";
+            }
+
+            // alert(item+""+itemtype); return;
+            var thistr       = $(document).find(".selectedTr");
+            var len          = thistr.length;
+            
+            var order_to_use = thistr.eq().prevObject[0].rowIndex+1;
+            var original_row = $(document).find("#tblLocations tbody tr").length;
+
+            // alert(original_row); return;
+
+                var hollow_row   = get_ordertouse(order_to_use);
+                    order_to_use = (order_to_use - hollow_row);
+
+            var qid     = $(document).find("#qid").val();
+            var d_id    = thistr.data("rid");
+            var t_id    = thistr.parent().data('tid');
+
+        //   console.log(t_id); return;
+            // console.log(updateorder); return;
 
             savethis({
-                "type"              : "comment",
+                "type"              : itemtype,
                 "ccost"             : 0,
-                "quote_id"          : $(document).find("#qid").val(),
-                "item"              : comment,
+                "quote_id"          : qid,
+                "item"              : item,
                 "markup"            : 0,
                 "quantity"          : 0,
-                "taxable"           : false
+                "itemorder"         : original_row+1,
+                "taxable"           : false,
+                "grp_id"            : t_id
             },"sales_quotes_items", function(id){
+                var dd_id = id;
+                var updateorder = {
+                        "quote_id"      : qid,
+                        "order_to_use"  : order_to_use,
+                        "item_id"       : dd_id,
+                        "grp_id"        : t_id,
+                        "inside_order"  : 0
+                    };
                 savethis({
                     "itemid"                 : id,
                     "product_services_id"    : 1,
                     "shippingfee"            : 0,
                     "endoflife"              : null,
                     "markupstatus"           : "approved"
-                },"sales_quotes_item_info_more_flds");
+                },"sales_quotes_item_info_more_flds", function(id){
+                        postAjax("<?php echo e(route('salesquote.set_order')); ?>", updateorder, function(response){
+                            // compute_subs(t_id);
 
-                get_no_value(id, function(){
-                    $('#commonModal').modal('hide');
+                            get_no_value(dd_id, function(){
+                                $('#commonModal').modal('hide');
+                            }, thistr);
+                
+                        });
                 });
+
+                    // postAjax("<?php echo e(route('salesquote.update_fld')); ?>", data, function(response){
+                        
+                    // });
+               
+                // get_no_value(id, function(){
+                //    
+                // });
             });
         });
 
@@ -711,29 +849,7 @@
             // }
         });
 
-        $(document).on("click",".subblank", function(){
-            savethis({
-                "type"              : "blank",
-                "ccost"             : 0,
-                "quote_id"          : $(document).find("#qid").val(),
-                "item"              : "--- blank ---",
-                "markup"            : 0,
-                "quantity"          : 0,
-                "taxable"           : false
-            },"sales_quotes_items", function(id){
-                savethis({
-                    "itemid"                 : id,
-                    "product_services_id"    : 1,
-                    "shippingfee"            : 0,
-                    "endoflife"              : null,
-                    "markupstatus"           : "approved"
-                },"sales_quotes_item_info_more_flds");
-
-                get_no_value(id, function(){
-                    $('#commonModal').modal('hide');
-                });
-            });
-        });
+        
 
     </script>
 <?php endif; ?>
@@ -1932,7 +2048,7 @@
 <?php elseif($type == 'salesquote'): ?>
     <!-- <h5 class="h4 d-inline-block font-weight-400 mb-4"><?php echo e(__('Sales Quote')); ?></h5> -->
     <div class="card" style="box-shadow: 0px -5px 9px #b5b5b5;">
-        <div class="card-header p-3" style="background: #eee;">
+        <div class="card-header p-3" style="background: #fff;">
             <!-- <div class="col-md-12 d-flex p-2"> -->
             <div class="card-tools">
                 <div class="with_as" id="thesmallbtn">
@@ -1955,22 +2071,22 @@
                     <a class="border-right mr-5 subitem_add">
                         <i class="ti ti-brand-producthunt"></i>
                     </a>
-                    <a class="border-right mr-5 subcomment" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
+                    <a class="border-right mr-5 subcomment" style="display:none;" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
                         <i class="ti ti-message-dots"></i>
                     </a>
-                    <a class="border-right mr-5 subblank" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
+                    <a class="border-right mr-5 subblank" id='subblank' style="display:none;" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
                         <i class="ti ti-space"></i>
                     </a>
                     <!-- <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('View Item Details')); ?>" data-url="<?php echo e(route('salesquote.viewitemdetails')); ?>" data-toggle="tooltip" title="<?php echo e(__('View Item Details')); ?>">
                         <i class="ti ti-eye"></i> <span class="hide-mob"> View Item Details </span>
                     </a> -->
-                    <a style="display:none;" class="border-right mr-5 viewdetails" data-title="<?php echo e(__('View Item Details')); ?>" title="<?php echo e(__('View Item Details')); ?>">
+                    <a style="display:none;" class="border-right mr-5 viewdetails" data-title="<?php echo e(__('View Item Details')); ?>" title="<?php echo e(__('View Item Details')); ?>" data-toggle="tooltip" title="<?php echo e(__('View Item Details')); ?>">
                         <i class="ti ti-eye"></i> <span class="hide-mob"> View Item Details </span>
                     </a>
-                    <a style="display:none;" class="border-right mr-5 deletethis" data-title="<?php echo e(__('Delete')); ?>" title="<?php echo e(__('Delete')); ?>">
+                    <a style="display:none;" class="border-right mr-5 deletethis" data-title="<?php echo e(__('Delete')); ?>" title="<?php echo e(__('Delete')); ?>" data-toggle="tooltip" title="<?php echo e(__('Delete')); ?>">
                         <i class="ti ti-trash"></i> <span class="hide-mob"> Delete </span>
                     </a>
-                    <a style="display:none;" class="border-right mr-5 copythis" data-title="<?php echo e(__('Delete')); ?>" title="<?php echo e(__('Delete')); ?>">
+                    <a style="display:none;" class="border-right mr-5 copythis" data-title="<?php echo e(__('Delete')); ?>" title="<?php echo e(__('Copy')); ?>" data-toggle="tooltip" title="<?php echo e(__('Copy')); ?>">
                         <i class="ti ti-copy"></i> <span class="hide-mob"> Copy </span>
                     </a>
                     <a class="border-right mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Create New Custom Item')); ?>" data-url="<?php echo e(route('salesquote.customitem')); ?>" data-toggle="tooltip" title="<?php echo e(__('Create Custom Item')); ?>">

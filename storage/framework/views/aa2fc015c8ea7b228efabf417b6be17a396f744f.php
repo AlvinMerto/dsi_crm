@@ -1305,11 +1305,24 @@
         <div class="col-md-12">
             <div style="display:flex; justify-content:space-between;" class="mb-3">
                 <div class="with_as" id="bigbtn_div" style="width: 100%;">
-                    <a class="border-right" id="email_quote" title="Send Quotation"> <i class="ti ti-send"></i> Send Quotation </a>
-                    <a class="border-right" > <i class="ti ti-download"></i> Download Quotation </a>
-                    <a class="border-right"> <i class="ti ti-transform-filled"></i> Convert to Order </a>
-                    <a class="border-right"> <i class="ti ti-businessplan"></i> Convert to sales </a>
-                    <a class="border-right"> <i class="ti ti-settings-2"></i> Quotation Settings </a>
+                    <a class="border-right" id="email_quote" title="Send Quotation" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
+                        <i class="ti ti-send"></i> <span> Send Quotation </span> 
+                    </a>
+                    <a class="border-right" title="Download Quotation" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
+                        <i class="ti ti-download"></i> <span> Download Quotation </span> 
+                    </a>
+                    <a class="border-right"  title="Preview Quotation" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
+                        <i class="ti ti-presentation"></i> <span> Preview Quotation </span> 
+                    </a>
+                    <a class="border-right"  title="Convert to Order" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
+                        <i class="ti ti-transform-filled"></i> <span> Convert to Order </span> 
+                    </a>
+                    <a class="border-right" title="Convert to Order" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
+                        <i class="ti ti-businessplan"></i> <span> Convert to sales </span> 
+                    </a>
+                    <a class="border-right" id='qt_settings' title="Quotation Settings" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Quotation Settings')); ?>" data-url="<?php echo e(route('salesquote.settings')); ?>" data-toggle="tooltip" title="<?php echo e(__('settings')); ?>"> 
+                        <i class="ti ti-settings-2"></i> <span> Quotation Settings </span> 
+                    </a>
                 </div>
             </div>
         </div>
@@ -1560,6 +1573,10 @@
                 dis.html("<i class='ti ti-send'></i> Send Quotation </a>").removeAttr("disabled");
             }
         }); 
+    });
+
+    $(document).on("click","#qt_settings", function(){
+        
     });
 </script>
 <?php $__env->stopSection(); ?>

@@ -175,7 +175,10 @@
                            data-grpid="<?php echo $values['subtotal_gpr']; ?>"
                            data-fld="shippingfee" style="text-align:center;" class='edittext_ship form-control' type='text' value="<?php echo $values['shippingfee']; ?>"/>
                 <?php } else { ?>
-                    <?php echo number_format($values['shippingfee'],2); ?>
+                    <?php 
+                        echo $values['shippingfee'];
+                        // echo number_format( $values['shippingfee'],2);
+                    ?>
                 <?php } ?> 
                 <?php // echo number_format($values['shippingfee'],2); ?> 
             </td> 
