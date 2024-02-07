@@ -12,11 +12,11 @@
                     </tr>
                     <tr>
                         <th> Cost </th>
-                        <td> <?php echo $quoteitems[0]->purchase_price; ?> </td>
+                        <td> <?php echo number_format($quoteitems[0]->purchase_price,2); ?> </td>
                     </tr>
                     <tr>
                         <th> Mark up </th>
-                        <td> <?php echo $quoteitems[0]->markup; ?> </td>
+                        <td> <?php echo $quoteitems[0]->markup; ?>% </td>
                     </tr>
                     <tr>
                         <th> Quantity </th>
@@ -24,7 +24,7 @@
                     </tr>
                     <tr>
                         <th> Shipping Fee </th>
-                        <td> <?php echo $quoteitems[0]->shippingfee; ?> </td>
+                        <td> <?php echo number_format($quoteitems[0]->shippingfee,2); ?> </td>
                     </tr>
                     <tr>
                         <th> Tax </th>
@@ -32,7 +32,7 @@
                     </tr>
                     <tr>
                         <th> Price </th>
-                        <td> <?php echo $quoteitems[0]->price; ?> </td>
+                        <td> <?php echo number_format($quoteitems[0]->price,2); ?> </td>
                     </tr>
                     <tr>
                         <th> Expiry Date </th>

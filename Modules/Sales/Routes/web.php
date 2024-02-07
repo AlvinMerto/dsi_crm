@@ -370,6 +370,7 @@ Route::post("salesquote/create_subtotal","SalesQuoteController@create_subtotal")
 Route::get('salesquote/getlaborwindow', ['as' => 'salesquote.getlaborwindow', 'uses' => 'SalesQuoteController@getlaborwindow']);
 Route::get("salesquote/addshippingfee", ["as" => 'salesquote.addshippingfee', 'uses' => "SalesQuoteController@addshippingfee"]);
 Route::get("salesquote/addcomment", ["as" => 'salesquote.addcomment', 'uses' => "SalesQuoteController@addcomment"]);
+Route::get("salesquote/settings",["as"=>'salesquote.settings','uses' => "SalesQuoteController@settings"]);
 
 Route::post("salesquote/savethis", "SalesQuoteController@savethis")->name("salesquote.savethis");
 
@@ -401,3 +402,4 @@ Route::get("/test_quote","SalesQuoteController@test_quote")->name("salesquote.te
 Route::post("/copythis","SalesQuoteController@copythis")->name("salesquote.copythis");
 
 Route::get("salesquote/fortest", "SalesQuoteController@fortest")->name("salesquote.fortest");
+Route::post("salesquote/saveview_sets","SalesQuoteController@saveview_sets")->name("salesquote.saveview_sets");
