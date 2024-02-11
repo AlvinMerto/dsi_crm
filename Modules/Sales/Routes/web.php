@@ -308,7 +308,7 @@ Route::group(['middleware' => 'PlanModuleCheck:Sales'], function ()
     Route::get('report/salesorderanalytic', 'ReportController@salesorderanalytic')->name('report.salesorderanalytic');
     Route::get('report/quoteanalytic', 'ReportController@quoteanalytic')->name('report.quoteanalytic');
 });
-Route::get('quote/pdf/{id}', 'QuoteController@pdf')->name('quote.pdf');
+// Route::get('quote/pdf/{id}', 'QuoteController@pdf')->name('quote.pdf');
 Route::get('/quote/pay/{quote}', ['as' => 'pay.quote','uses' => 'QuoteController@payquote']);
 
 Route::get(
@@ -353,53 +353,65 @@ Route::post('salesquote/setting/store','SalesQuoteController@settingstore')->nam
 
 Route::post('salesquote/getcustomers','SalesQuoteController@getcustomers')->name('salesquote.getcustomers');
 
-// added by Alvin Merto
-Route::post("salesquote/addcustomitem",'SalesQuoteController@addcustomitem')->name('salesquote.addcustomitem');
-Route::post("salesquote/postcreatequote",'SalesQuoteController@postcreatequote')->name("salesquote.postcreatequote");
-Route::get("salesquote/showquote/{id}",'SalesQuoteController@showquote')->name("salesquote.showquote");
-Route::post("salesquote/getquote_items",'SalesQuoteController@getquote_items')->name("salesquote.getquote_items");
+Route::group(
+    [
+        'middleware' => [
+            'auth',
+        ],
+    ], function (){
+        // added by Alvin Merto
+        Route::post("salesquote/addcustomitem",'SalesQuoteController@addcustomitem')->name('salesquote.addcustomitem');
+        Route::post("salesquote/postcreatequote",'SalesQuoteController@postcreatequote')->name("salesquote.postcreatequote");
+        Route::get("salesquote/showquote/{id}",'SalesQuoteController@showquote')->name("salesquote.showquote");
+        Route::post("salesquote/getquote_items",'SalesQuoteController@getquote_items')->name("salesquote.getquote_items");
 
-Route::post("salesquote/blursave", 'SalesQuoteController@blursave')->name("salesquote.blursave");
+        Route::post("salesquote/blursave", 'SalesQuoteController@blursave')->name("salesquote.blursave");
 
-Route::post("salesquote/update_fld","SalesQuoteController@update_fld")->name("salesquote.update_fld");
-Route::post("/update_this","SalesQuoteController@update_this")->name("salesquote.update_this");
-Route::post("/removethis","SalesQuoteController@removethis")->name("salesquote.removethis");
+        Route::post("salesquote/update_fld","SalesQuoteController@update_fld")->name("salesquote.update_fld");
+        Route::post("/update_this","SalesQuoteController@update_this")->name("salesquote.update_this");
+        Route::post("/removethis","SalesQuoteController@removethis")->name("salesquote.removethis");
 
-Route::post("salesquote/get_total", "SalesQuoteController@get_total")->name("salesquote.get_total");
-Route::post("salesquote/create_subtotal","SalesQuoteController@create_subtotal")->name("salesquote.create_subtotal");
-Route::get('salesquote/getlaborwindow', ['as' => 'salesquote.getlaborwindow', 'uses' => 'SalesQuoteController@getlaborwindow']);
-Route::get("salesquote/addshippingfee", ["as" => 'salesquote.addshippingfee', 'uses' => "SalesQuoteController@addshippingfee"]);
-Route::get("salesquote/addcomment", ["as" => 'salesquote.addcomment', 'uses' => "SalesQuoteController@addcomment"]);
-Route::get("salesquote/settings",["as"=>'salesquote.settings','uses' => "SalesQuoteController@settings"]);
+        Route::post("salesquote/get_total", "SalesQuoteController@get_total")->name("salesquote.get_total");
+        Route::post("salesquote/create_subtotal","SalesQuoteController@create_subtotal")->name("salesquote.create_subtotal");
+        Route::get('salesquote/getlaborwindow', ['as' => 'salesquote.getlaborwindow', 'uses' => 'SalesQuoteController@getlaborwindow']);
+        Route::get("salesquote/addshippingfee", ["as" => 'salesquote.addshippingfee', 'uses' => "SalesQuoteController@addshippingfee"]);
+        Route::get("salesquote/addcomment", ["as" => 'salesquote.addcomment', 'uses' => "SalesQuoteController@addcomment"]);
+        Route::get("salesquote/settings/{qid?}",["as"=>'salesquote.settings','uses' => "SalesQuoteController@settings"]);
 
-Route::post("salesquote/savethis", "SalesQuoteController@savethis")->name("salesquote.savethis");
+        Route::post("salesquote/savethis", "SalesQuoteController@savethis")->name("salesquote.savethis");
 
-Route::post("salesquote/compute_subtotal","SalesQuoteController@compute_subtotal")->name("salesquote.compute_subtotal");
+        Route::post("salesquote/compute_subtotal","SalesQuoteController@compute_subtotal")->name("salesquote.compute_subtotal");
 
-//Route::post("salesquote/viewitemdetails", ["as" => 'salesquote.viewitemdetails', 'uses' => "SalesQuoteController@viewitemdetails"]);
-Route::post("/viewitemdetails","SalesQuoteController@viewitemdetails")->name("salesquote.viewitemdetails");
+        //Route::post("salesquote/viewitemdetails", ["as" => 'salesquote.viewitemdetails', 'uses' => "SalesQuoteController@viewitemdetails"]);
+        Route::post("/viewitemdetails","SalesQuoteController@viewitemdetails")->name("salesquote.viewitemdetails");
 
-Route::post("salesquote/emailquote","SalesQuoteController@email_quote")->name("salesquote.emailquote");
+        Route::post("salesquote/emailquote","SalesQuoteController@email_quote")->name("salesquote.emailquote");
 
-// quote controller
-Route::get('/display/quote/{quote_id?}','QuoteController@displayquote')->name("quote.displayquote");
+        // respond to quote sent 
+        Route::get("salesquote/respond/{qid?}","QuoteController@respond")->name("salesquote.respond");
 
-// tax
-Route::post("/updatetax","SalesQuoteController@updatetax")->name("quote.updatetax");
-Route::post("/getnovalue", "SalesQuoteController@getnovalue")->name("quote.getnovalue");
+        // quote controller
+        Route::get('/display/quote/{quote_id?}','QuoteController@displayquote')->name("quote.displayquote");
 
-// add new item
-Route::post("/add_newinfo","SalesQuoteController@add_newinfo")->name("salesquote.add_newinfo");
-Route::post("/get_add_info_ajax","SalesQuoteController@get_add_info_ajax")->name("salesquote.get_add_info_ajax");
+        // tax
+        Route::post("/updatetax","SalesQuoteController@updatetax")->name("quote.updatetax");
+        Route::post("/getnovalue", "SalesQuoteController@getnovalue")->name("quote.getnovalue");
 
-// delete this 
-Route::post("/bulkremove","SalesQuoteController@bulkremove")->name("salesquote.deletethis");
+        // add new item
+        Route::post("/add_newinfo","SalesQuoteController@add_newinfo")->name("salesquote.add_newinfo");
+        Route::post("/get_add_info_ajax","SalesQuoteController@get_add_info_ajax")->name("salesquote.get_add_info_ajax");
 
-Route::post("/set_order","SalesQuoteController@set_order")->name("salesquote.set_order");
+        // delete this 
+        Route::post("/bulkremove","SalesQuoteController@bulkremove")->name("salesquote.deletethis");
 
-Route::get("/test_quote","SalesQuoteController@test_quote")->name("salesquote.test_quote");
+        Route::post("/set_order","SalesQuoteController@set_order")->name("salesquote.set_order");      
+});
+
 
 Route::post("/copythis","SalesQuoteController@copythis")->name("salesquote.copythis");
 
 Route::get("salesquote/fortest", "SalesQuoteController@fortest")->name("salesquote.fortest");
 Route::post("salesquote/saveview_sets","SalesQuoteController@saveview_sets")->name("salesquote.saveview_sets");
+
+Route::get('quote/pdf/{id}', 'QuoteController@downloadpdf')->name('quote.pdf');
+Route::get("/test_quote","SalesQuoteController@test_quote")->name("salesquote.test_quote");

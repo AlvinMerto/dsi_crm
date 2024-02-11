@@ -18,8 +18,12 @@
 @endsection
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
+<title> Quotation </title>
 <style>
+    * {
+        font-family:"calibri";
+    }
+
     input,textarea,select {
         border:none !important;
         resize:none !important;
@@ -122,173 +126,205 @@
         width: 100%;
     }
 
+    .quoteviewtbl thead tr {
+        border-bottom:2px solid #333;
+    }
+
     .quoteviewtbl tbody tr:nth-child(2n+2) {
-        background:#ebebeb;
+       
+    }
+
+    .quoteviewtbl tbody tr {
+        
     }
 
     .quoteviewtbl tr td {
-        padding:10px 2px;
+        
     }
 
+    .quoteviewtbl tr td span {
+        padding: 0px !important;
+        color: #000 !important;
+        font-style: normal !important;
+    }
+
+    .float_nav{
+        position: fixed;
+  width: 20%;
+  background: #e7e4e4;
+  border-radius: 5px;
+    }
+
+    .float_nav p {
+        width:90%;
+    }
+
+    .float_nav ul {
+        padding:0px;
+        margin:0px;
+    }
+
+    .float_nav ul li {
+        padding:0px;
+        text-align:left;
+        list-style:none;
+        padding:8px 20px;
+    }
+    
+    .float_nav ul li:hover {
+        background:#ccc;
+    }
+
+    .float_nav ul li a {
+        text-decoration:none;
+        color:#333;
+    }
+
+    .desc_div {
+        text-align:left;
+    }
+
+    .theinfo_box table {
+        width: 100%;
+    }
+
+    .theinfo_box table th {
+        vertical-align: top;
+        text-align:right;
+        padding-right:15px;
+    }
+
+    .theinfo_box table th p, 
+    .theinfo_box table td p {
+        margin:0px;
+    }
 </style>
 <center>
     <div class="col-md-10">
         <div class="row">
             <div class="container">
-                <div class="card">
-                    <div class="card-body">
-                        <dl class="row">
-                            <div class="col-12">
-                                <div class="row align-items-center mb-2">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                    </div>
-                                    <div class="col-sm-6 text-end">
-                                        <h6 class="d-inline-block m-0 d-print-none">{{__('Quote')}}</h6>
-
-                                            <span class="badge bg-primary p-2 px-3 rounded"> test  </span>
-                                        
-                                    </div>
-                                </div>
+                <div class="card_">
+                    <div class="_card-body">
+                        <!-- <dl class="row">
+                            <div class="col-12"> -->
                                 <div class="row">
-                                    <div class="col-lg-6 col-md-8">
-                                        <h6 class="d-inline-block m-0 d-print-none">{{__('Quote ID')}}</h6>
-                                        <span class="col-sm-8"><span class="text-sm"> </span></span>
-                                    </div>
-
-                                    <div class="col-lg-6 text-end">
-                                        <h6 class="d-inline-block m-0 d-print-none">{{__('Assigned User :')}}</h6>
-                                        <span class="text-sm"> </span>
-                                    </div>
-                                </div>
-                                <div class="row mb-5">
-                                    <div class="col-lg-6 col-md-8">
-                                        <h6 class="d-inline-block m-0 d-print-none">{{__('Quote Date')}}</h6>
-                                        <span class="col-sm-8"><span class="text-sm"> </span></span>
-                                    </div>
-                                    <div class="col-lg-6 text-end">
-                                        <h6 class="d-inline-block m-0 d-print-none">{{__('Created :')}}</h6>
-                                        <span class="text-sm"> </span>
-                                    </div>
-                                </div>
-                            
-                                <div class="row mb-3">
-                                    <div class="col-12 col-md-4">
-                                        <h5>{{__('From')}}</h5>
-                                        <div class="row mt-4 align-items-center">
-                                            <div class="col-sm-4 h6 text-m">{{__('Company Address')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Company City')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Zip Code')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Company Country')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Company Contact')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
+                                    <div class='col-md-3' style='position:relative;'>
+                                        <div class='float_nav mt-3'>
+                                            <ul>
+                                                <li> <a href='#quotation'> Your Quotation </a> </li>
+                                                <li> <a href='#aboutus'> About Us </a> </li>
+                                                <li> <a href='#pricing'> Pricing </a> </li>
+                                                <li> <a href='#howtoorder'> How to Order </a> </li>
+                                                <li> <a href='#contact'> Contact Us </a> </li>
+                                            </ul>
+                                            <hr/>
+                                            <?php echo $qt_validity; ?>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-md-4">
-                                        <h5>{{__('Billing Address')}}</h5>
-                                        <div class="row mt-4 align-items-center">
-                                            <div class="col-sm-4 h6 text-m">{{__('Billing Address')}}</div>
-                                            <div class="col-sm-8 text-m">  </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Billing City')}}</div>
-                                            <div class="col-sm-8 text-m">  </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Zip Code') }}</div>
-                                            <div class="col-sm-8 text-m">  </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Billing Country')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Billing Contact')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-12 col-md-4">
-                                        <h5>{{__('Shipping Address')}}</h5>
-                                        <dl class="row mt-4 align-items-center">
-                                            <div class="col-sm-4 h6 text-m">{{__('Shipping Address')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Shipping City')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Zip Code')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Shipping Country')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-
-                                            <div class="col-sm-4 h6 text-m">{{__('Shipping Contact')}}</div>
-                                            <div class="col-sm-8 text-m"> </div>
-                                        </dl>
-                                    </div>
-                                
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h5 class="px-2 py-2" style="text-align:left;">{{__('Item List')}}</h5>
-                                        <div class="table-responsive mt-2">
-                                            <table class="mb-0 quoteviewtbl">
-                                            
-                                                <?php echo $quote; ?>
-                                                <tfoot>
-                                                <tr>
-                                                    <td colspan="4">&nbsp;</td>
-                                                    <td></td>
-                                                    <td><strong>{{__('Sub Total')}}</strong></td>
-                                                    <td class="text- subTotal"></td>
-
-                                                </tr>
-
-                                                <tr>
-                                                    <td colspan="4">&nbsp;</td>
-                                                    <td></td>
-                                                    <td><strong>{{__('Discount')}}</strong></td>
-                                                    <td class="text- subTotal"></td>
-
-                                                </tr>
-                                                
-                                                <tr>
-                                                    <td colspan="4">&nbsp;</td>
-                                                    <td></td>
-                                                    <td><strong>{{__('Total')}}</strong></td>
-                                                    <td class="text- subTotal"></td>
-                                                </tr>
-                                                </tfoot>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="card my-5 bg-secondary">
-                                            <div class="card-body">
-                                                <div class="row justify-content-between align-items-center">
-                                                    <div class="col-md-6 order-md-2 mb-4 mb-md-0">
-                                                        <div class="d-flex align-items-center justify-content-md-end">
-                                                            <span class="h6 text-muted d-inline-block mr-3 mb-0">{{__('Total value')}}:</span>
-                                                            <span class="h4 mb-0"></span>
-                                                        </div>
+                                    <div class="col-md-9">
+                                        <div id='quotation'>
+                                            <h3 class="px-2 py-2" style="text-align:left;">Your Quotation</h3> 
+                                                <!-- <div class="desc_div px-2 py-2">
+                                                         
+                                                </div> -->
+                                                <div class="row px-2 py-2 theinfo_box">
+                                                    <div class="col-md-6">
+                                                        <table>
+                                                            <tr>
+                                                                <th> Customer: </th>
+                                                                <td class='px-2'> <?php echo $salesquote[0]->customer->name; ?> </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class='py-3'> Bill To:</th>
+                                                                <td class='px-2 py-3'> 
+                                                                    <p> <?php echo $salesquote[0]->customer->name; ?> </p>
+                                                                    <p> <i class="ti ti-map-pins"></i> &nbsp; <?php echo $salesquote[0]->customer->shipping_address; ?> </p>
+                                                                    <p> <i class="ti ti-user"></i> &nbsp; <?php echo $salesquote[0]->contactperson->name; ?> </p>
+                                                                    <p> <i class="ti ti-phone"></i> &nbsp; <?php echo $salesquote[0]->contactperson->phone; ?> </p>
+                                                                    <p> <i class="ti ti-mail"></i> &nbsp; <?php echo $salesquote[0]->contactperson->email; ?> </p>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
                                                     </div>
-                                                    <div class="col-md-6 order-md-1">
+                                                    <div class="col-md-6">
+                                                        <table>
+                                                            <tr>
+                                                                <th> Your Contact: </th>
+                                                                <td> 
+                                                                    <p> <?php echo $salesquote[0]->cont_person->name; ?> </p>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th> Quote Date: </th>
+                                                                <td> <?php echo date("M. d, Y", strtotime($salesquote[0]->issue_date)); ?> </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th> Expiration Date: </th>
+                                                                <td> <?php echo date("l - M. d, Y", strtotime($salesquote[0]->quote_validity)); ?> </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        <div id='aboutus'>
+                                            <h3 class="px-2 py-2" style="text-align:left;">About Us</h3> 
+                                                <div class="desc_div px-2 py-2">
+                                                    <p> Lorem ipsum dolor set amit </p>        
+                                                </div>
+                                        </div>
+                                        <div id='pricing'>
+                                            <h3 class="px-2 py-2" style="text-align:left;">{{__('Pricing')}}</h3>
+                                            <table class="quoteviewtbl">
+                                                <?php echo $quote; ?>
+                                            </table>
+                                            <div>
+                                                <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> <?php echo $total['subtotal']; ?> </span> </p>
+                                                <p style="text-align: right;padding: 0px 0px; margin:10px;"> Tax &nbsp; &nbsp; &nbsp; <span> <?php echo $total['tax']; ?> </span> </p>
+                                                <p style="text-align: right;padding: 0px 0px; margin:10px;">  <strong> Total </strong> &nbsp; &nbsp; &nbsp; <span> <?php echo $total['totalamount']; ?> </span> </p>
+                                            </div>
+                                        </div>
+                                        <?php if ($qt_valid) { ?>
+                                            <div class="card my-5">
+                                                <div class="card-body">
+                                                    <div class="row justify-content-between align-items-center">
+                                                        <div class="col-md-6 order-md-2 mb-4 mb-md-0">
+                                                            <div class="d-flex align-items-center justify-content-md-end">
+                                                                <a href="{{route('salesquote.respond',[$quote_id])}}" class='btn btn-primary'> Accept </a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 order-md-1">
 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        <?php } ?>
+                                        <div id='howtoorder'>
+                                            <h3 class="px-2 py-2" style="text-align:left;">How to Order</h3> 
+                                                <div class="desc_div px-2 py-2">
+                                                    <p> Lorem ipsum dolor set amit </p>        
+                                                </div>
+                                        </div>
+                                        <div id='contact'>
+                                            <h3 class="px-2 py-2" style="text-align:left;">Contact Us</h3> 
+                                                <div class="desc_div px-2 py-2">
+                                                    <p> Lorem ipsum dolor set amit </p>        
+                                                </div>
                                         </div>
                                     </div>
                                 </div>
 
-                            </div>
-                        </dl>
+                            <!-- </div>
+                        </dl> -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </center>
+
+<style>
+    .quoteviewtbl th, .quoteviewtbl tr td{
+        padding:3px 10px;
+    }
+</style>

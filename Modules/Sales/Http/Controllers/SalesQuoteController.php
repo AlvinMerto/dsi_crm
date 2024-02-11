@@ -1295,12 +1295,16 @@ class SalesQuoteController extends Controller
             $quoteid = $salesquote->id;
         } else {
             // update existing
-            $salesquote                 = SalesQuote::where("quote_id",$qid);
-            $salesquote->customer_id    = $req->input("customer_id");
-            $salesquote->contact_person = $req->input("contact_person");
-            $salesquote->issue_date     = $req->input("issue_date");
-            $salesquote->quote_validity = date('Y-m-d',strtotime($req->input("quote_validity")));
-            $salesquote->save();
+            $update_arr = [
+                "customer_id"       => $req->input("customer_id"),
+                "contact_person"    => $req->input("contact_person"),
+                "issue_date"        => $req->input("issue_date"),
+                "quote_validity"    => date('Y-m-d',strtotime($req->input("quote_validity")))
+            ];
+
+            //var_dump($update_arr); return;
+            $salesquote             = SalesQuote::where("id",$qid)->update($update_arr);
+            $quoteid                = $qid;
         }
 
         return redirect()->route("salesquote.showquote",[$quoteid]);
@@ -1323,7 +1327,16 @@ class SalesQuoteController extends Controller
             $cust_sel     = $thequote->customer_id;
             $cont_sel     = $thequote->contact_person;
 
-            return view('sales::salesquote.create',compact('customers','quote_number','users',"showsection","quoteid","cust_sel","cont_sel"));
+            $issue_date   = null;
+            $date_valid   = null;
+            //var_dump($thequote);
+            //return;
+            // if (count($thequote) > 0) {
+                $issue_date = $thequote->issue_date;
+                $date_valid = $thequote->quote_validity;
+            // }
+
+            return view('sales::salesquote.create',compact('customers','quote_number','users',"showsection","quoteid","cust_sel","cont_sel","issue_date","date_valid"));
         }
         else
         {
@@ -1351,7 +1364,7 @@ class SalesQuoteController extends Controller
                    "subitem"       => true
         ];
 
-        $html            = $this->get_quote_item($qid, $show);
+        $html            = $this->get_quote_item($qid, $show, true);
    
         return response()->json($html);  
     }
@@ -1437,7 +1450,7 @@ class SalesQuoteController extends Controller
                  "update sales_quotes_items set {$itemorder} = '{$order_to_use}' where id = '{$item_id}'"];
     }
 
-    public function get_quote_item($qid, $showsettings = null, $intextbox = false) {
+    public function get_quote_item($qid, $showsettings = null, $intextbox = false, $qt_window = true) {
         $salesquoteitems = SalesQuoteItem::where('quote_id',$qid)
                                             ->leftjoin("sales_quotes_item_info_more_flds","sales_quotes_items.id","=","sales_quotes_item_info_more_flds.itemid")
                                             ->orderBy("itemorder","ASC")
@@ -1451,7 +1464,7 @@ class SalesQuoteController extends Controller
 
             $html  = "<thead>";
             $html .= "<tr>";
-            $html .= "<th style='min-width: 5%;'>*</th>";
+            $html .= "<th style='min-width: 5%; padding:10px 0px;'>*</th>";
 
             if (isset($showsettings['profit'])) {
                 $html .= "<th style='min-width: 5%; text-align:right;'>Profit</th>";
@@ -1482,7 +1495,7 @@ class SalesQuoteController extends Controller
             }
 
             if (isset($showsettings['description'])) {
-                $html .= "<th>Description</th>";
+                $html .= "<th style='text-align:left;'>Description</th>";
             }
 
             if (isset($showsettings['qty'])) {
@@ -1519,7 +1532,7 @@ class SalesQuoteController extends Controller
                 if ($aa->grp_id !== null) {
 
                     if (!in_array($aa->grp_id,$postedgroup)) {
-
+                        
                         $html .= "<tbody data-tid={$aa->grp_id}>";
                         // if not posted yet
                         array_push($postedgroup,$aa->grp_id);
@@ -1599,17 +1612,41 @@ class SalesQuoteController extends Controller
 
                         if (isset($showsettings['sub'])) {
                             $colspan = 4;
-
-                            if ($intextbox) {
-                                $colspan = 1;
+                            $addtd   = "";
+                            // if ($intextbox) {
+                                
+                            //     $colspan = 4;
+                            // }
+                            if (!isset($showsettings['supplier'])) {
+                                $colspan -= 1;
+                            } else {
+                                $addtd   .= "<td> &nbsp; </td>";
+                            }
+                
+                            if (!isset($showsettings['supplier_num'])) {
+                                $colspan -= 1;
+                            } else {
+                                $addtd   .= "<td> &nbsp; </td>";
+                            }
+                
+                            if (!isset($showsettings['manu'])) {
+                                $colspan -= 1;
+                            } else {
+                                $addtd   .= "<td> &nbsp; </td>";
+                            }
+                
+                            if (!isset($showsettings['manu_num'])) {
+                                $colspan -= 1;
+                            } else {
+                                $addtd   .= "<td> &nbsp; </td>";
                             }
 
-                            $html .= "<tr class='substart_click hollow_row' data-tid='{$grpid}'>";
+                            $html .= "<tr class='substart_click hollow_row' data-tid='{$grpid}' style='border-top:1px solid #000;'>";
                             $html .= "<td> </td>";
 
                             if (isset($showsettings['profit'])) {
                                 $html .= "<td style='text-align:right;' id='{$grpid}_profit'> ";
-                                if (!$intextbox) {
+                                if ($intextbox) {
                                     $html .= "<strong>".number_format($totalprofit,2)."</strong>";
                                 } else {
                                     $html .= number_format($totalprofit,2);
@@ -1619,7 +1656,7 @@ class SalesQuoteController extends Controller
 
                             if (isset($showsettings['markup'])) {
                                 $html .= "<td style='text-align:center; font-weight:bold;' id='{$grpid}_gp'>";
-                                if (!$intextbox) {
+                                if ($intextbox) {
                                     $html .= $totalmup."%";
                                 } else {
                                     $html .= $totalmup."%";
@@ -1629,7 +1666,7 @@ class SalesQuoteController extends Controller
 
                             if (isset($showsettings['cost'])) {
                                 $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_cost'> ";
-                                if (!$intextbox) {
+                                if ($intextbox) {
                                     $html .= "<strong>".number_format($totalcost,2)."</strong>";
                                 } else {
                                     $html .= number_format($totalcost,2);
@@ -1637,21 +1674,27 @@ class SalesQuoteController extends Controller
                                 $html .= "</td>";
                             }
 
-                            $html .= "<td colspan='{$colspan}' style='text-align:right;'> <i> Sub Start </i> &nbsp; </td>";
+                            if ($qt_window == true) {
+                                $html .= "<td colspan='{$colspan}' style='text-align:right;'> <i> Sub Start </i> &nbsp; </td>";
 
-                            if (isset($showsettings['description'])) {
-                                $html .= "<td class='number'>";
-                                if (!$intextbox) {
-                                    $html .= "<input id = '{$grpid}_desc' data-id='{$grpid}' data-fld='description' data-removecomma = 'false' style='text-align:left; font-weight:bold;' class='textsubtotal form-control bold_input' type='text' value='{$desc}'/>";
-                                } else {
-                                    $html .= $desc;
+                                if (isset($showsettings['description'])) {
+                                    $html .= "<td class='number'>";
+                                    if ($intextbox) {
+                                        $html .= "<input id = '{$grpid}_desc' data-id='{$grpid}' data-fld='description' data-removecomma = 'false' style='text-align:left; font-weight:bold;' class='textsubtotal form-control bold_input' type='text' value='{$desc}'/>";
+                                    } else {
+                                        $html .= $desc;
+                                    }
+                                    $html .= "</td>";
                                 }
-                                $html .= "</td>";
+
+                            } else {
+                                $html .= $addtd;
+                                $html .= "<td colspan='{$colspan}' style='text-align:left;'>".$desc."</td>";
                             }
 
                             if (isset($showsettings['qty'])) {
                                 $html .= "<td style='text-align:center;' id='{$grpid}_qty'>";
-                                if (!$intextbox) {
+                                if ($intextbox) {
                                     $html .="<input id = '{$grpid}_qty' data-id='{$grpid}' data-fld='quantity' data-removecomma = 'true' style='text-align:center; font-weight:bold;' class='textsubtotal form-control' type='text' value='{$qty}'/>";
                                 } else {
                                     $html .= $qty;
@@ -1661,37 +1704,40 @@ class SalesQuoteController extends Controller
 
                             if (isset($showsettings['shipping'])) {
                                 $html .= "<td class='number'>";
-                                if (!$intextbox) {
+                                if ($intextbox) {
                                     $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
                                 } else {
-                                    $html .= $shippingfee;
+                                    $html .= number_format($shippingfee,2);
                                 }
                                 $html .= "</td>";
                             }
 
                             if (isset($showsettings['price'])) {
                                 $html .= "<td class='number'>";
-                                if (!$intextbox) {
+                                if ($intextbox) {
                                     $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
                                 } else {
-                                    $html .= $price;
+                                    $html .= number_format($price,2);
                                 }
                                 $html .= "</td>";
                             }
 
                             if (isset($showsettings['extended'])) {
                                 $html .= "<td class='number'>";
-                                if (!$intextbox) {
+                                if ($intextbox) {
                                     $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($amount,2)."'/>";
                                 } else {
-                                    $html .= $amount; 
+                                    $html .= number_format($amount,2); 
                                 }
                                 $html .= "</td>";
                             }
 
+                            if (isset($showsettings['tax'])) {
                                 $html .= "<td> &nbsp; </td>";
                                 $html .= "<td> &nbsp; </td>";
-                                $html .= "</tr>";
+                            }
+
+                            $html .= "</tr>";
                         }
 
                         $count     = 1;
@@ -1739,7 +1785,7 @@ class SalesQuoteController extends Controller
                                         }
 
                                         if ($include) {
-                                            $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
+                                            $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings","intextbox"))->render();
                                         }
 
                                     } else {
@@ -1766,22 +1812,73 @@ class SalesQuoteController extends Controller
 
                             if ($aa->grp_id !== null) {
                                 if (isset($showsettings['sub'])) {
-                                    $colspan = 8;
+                                    $colspan_substop = 8;
                                     
-                                    if ($intextbox) {
-                                        $colspan = 1;
+                                    // if ($intextbox) {
+                                    //     $colspan = 8;
+                                    // }
+                                    if (!isset($showsettings['profit'])) {
+                                        $colspan_substop -= 1;
                                     }
 
-                                    $html .= "<tr class='hollow_row'>";
-                                    $html .= "<td colspan='{$colspan}' style='text-align:right; padding-top:4px; padding-bottom:4px;'> <i> Sub Stop </i> &nbsp; </td>";
-                                    $html .= "<td> </td>";
-                                    $html .= "<td> </td>";
-                                    $html .= "<td> </td>";
-                                    $html .= "<td> </td>";
-                                    $html .= "<td> </td>";
-                                    $html .= "<td> </td>";
-                                    $html .= "<td> &nbsp; </td>";
-                                    $html .= "</tr>";
+                                    if (!isset($showsettings['markup'])) {
+                                        $colspan_substop -= 1;
+                                    }
+
+                                    if (!isset($showsettings['cost'])) {
+                                        $colspan_substop -= 1;
+                                    }
+
+                                    if (!isset($showsettings['supplier'])) {
+                                        $colspan_substop -= 1;
+                                    }
+                        
+                                    if (!isset($showsettings['supplier_num'])) {
+                                        $colspan_substop -= 1;
+                                    }
+                        
+                                    if (!isset($showsettings['manu'])) {
+                                        $colspan_substop -= 1;
+                                    }
+                        
+                                    if (!isset($showsettings['manu_num'])) {
+                                        $colspan_substop -= 1;
+                                    }
+
+                                    if ($qt_window == true) {
+                                        $substop = "Sub Stop";
+                                    } else {
+                                        $substop = null;
+                                    }
+
+                                    if ($substop != null) {
+                                        $html .= "<tr class='hollow_row'>";
+                                        $html .= "<td colspan='{$colspan_substop}' style='text-align:right; padding-top:4px; padding-bottom:4px;'> <i> {$substop} </i> &nbsp; </td>";
+                                        
+                                        if (isset($showsettings['description'])) {
+                                            $html .= "<td> </td>";
+                                        }
+                                        if (isset($showsettings['qty'])) {
+                                            $html .= "<td> </td>";
+                                        }
+                                        if (isset($showsettings['shipping'])) {
+                                            $html .= "<td> </td>";
+                                        }
+                                        if (isset($showsettings['price'])) {
+                                            $html .= "<td> </td>";
+                                        }
+                                        if (isset($showsettings['extended'])) {
+                                            $html .= "<td> </td>";
+                                        }
+                                        if (isset($showsettings['tax'])) {
+                                            $html .= "<td> </td>";
+                                        }
+                                        if (isset($showsettings['tax'])) {
+                                            $html .= "<td> </td>";
+                                        }
+                                        
+                                        $html .= "</tr>";
+                                    }
                                 }
                             }
                             $html .= "</tbody>";
@@ -1833,7 +1930,7 @@ class SalesQuoteController extends Controller
                             }
 
                             if ($include) {
-                                $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
+                                $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings","intextbox"))->render();
                             }
                         } else {
                             $include   = true;
@@ -2028,11 +2125,11 @@ class SalesQuoteController extends Controller
         return $settings;
     }
     
-    function settings() {
+    function settings($qid) {
         $qs     = new SalesQuoteSetting();
-        $data   = $qs->salesquotesetting('78');
+        $data   = $qs->salesquotesetting($qid);
 
-        return view("sales::salesquote.settings", compact("data"));
+        return view("sales::salesquote.settings", compact("data","qid"));
     }
 
     function saveview_sets(Request $req) {
@@ -2564,7 +2661,7 @@ class SalesQuoteController extends Controller
                 'company_address' => $address,
                 'amount'          => $amount,
                 'online_link'     => $url,
-                "thefile"         => "https://static-ph.lamudi.com/static/media/bm9uZS9ub25l/774x491/c81bdc4e9e5574.webp"
+                "thefile"         => route('quote.pdf',[$quote_id])
                 ];
 
         $opportunity   = 0;

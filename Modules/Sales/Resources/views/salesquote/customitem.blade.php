@@ -126,8 +126,9 @@
                         <textarea class="form-control" id="info_desc"></textarea>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <span class="btn btn-primary" id="save_info_btn"> Save Information  </span>
+                <div class="col-md-12">
+                    <span class="btn btn-primary btn-sm" id="save_info_btn"> Save Information  </span>
+                    <span class="btn btn-danger btn-sm" id="delete_info_btn"> Remove Information  </span>
                 </div>
             </div>
         </div> 
