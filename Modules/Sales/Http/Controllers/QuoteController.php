@@ -29,6 +29,9 @@ use Modules\Sales\Events\CreateSalesOrderConvert;
 use Modules\Sales\Events\QuoteDuplicate;
 
 use Modules\Sales\Entities\SalesQuoteItem;
+use Modules\Sales\Entities\SalesQuote;
+
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class QuoteController extends Controller
 {
@@ -1039,11 +1042,11 @@ class QuoteController extends Controller
 
     public function pdf($id)
     {
-        $quoteId = Crypt::decrypt($id);
+        $quoteId = $id; // Crypt::decrypt($id);
         $quote   = Quote::where('id', $quoteId)->first();
-        $data  = \DB::table('settings');
-        $data  = $data->where('id', '=', $quote->created_by);
-        $data1 = $data->get();
+        // $data  = \DB::table('settings');
+        // $data  = $data->where('id', '=', $quote->created_by);
+        // $data1 = $data->get();
 
         $user         = new User();
         $user->name   = $quote->name;
@@ -1221,23 +1224,113 @@ class QuoteController extends Controller
             //         "sub"           => true,
             //         "subitem"       => true
             // ];
-            $show  = (new SalesQuoteController)->showsettings($id);
+            $show           = (new SalesQuoteController)->showsettings($id);
 
-            $quote = (new SalesQuoteController)->get_quote_item($id, $show, true);
+            $quote          = (new SalesQuoteController)->get_quote_item($id, $show, false, false);
+            $total          = (new SalesQuoteController)->compute_totality($id);
 
+            $salesquote     = SalesQuote::where(["id"=>$id])->get();
+
+            $qt_validity    = null;
+            $qt_valid       = false;
+
+            if ( strtotime($salesquote[0]->quote_validity) < strtotime(date("Y-m-d"))) {
+                $qt_validity = "<p class='btn btn-danger'> Expired <br/> <span> contact us for new quote </span> </p> ";
+                $qt_valid       = false;
+            } else if ( strtotime($salesquote[0]->quote_validity) > strtotime(date("Y-m-d"))) {
+                $qt_validity = "<p class='btn btn-success'> Valid </p>";
+                $qt_valid       = true;
+            } else if ( strtotime($salesquote[0]->quote_validity) == strtotime(date("Y-m-d"))) {
+                $qt_validity = "<p class='btn btn-default'> WILL EXPIRE TODAY </p>";
+                $qt_valid       = true;
+            }
+            
             $users              = null;
             $company_id         = null;
             $workspace          = null;
             $customFields       = null;
 
             if(!is_null($quote)){
-                return view('sales::quote.quoteview',compact('quote'));
+                return view('sales::quote.quoteview',compact('quote','total',"salesquote","qt_validity","quote_id","qt_valid"));
             }else{
                 return abort('404', 'The Link You Followed Has Expired');
             }
         }else{
             return abort('404', 'The Link You Followed Has Expired');
         }
+    }
+
+    function downloadpdf($id) {
+        // $id             = 78;
+        $show           = (new SalesQuoteController)->showsettings($id);
+        $quote          = (new SalesQuoteController)->get_quote_item($id, $show, false, false);
+
+        // return view('sales::quote.templates.quotepdf', compact("quote"));
+        
+        $pdf = Pdf::loadView('sales::quote.templates.quotepdf', compact("quote"));
+        $pdf = $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
+
+        $pdf = $pdf->setPaper('a4', 'portrait');
+        return $pdf->download();
+       
+    }
+
+    function respond($qid) {
+        // $qid         = $qid;
+
+        $salesquote  = SalesQuote::where("id",$qid)->get();
+
+        $url         = "https://google.com";
+
+        $quoteNumber  = $salesquote[0]->quote_id;
+        $name         = $salesquote[0]->customer->name;
+        $billing_addr = $salesquote[0]->customer->billing_address.", ".$salesquote[0]->customer->billing_city.", ".$salesquote[0]->customer->billing_state.", ".$salesquote[0]->customer->billing_country.", ".$salesquote[0]->customer->billing_postalcode;
+        $ship_addr    = $salesquote[0]->customer->shipping_address.", ".$salesquote[0]->customer->shipping_city.", ".$salesquote[0]->customer->shipping_state.", ".$salesquote[0]->customer->shipping_country." ".$salesquote[0]->customer->shipping_postalcode;
+        $amount       = null;
+        $w_name       = $salesquote[0]->cont_person->name;
+        $id           = $salesquote[0]->created_by;
+        $email        = $salesquote[0]->cont_person->email; //"ajbmerto@gmail.com";
+
+        $subject     = "New Order: {$quoteNumber} from {$name}";
+        $uArr = [
+            'customer_name'   => $name,
+            'quote_number'    => \Modules\Sales\Entities\SalesQuote::quoteNumberFormat($quoteNumber),
+            'salesquote_url'  => route('print.salesquote',\Illuminate\Support\Facades\Crypt::encrypt($qid)),
+            'company_name'    => \Auth::user()->name,
+            'company_logo'    => get_file(sidebar_logo()),
+            'company_address' => $billing_addr,
+            'amount'          => $amount,
+            'online_link'     => $url,
+            "thefile"         => route('quote.pdf',[$qid]),
+            'app_url'         => "",
+            "app_name"        => "Dimension System",
+            "date_quoted"     => "",
+            "description"     => "",
+            "quote_number"           => $quoteNumber,
+            "billing_address"        => $billing_addr,
+            "shipping_address"       => $ship_addr,
+            "salesorder_assign_user" => $w_name
+            ];
+        
+        if ( strtotime($salesquote[0]->quote_validity) < strtotime(date("Y-m-d"))) {
+            $resp = false;
+        } else {
+            $resp = EmailTemplate::sendEmailTemplate('New Sales Order', [$id => $email], $uArr,null, null,$subject);
+        }
+                
+        $template = null;
+        $title    = null;
+
+        if ($resp) {
+            $template = "thankyou";
+            $title    = "Thank you";
+        } else {
+            $template = "expired";
+            $title    = "Quotation Expired";
+        }
+
+        return view("sales::salesorder.templates.respond",compact("template","title"));
+        // return response()->json($resp);
     }
 
 }

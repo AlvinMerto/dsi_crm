@@ -917,20 +917,20 @@
         });
     });
 
-    $(document).on("click","#addnewinformation", function(){
-        var itemid = $(this).data("r");
-        var data = {
-            title  : $(document).find("#texttitle").val(),
-            lbl    : $(document).find("#textlabel").val(),
-            desc   : $(document).find("#textdesc").val(),
-            itemid : itemid
-        };
+    // $(document).on("click","#addnewinformation", function(){
+    //     var itemid = $(this).data("r");
+    //     var data = {
+    //         title  : $(document).find("#texttitle").val(),
+    //         lbl    : $(document).find("#textlabel").val(),
+    //         desc   : $(document).find("#textdesc").val(),
+    //         itemid : itemid
+    //     };
 
-        postAjax("<?php echo e(route('salesquote.add_newinfo')); ?>", data, function(){
-            get_additional_info(itemid);
-        });
+    //     postAjax("<?php echo e(route('salesquote.add_newinfo')); ?>", data, function(){
+    //         get_additional_info(itemid);
+    //     });
 
-    });
+    // });
 
     function get_additional_info(id) {
         postAjax("<?php echo e(route('salesquote.get_add_info_ajax')); ?>", {itemid : id}, function(html){
@@ -2103,13 +2103,41 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
+            <div class="table-responsive" style='margin-bottom: 50px;'>
                 <table class="table ui-sortable" id="tblLocations">
                    
                 </table>
             </div>
-
-            <div class="table-responsive mt-5">
+            <div class="table-responsive mt-0" style="position: fixed;bottom: 0px;background: #fff;z-index: 1000; width:80%;">
+                <table class="table mb-0 table-custom-style footer-table">
+                    <thead>
+                        <th colspan='8' style="background: #d9d9d9;"> Total </th>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <td> Product </td>
+                            <td> Shipping </td>
+                            <td> Labor </td>
+                            <td> Total Profit </td>
+                            <td> GP% </td>
+                            <td> Subtotal </td>
+                            <td> Tax </td>
+                            <td> Total Amount </td>
+                        </tr>
+                        <tr style="font-weight:bold;">
+                            <td> <?php echo e(company_setting('defult_currancy_symbol')); ?> <span class='totalproduct'> </span> </td>
+                            <td> <?php echo e(company_setting('defult_currancy_symbol')); ?> <span class='totalshipping'> </span> </td>
+                            <td> <?php echo e(company_setting('defult_currancy_symbol')); ?> <span class='totallabor'> </span> </td>
+                            <td> <?php echo e(company_setting('defult_currancy_symbol')); ?> <span class='totalprofit'> </span> </td>
+                            <td> <span class='totalgp'> </span> </td>
+                            <td> <?php echo e(company_setting('defult_currancy_symbol')); ?> <span class='maintotal'> </span> </td>
+                            <td> <?php echo e(company_setting('defult_currancy_symbol')); ?> <span class='totalTax'> </span> </td>
+                            <td> <?php echo e(company_setting('defult_currancy_symbol')); ?> <span class='totalAmount'> </span> </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- <div class="table-responsive mt-5">
                 <table class="table mb-0 table-custom-style footer-table">
                     <tfoot>
                     <tr>
@@ -2181,7 +2209,7 @@
                     </tr>
                     </tfoot>
                 </table>
-            </div>
+            </div> -->
         </div>
     </div>
 <?php endif; ?>

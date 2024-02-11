@@ -20,7 +20,7 @@
    
     ?>
 
-    <tr class="subitem" data-rid="<?php echo $values['id']; ?>" data-itemorder="<?php echo $values['itemorderid']; ?>">
+    <tr class="subitem" data-rid="<?php echo $values['id']; ?>" data-itemorder="<?php echo $values['itemorderid']; ?>" style='border-top:1px solid #000;'>
         <td id="<?php echo $values['id']; ?>_count" style="text-align:center"> 
            
             <?php 
@@ -44,7 +44,7 @@
         <?php } ?>
         <?php if (isset($showsettings['markup'])) { ?>
             <td> 
-                <?php if (!$intextbox) { ?>
+                <?php if ($intextbox) { ?>
                     <select data-grpid="<?php echo $values['subtotal_gpr']; ?>" data-id="<?php echo $values['id']; ?>" data-fld="markup" class='markupchange form-control'>
                         <?php 
                             foreach($markups as $m) {
@@ -67,7 +67,7 @@
         <?php } ?>
         <?php if (isset($showsettings['cost'])) { ?>
             <td class="number"> 
-                <?php if (!$intextbox) {?>
+                <?php if ($intextbox) {?>
                     <input data-id="<?php echo $values['id']; ?>" 
                             data-fld="purchase_price" 
                             class='edittext form-control' 
@@ -148,7 +148,7 @@
 
         <?php if (isset($showsettings['description'])) { ?>
             <td style='text-align:left;'>
-                <?php if (!$intextbox) {?>
+                <?php if ($intextbox == true) {?>
                     <textarea data-id="<?php echo $values['id']; ?>" data-fld="item" class='edittext form-control bold_input' style="text-align:left;padding-left: 5px;" type='text'><?php echo $description; ?></textarea> 
                 <?php } else { ?>
                     <?php echo $description; ?>
@@ -158,7 +158,7 @@
 
         <?php if (isset($showsettings['qty'])) { ?>
             <td style='text-align:center;'>
-                <?php if (!$intextbox) {?>
+                <?php if ($intextbox) {?>
                     <input data-id="<?php echo $values['id']; ?>" 
                            data-grpid="<?php echo $values['subtotal_gpr']; ?>"
                            data-fld="quantity" style="text-align:center;" class='edittext form-control' type='text' value="<?php echo $qty; ?>"/>
@@ -170,7 +170,7 @@
 
         <?php if (isset($showsettings['shipping'])) { ?>
             <td class="number"> 
-                <?php if (!$intextbox) {?>
+                <?php if ($intextbox) {?>
                     <input data-id="<?php echo $values['id']; ?>" 
                            data-grpid="<?php echo $values['subtotal_gpr']; ?>"
                            data-fld="shippingfee" style="text-align:center;" class='edittext_ship form-control' type='text' value="<?php echo $values['shippingfee']; ?>"/>

@@ -1171,7 +1171,29 @@
             additional_info[tab_id]['label']       = lbl;
             additional_info[tab_id]['description'] = desc;
 
-            // console.log(additional_info);
+            alert("Information is saved");
+
+            console.log(additional_info);
+        });
+
+        $(document).on("click","#delete_info_btn", function(){
+            var conf = confirm("Are you sure you want to remove this?");
+
+            if (!conf) {
+                return;
+            }
+
+            delete additional_info[tab_id];
+
+            $(document).find("#"+tab_id).remove();
+            $(document).find("#info_tab").hide();
+
+            tab_id = null;
+            tabname = null;
+
+            alert("Information is removed");
+
+            console.log(additional_info);
         });
 
         $(document).on("click",".open_info", function(){
@@ -1305,22 +1327,12 @@
         <div class="col-md-12">
             <div style="display:flex; justify-content:space-between;" class="mb-3">
                 <div class="with_as" id="bigbtn_div" style="width: 100%;">
-                    <a class="border-right" id="email_quote" title="Send Quotation" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
-                        <i class="ti ti-send"></i> <span> Send Quotation </span> 
-                    </a>
-                    <a class="border-right" title="Download Quotation" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
-                        <i class="ti ti-download"></i> <span> Download Quotation </span> 
-                    </a>
-                    <a class="border-right"  title="Preview Quotation" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
-                        <i class="ti ti-presentation"></i> <span> Preview Quotation </span> 
-                    </a>
-                    <a class="border-right"  title="Convert to Order" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
+                    
+                    <a class="border-right"  title="Convert to Order" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Convert to Order')); ?>"> 
                         <i class="ti ti-transform-filled"></i> <span> Convert to Order </span> 
                     </a>
-                    <a class="border-right" title="Convert to Order" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>"> 
-                        <i class="ti ti-businessplan"></i> <span> Convert to sales </span> 
-                    </a>
-                    <a class="border-right" id='qt_settings' title="Quotation Settings" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Quotation Settings')); ?>" data-url="<?php echo e(route('salesquote.settings')); ?>" data-toggle="tooltip" title="<?php echo e(__('settings')); ?>"> 
+                    
+                    <a class="border-right" id='qt_settings' title="Quotation Settings" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Quotation Settings')); ?>" data-url="<?php echo e(route('salesquote.settings',[$quoteid])); ?>" data-toggle="tooltip" title="<?php echo e(__('settings')); ?>"> 
                         <i class="ti ti-settings-2"></i> <span> Quotation Settings </span> 
                     </a>
                 </div>
@@ -1414,8 +1426,7 @@
 
                                             <span class="text-danger">*</span>
                                             <div class="form-icon-user">
-                                                <?php echo e(Form::date('issue_date',date('Y-m-d'), ["name"=>"issue_date", 'class' => 'form-control ', 'required' => 'required', 'placeholder' => 'Select Issue Date'])); ?>
-
+                                                <input type='date' name='issue_date' class='form-control' placeholder='Select Issue Date' value='<?php echo $issue_date; ?>' required/>
                                             </div>
                                         </div>
                                     </div>
@@ -1425,7 +1436,7 @@
 
                                             <span class="text-danger">*</span>
                                             <div class="form-icon-user">
-                                                <input type="text" name="quote_validity" id="quote_validity" required class="form-control curdatepicker-input"  placeholder="Select date">
+                                                <input type="text" name="quote_validity" id="quote_validity" value='<?php echo $date_valid; ?>' required class="form-control curdatepicker-input">
                                             </div>
                                         </div>
                                     </div>
@@ -1564,13 +1575,16 @@
         var quote_id       = $(document).find("#qid").val();
         var dis            = $(this);
 
-        dis.html("Sending Quotation.. please wait").attr("disabled","disabled");
+        // dis.html("Sending Quotation.. please wait").attr("disabled","disabled");
+        $(document).find("#loading_div").show();
 
         postAjax("<?php echo e(route('salesquote.emailquote')); ?>", {quote_id : quote_id }, function(data){
             if (data == "markup_error") {
                 alert("Please ask for the approval of some of the items to continue sending the quote.");
             } else {
-                dis.html("<i class='ti ti-send'></i> Send Quotation </a>").removeAttr("disabled");
+                $(document).find("#loading_div").hide();
+                alert("Quotation has been successfully sent");
+                // dis.html("<i class='ti ti-send'></i> Send Quotation </a>").removeAttr("disabled");
             }
         }); 
     });

@@ -61,11 +61,12 @@ class SalesQuote extends Model
         // return $this->hasOne(User::class, 'id', 'contact_person');
     }
 
-    public static function cont_person($quote_id) {
+    public function cont_person() {
         // sales_quotes
         // return SalesQuote::join("contacts","account","=","contact_person")
         //                  ->where("sales_quotes.quote_id",$quote_id)
         //                  ->get();
+        return $this->hasOne(User::class,'id','created_by');
     }
 
     public function items()
