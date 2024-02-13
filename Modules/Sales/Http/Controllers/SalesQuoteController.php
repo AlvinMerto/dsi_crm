@@ -1010,10 +1010,12 @@ class SalesQuoteController extends Controller
             $istaxable               = (Boolean) $values["istaxable"];
         }
             
-        $shippingfee             = $values["shippingfee"];
         $cost                    = $values["ccost"];
         $markup                  = $values["markup"];
         $qty                     = $values['qty'];
+
+        $shippingfee             = $values["shippingfee"];
+       
 
         // tax
             $taxprice                 = 0;
@@ -1049,40 +1051,46 @@ class SalesQuoteController extends Controller
                 // calculating the cost with markup
                     $markup_in_dec    = $markup/100;
                     $markup_value     = $cost*$markup_in_dec;
-                    $price            = $markup_value+$cost; // 1::PRICE
                 // end calculations of markup
             // end calculations
 
-        
+        $itemshipping            = ($shippingfee*$markup_in_dec)+$shippingfee; // 2:: ITEMSHIPPING
+        $totalmaincost           = ($cost*$markup_in_dec)+$cost; // 3:: TOTALMAINCOST
+        $price                   = $itemshipping+$totalmaincost; // 4:: PRICE
+        // $pricewithtax            = $price*$taxprice; 
+        $amount                  = ($price*$taxprice)+$price; // 5:: PRICE WITH TAX
+        $extended                = $amount*$qty;
 
-        $profit       = $price-$cost; // profit per item
-        $total_profit = $profit*$qty; 
+        $profit                  = $totalmaincost-$cost; // profit per item
+        $total_profit            = $profit*$qty; 
        
-        $extended     = ($price*$qty)+$shippingfee;
+        // $extended     = ($price*$qty)+$shippingfee;
 
         // computation of tax
-        $tax_value    = $extended*$taxprice;  // tax value
-        $amount       = $amount+$tax_value;
-
+        // $tax_value               = $extended*$taxprice;  // tax value
+        $tax_value               = $price*$taxprice;
+        
         // $amount       = ($price*$qty)+$shippingfee; // (total price * qty) + shipping fee
         
         // price     = purchase price + markup
         // profit    = price - purchase price
         // extended  = :: same with price
         // amount    = (purchase price * qty) + shipping fee
-        
-        $price       = $price*$qty;
+    
+        // $price         = $price*$qty;
         return [
-            "markupvalue" => $markup,
-            "price"       => $price, 
-            "tax_in_dec"  => $taxprice,
-            "tax_value"   => $tax_value,
-            "tax_used"    => $taxation_id,
-            "extended"    => $extended,
-            "amount"      => $amount,
-            "profit"      => $profit,
-            "totalprofit" => $total_profit,
-            "ccost"       => $cost
+            "markupvalue"   => $markup,
+            "price"         => $price, 
+            "tax_in_dec"    => $taxprice,
+            "tax_value"     => $tax_value,
+            "tax_used"      => $taxation_id,
+            "extended"      => $extended,
+            "amount"        => $amount,
+            "profit"        => $profit,
+            "totalprofit"   => $total_profit,
+            "totalmaincost" => $totalmaincost,
+            "itemshipping"  => $itemshipping,
+            "ccost"         => $cost
         ];
         
     }
@@ -1126,16 +1134,18 @@ class SalesQuoteController extends Controller
         ]);
 
         /*
-            "markupvalue" => $markup_value,
-            "price"       => $price, // price
-            "tax_in_dec"  => $taxprice,
-            "tax_value"   => $tax_value,
-            "tax_used"    => $taxation_used,
-            "extended"    => $price,
-            "amount"      => $amount,
-            "profit"      => $profit,
-            "totalprofit" => $total_profit,
-            "ccost"       => $cost
+            "markupvalue"   => $markup,
+            "price"         => $price, 
+            "tax_in_dec"    => $taxprice,
+            "tax_value"     => $tax_value,
+            "tax_used"      => $taxation_id,
+            "extended"      => $extended,
+            "amount"        => $amount,
+            "profit"        => $profit,
+            "totalprofit"   => $total_profit,
+            "totalmaincost" => $totalmaincost,
+            "itemshipping"  => $itemshipping,
+            "ccost"         => $cost
         */
 
         $salesquoteproduct                                 = new SalesQuoteItem();
@@ -1144,7 +1154,7 @@ class SalesQuoteController extends Controller
         $salesquoteproduct->inside_sub_order               = null;
         $salesquoteproduct->type                           = $type;
         $salesquoteproduct->profit                         = $values['profit'];
-        $salesquoteproduct->totalmaincost                  = 0;
+        $salesquoteproduct->totalmaincost                  = $values['totalmaincost'];
         $salesquoteproduct->markup                         = $markup;
         $salesquoteproduct->purchase_price                 = $cost;
         $salesquoteproduct->subtotal_description           = null;
@@ -1180,6 +1190,7 @@ class SalesQuoteController extends Controller
             $other_iteminfo->itemid                 = $salesquoteproduct->id;
             $other_iteminfo->product_services_id    = 1;
             $other_iteminfo->shippingfee            = $shippingfee;
+            $other_iteminfo->itemshipping           = $values['itemshipping'];
             $other_iteminfo->endoflife              = ($expiry==false)?null:$expiry;
             $other_iteminfo->markupstatus           = $status;
             $other_iteminfo->save();
@@ -1234,7 +1245,7 @@ class SalesQuoteController extends Controller
         //             ];
          $showsettings = $this->showsettings();
 
-        $intextbox = false;
+        $intextbox     = true;
 
        // if ($values[''])
        //  $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
@@ -1361,7 +1372,10 @@ class SalesQuoteController extends Controller
                    "extended"      => true,
                    "tax"           => true,
                    "sub"           => true,
-                   "subitem"       => true
+                   "subitem"       => true,
+                   "itemshipping"  => true,
+                   "itemcost"      => true,
+                   "pricewithtax"  => true
         ];
 
         $html            = $this->get_quote_item($qid, $show, true);
@@ -1498,16 +1512,28 @@ class SalesQuoteController extends Controller
                 $html .= "<th style='text-align:left;'>Description</th>";
             }
 
+            if (isset($showsettings['shipping'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Shipping Cost</th>";
+            }
+
             if (isset($showsettings['qty'])) {
                 $html .= "<th style='min-width: 5%; text-align:center;'>QTY</th>";
             }
 
-            if (isset($showsettings['shipping'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Shipping</th>";
+            if (isset($showsettings['itemshipping'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Item Shipping</th>";
+            }
+
+            if (isset($showsettings['itemcost'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Item Cost</th>";
             }
 
             if (isset($showsettings['price'])) {
                 $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
+            }
+
+            if (isset($showsettings['pricewithtax'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Price With Tax</th>";
             }
 
             if (isset($showsettings['extended'])) {
@@ -1544,8 +1570,10 @@ class SalesQuoteController extends Controller
                         $qty         = 1;
                         $price       = $st['subs'][0]->price;
 
-                        $shippingfee = 0; 
-                        $amount      = $st['subs'][0]->extended; 
+                        $shippingfee  = 0; 
+                        $itemshipping = 0;
+
+                        $amount       = $st['subs'][0]->extended; 
 
                         $profit      = $st['subs'][0]->profit;
                         $cost        = $st['subs'][0]->cost;
@@ -1574,10 +1602,18 @@ class SalesQuoteController extends Controller
                                 $price       = $st['subs'][0]->price;
                             }
 
+                            // change here
                             if ($st['sales'][0]->shippingfee != null || strlen($st['sales'][0]->shippingfee) > 0) {
-                                $shippingfee = $st['sales'][0]->shippingfee;
+                                $shippingfee = 2; //$st['sales'][0]->shippingfee;
                             } else {
-                                $shippingfee = $st['subs'][0]->shipping; 
+                                $shippingfee = 3; //$st['subs'][0]->shipping; 
+                            }
+                            // end recode
+
+                            if ($st['sales'][0]->itemshipping != null || strlen($st['sales'][0]->itemshipping) > 0) {
+                                $itemshipping = $st['sales'][0]->itemshipping;
+                            } else {
+                                $itemshipping = $st['subs'][0]->itemshipping; // mark me here
                             }
 
                             if ($st['sales'][0]->extended != null || strlen($st['sales'][0]->extended) > 0) {
@@ -1692,6 +1728,16 @@ class SalesQuoteController extends Controller
                                 $html .= "<td colspan='{$colspan}' style='text-align:left;'>".$desc."</td>";
                             }
 
+                            if (isset($showsettings['shipping'])) {
+                                $html .= "<td class='number'>";
+                                if ($intextbox) {
+                                    $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
+                                } else {
+                                    $html .= number_format($shippingfee,2);
+                                }
+                                $html .= "</td>";
+                            }
+
                             if (isset($showsettings['qty'])) {
                                 $html .= "<td style='text-align:center;' id='{$grpid}_qty'>";
                                 if ($intextbox) {
@@ -1702,17 +1748,37 @@ class SalesQuoteController extends Controller
                                 $html .= "</td>";
                             }
 
-                            if (isset($showsettings['shipping'])) {
-                                $html .= "<td class='number'>";
+                            if (isset($showsettings['itemshipping'])) {
+                                $html .= "<td class='number' id = '{$grpid}_itemshipping'>";
+                                //if ($intextbox) {
+                                    // $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
+                                //} else {
+                                    $html .= number_format($itemshipping,2);
+                                //}
+                                $html .= "</td>";
+                            }
+
+                            if (isset($showsettings['itemcost'])) {
+                                $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_cost'> ";
                                 if ($intextbox) {
-                                    $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
+                                    $html .= "<strong>".number_format($totalcost,2)."</strong>";
                                 } else {
-                                    $html .= number_format($shippingfee,2);
+                                    $html .= number_format($totalcost,2);
                                 }
                                 $html .= "</td>";
                             }
 
                             if (isset($showsettings['price'])) {
+                                $html .= "<td class='number'>";
+                                if ($intextbox) {
+                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
+                                } else {
+                                    $html .= number_format($price,2);
+                                }
+                                $html .= "</td>";
+                            }
+
+                            if (isset($showsettings['pricewithtax'])) {
                                 $html .= "<td class='number'>";
                                 if ($intextbox) {
                                     $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
@@ -1746,21 +1812,23 @@ class SalesQuoteController extends Controller
                                 $other_info      = $this->get_otherfields($si->itemid, ["Manufacturer","Supplier"]);
 
                                 if ($si->grp_id === $aa->grp_id) { 
-                                    $values          = [
-                                    "id"                => $si->itemid,
-                                    "profit"            => $si->profit,
-                                    "markupvalue"       => $si->markup,
-                                    "ccost"             => $si->purchase_price,
-                                    "extended"          => $si->extended,
-                                    "amount"            => $si->amount,
-                                    "tax_value"         => $si->itemtaxrate,
-                                    "shippingfee"       => number_format($si->shippingfee,2),
-                                    'subtotal_gpr'      => $si->grp_id,
-                                    "expiry"            => $si->endoflife,
-                                    "price"             => $si->price,
-                                    'itemorderid'       => $si->itemorder,
-                                    'status'            => $si->markupstatus,
-                                    'otherinfo'         => $other_info
+                                    $values = [
+                                        "id"                => $si->itemid,
+                                        "profit"            => $si->profit,
+                                        "markupvalue"       => $si->markup,
+                                        "ccost"             => $si->purchase_price,
+                                        "totalmaincost"     => $si->totalmaincost,
+                                        "extended"          => $si->extended,
+                                        "amount"            => $si->amount,
+                                        "tax_value"         => $si->itemtaxrate,
+                                        "shippingfee"       => number_format($si->shippingfee,2),
+                                        "itemshipping"      => $si->itemshipping,
+                                        'subtotal_gpr'      => $si->grp_id,
+                                        "expiry"            => $si->endoflife,
+                                        "price"             => $si->price,
+                                        'itemorderid'       => $si->itemorder,
+                                        'status'            => $si->markupstatus,
+                                        'otherinfo'         => $other_info
                                     ];
 
                                     if (!in_array($si->markup, $markups)) {
@@ -1905,6 +1973,8 @@ class SalesQuoteController extends Controller
                             "price"             => $aa->price,
                             'itemorderid'       => $aa->itemorder,
                             'status'            => $aa->markupstatus,
+                            "totalmaincost"     => $aa->totalmaincost,
+                            "itemshipping"      => number_format($aa->itemshipping,2),
                             'otherinfo'         => $other_info
                         ];
 
@@ -1999,12 +2069,15 @@ class SalesQuoteController extends Controller
         $status         = null;
         $otherinfo      = null;
 
+        $itemshipping   = 0;
+        $totalmaincost  = null;
+
         $showsettings    = $this->showsettings();
         $other_info      = null;
         $markups         = $this->get_markup();
         $datetoday       = date("Y-m-d");
         $count           = 1;
-        $intextbox       = false;
+        $intextbox       = true;
         $description     = null;
         $qty             = null;
 
@@ -2034,6 +2107,8 @@ class SalesQuoteController extends Controller
                         $amount            = $get['amount'];
                         $tax_value         = $get['itemtaxrate'];
 
+                        $totalmaincost     = $get['totalmaincost'];
+
                         $subtotal_gpr      = $get['grp_id'];
                         
                         $price             = $get['price'];
@@ -2049,8 +2124,8 @@ class SalesQuoteController extends Controller
                         $get = (array) $get[0];
 
                             unset($get['id']);
-                            $get['item_id'] = $salesquoteid;
-        
+                            $get['item_id']         = $salesquoteid;
+
                         $id = DB::table($ts)->insertGetId($get);
                     }
                 }
@@ -2069,6 +2144,7 @@ class SalesQuoteController extends Controller
                         $shippingfee  = $get['shippingfee'];
                         $endoflife    = $get['endoflife'];
                         $markupstatus = $get['markupstatus'];
+                        $itemshipping = $get['itemshipping'];
                     }
                 }
             }
@@ -2087,6 +2163,8 @@ class SalesQuoteController extends Controller
                 "price"             => $price,
                 'itemorderid'       => 1,
                 'status'            => $markupstatus,
+                "totalmaincost"     => $totalmaincost,
+                "itemshipping"      => number_format($itemshipping,2),
                 'otherinfo'         => $other_info
             ];
 
@@ -2112,7 +2190,10 @@ class SalesQuoteController extends Controller
                     "extended"      => true,
                     "tax"           => true,
                     "sub"           => true,
-                    "subitem"       => true
+                    "subitem"       => true,
+                    "itemshipping"  => true,
+                    "itemcost"      => true,
+                    "pricewithtax"  => true
                 ];
         
         if ($qid == false) {
@@ -2320,6 +2401,7 @@ class SalesQuoteController extends Controller
                         sum(purchase_price) as cost,
                         sum(profit) as profit,
                         sum(shippingfee) as shipping,
+                        sum(itemshipping) as itemshipping,
                         (((sum(price)-sum(purchase_price))/sum(price))*100) as gp
                     from sales_quotes_items as sqi
                         left join sales_quotes_item_info_more_flds as sqiimf on sqi.id = sqiimf.itemid
@@ -2340,6 +2422,7 @@ class SalesQuoteController extends Controller
                         "price"        => $subs[0]->price,
                         "extended"     => $subs[0]->extended,
                         "shippingfee"  => $subs[0]->shipping,
+                        "itemshipping" => $subs[0]->itemshipping,
                         "totalprofit"  => $subs[0]->profit,
                         "totalcost"    => $subs[0]->cost,
                         "markup"       => $subs[0]->gp

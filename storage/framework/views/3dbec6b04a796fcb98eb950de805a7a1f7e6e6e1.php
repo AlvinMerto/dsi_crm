@@ -30,7 +30,7 @@
                 }
 
                 if ($status == "fapproval") {
-                    echo "<i class='ti ti-loader-2' style='color:red; font-size: 25px;'></i>";
+                    echo "<i class='ti ti-exclamation-circle' style='color:red; font-size: 25px;'></i>";
                 } else if ($status == "declined") {
                     echo "<i class='ti ti-thumb-down' style='color:red; font-size: 25px;'></i>";
                 }
@@ -65,6 +65,7 @@
                 <?php } ?>
             </td>
         <?php } ?>
+
         <?php if (isset($showsettings['cost'])) { ?>
             <td class="number"> 
                 <?php if ($intextbox) {?>
@@ -156,6 +157,23 @@
             </td>
         <?php } ?>
 
+        <?php if (isset($showsettings['shipping'])) { ?>
+            <td class="number"> 
+                <?php if ($intextbox) {?>
+                    <input data-id="<?php echo $values['id']; ?>" 
+                           data-grpid="<?php echo $values['subtotal_gpr']; ?>"
+                           data-fld="shippingfee" style="text-align:right;" 
+                           class='edittext_ship form-control' type='text' value="<?php echo $values['shippingfee']; ?>"/>
+                <?php } else { ?>
+                    <?php 
+                        echo $values['shippingfee'];
+                        // echo number_format( $values['shippingfee'],2);
+                    ?>
+                <?php } ?> 
+                <?php // echo number_format($values['shippingfee'],2); ?> 
+            </td> 
+        <?php } ?>
+
         <?php if (isset($showsettings['qty'])) { ?>
             <td style='text-align:center;'>
                 <?php if ($intextbox) {?>
@@ -168,25 +186,50 @@
             </td>
         <?php } ?>
 
-        <?php if (isset($showsettings['shipping'])) { ?>
-            <td class="number"> 
+        <?php if (isset($showsettings['itemshipping'])) { ?>
+            <td class="number" id="<?php echo $values['id']."_itemshipping"; ?>">
                 <?php if ($intextbox) {?>
-                    <input data-id="<?php echo $values['id']; ?>" 
-                           data-grpid="<?php echo $values['subtotal_gpr']; ?>"
-                           data-fld="shippingfee" style="text-align:center;" class='edittext_ship form-control' type='text' value="<?php echo $values['shippingfee']; ?>"/>
+                    <?php echo number_format($values['itemshipping'],2); ?>
+                    <!-- <input data-id="<?php // echo $values['id']; ?>" 
+                           data-grpid="<?php // echo $values['subtotal_gpr']; ?>"
+                           data-fld="itemshipping" 
+                            style="text-align:center;" class='edittext_ship form-control' type='text' 
+                            value="<?php //echo $values['itemshipping']; ?>"/> -->
                 <?php } else { ?>
                     <?php 
-                        echo $values['shippingfee'];
-                        // echo number_format( $values['shippingfee'],2);
+                        // echo $values['itemshipping'];
+                        echo number_format( $values['itemshipping'],2);
                     ?>
                 <?php } ?> 
                 <?php // echo number_format($values['shippingfee'],2); ?> 
             </td> 
         <?php } ?>
 
+        <?php if (isset($showsettings['itemcost'])) { ?>
+            <td class="number"> 
+                <?php if ($intextbox) {?>
+                    <?php echo number_format($values['totalmaincost'],2); ?>
+                    <!-- <input data-id="<?php // echo $values['id']; ?>" 
+                            data-fld="purchase_price" 
+                            class='edittext form-control' 
+                            type='text' 
+                            data-grpid="<?php // echo $values['subtotal_gpr']; ?>"
+                            value="<?php // echo number_format($values['totalmaincost'],2); ?>"/>  -->
+                <?php } else { ?>
+                    <?php echo number_format($values['totalmaincost'],2); ?>
+                <?php } ?>
+            </td>
+        <?php } ?>
+
         <?php if (isset($showsettings['price'])) { ?>
             <td class="number" id="<?php echo $values['id']."_price"; ?>"> 
                 <?php echo number_format($values['price'],2); ?> 
+            </td>
+        <?php } ?>
+
+        <?php if (isset($showsettings['pricewithtax'])) { ?>
+            <td class="number" id="<?php echo $values['id']."_amount"; ?>"> 
+                <?php echo number_format($values['amount'],2); ?> 
             </td>
         <?php } ?>
 

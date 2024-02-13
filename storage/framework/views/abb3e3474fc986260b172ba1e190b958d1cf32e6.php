@@ -126,6 +126,10 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 
 <style>
+    body .table thead th {
+        font-size:10px;
+    }
+
     .loader {
         border: 16px solid #f3f3f3;
         border-radius: 50%;
@@ -1288,7 +1292,7 @@
             if (table == "sales_quotes_items") {
                 $(document).find("#"+disid+"_profit").html(response['profit']);
                 $(document).find("#"+disid+"_price").html(response['price']);
-                // $(document).find("#"+disid+"_amount").html(response['amount']);
+                $(document).find("#"+disid+"_amount").html(response['amount']);
                 $(document).find("#"+disid+"_extended").html(response['extended']);
                 $(document).find("#"+disid+"_tax_value").html(response['itemTaxRate']);
             }
@@ -2108,10 +2112,10 @@
                    
                 </table>
             </div>
-            <div class="table-responsive mt-0" style="position: fixed;bottom: 0px;background: #fff;z-index: 1000; width:80%;">
+            <div class="table-responsive mt-0" style="position: fixed;bottom: 0px;background: #fff;z-index: 1000; width:80%;box-shadow: 0px -5px 10px #a6a6a6;">
                 <table class="table mb-0 table-custom-style footer-table">
                     <thead>
-                        <th colspan='8' style="background: #d9d9d9;"> Total </th>
+                        <th colspan='8' style="background: #fff; border-top: 3px solid #7f7f7f;"> Total </th>
                     </thead>
                     <tfoot>
                         <tr>
