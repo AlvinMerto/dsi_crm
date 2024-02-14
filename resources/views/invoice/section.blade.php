@@ -501,16 +501,77 @@
 
         function compute_subs(grp_id) {
             postAjax("{{route('salesquote.compute_subtotal')}}", {grp_id:grp_id}, function(response){
+                var theindex      = null;
+                var profit        = 0;
+                var totalcost     = 0;
+                var totalgp       = 0;
+                var qty           = 0;
+                var price         = 0;
+                var shippingfee   = 0;
+                var itemshipping  = 0;
+                var amount        = 0;
+                var totalmaincost = 0;
 
-                $(document).find("#"+grp_id+"_profit").html( numberWithCommas( response['subs'][0].profit) );
-                $(document).find("#"+grp_id+"_cost").html( numberWithCommas( response['subs'][0].cost) );
-                $(document).find("#"+grp_id+"_gp").html( numberWithCommas( response['subs'][0].gp)+"%" );
-                $(document).find("#"+grp_id+"_qty").val( numberWithCommas( response['subs'][0].qty) );
+                if (response['sales'].length > 0) {
+                    // console.log("sales");
+                    // console.log(response['sales']);
+                    profit        = response['sales'][0].totalprofit;
+                    totalcost     = response['sales'][0].totalcost;
+                    totalgp       = response['sales'][0].markup+"&";
+                    qty           = response['sales'][0].quantity;
+                    price         = response['sales'][0].price;
+                    shippingfee   = response['sales'][0].shippingfee;
+                    itemshipping  = response['sales'][0].itemshipping;
+                    amount        = response['sales'][0].extended;
+                    totalmaincost = 0;
+                } else if (response['subs'].length > 0) {
+                    // console.log("subs");
+                    // console.log(response['subs']);
+                    profit        = response['subs'][0].profit;
+                    totalcost     = response['subs'][0].cost;
+                    totalgp       = response['subs'][0].gp+"%";
+                    qty           = response['subs'][0].qty;
+                    price         = response['subs'][0].price;
+                    shippingfee   = response['subs'][0].shipping;
+                    itemshipping  = response['subs'][0].itemshipping;
+                    amount        = response['subs'][0].extended;
+                    totalmaincost = 0;
+                }
+                
+                if (undefined !== profit) {
+                    $(document).find("#"+grp_id+"_profit").html( numberWithCommas( profit ) );
+                }
 
-                $(document).find("#"+grp_id+"_price").val( numberWithCommas( response['sales'][0].price) );
-                $(document).find("#"+grp_id+"_shippingfee").val( numberWithCommas( response['sales'][0].shippingfee) );
-                $(document).find("#"+grp_id+"_itemshipping").html( numberWithCommas( response['sales'][0].itemshipping) );
-                $(document).find("#"+grp_id+"_amount").val( numberWithCommas( response['sales'][0].extended) );
+                if (undefined !== totalcost) {
+                    $(document).find("#"+grp_id+"_cost").html( numberWithCommas( totalcost ) );
+                }
+
+                if (undefined !== totalgp) {
+                    $(document).find("#"+grp_id+"_gp").html( numberWithCommas( totalgp ) );
+                }
+
+                if (undefined !== qty) {
+                    $(document).find("#"+grp_id+"_qty").val( numberWithCommas( qty ) );
+                }
+                
+                if (undefined !== price) {
+                    $(document).find("#"+grp_id+"_price").val( numberWithCommas( price ) );
+                }
+                
+                if (undefined !== shippingfee) {
+                    $(document).find("#"+grp_id+"_shippingfee").val( shippingfee );
+                }
+
+                if (undefined !== itemshipping) {
+                    $(document).find("#"+grp_id+"_itemshipping").html( numberWithCommas( itemshipping ) );
+                }
+                
+                if (undefined !== amount) {
+                    $(document).find("#"+grp_id+"_amount").val( numberWithCommas( amount ) );
+                }
+
+                $(document).find("#"+grp_id+"_totalmaincost").val( numberWithCommas( totalmaincost ) );
+                
             });
         }
 
@@ -1296,7 +1357,6 @@
                 $(document).find("#"+disid+"_amount").html(response['amount']);
                 $(document).find("#"+disid+"_extended").html(response['extended']);
                 $(document).find("#"+disid+"_tax_value").html(response['itemTaxRate']);
-
 
                 $(document).find("#"+disid+"_itemshipping").html(response['itemshipping']);
                 $(document).find("#"+disid+"_totalmaincost").html(response['totalmaincost']);
@@ -2086,7 +2146,7 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive" style='margin-bottom: 50px;'>
+            <div class="table-responsive" style='margin-bottom: 80px;'>
                 <table class="table ui-sortable" id="tblLocations">
                    
                 </table>
@@ -2094,7 +2154,7 @@
             <div class="table-responsive mt-0" style="position: fixed;bottom: 0px;background: #fff;z-index: 1000; width:80%;box-shadow: 0px -5px 10px #a6a6a6; border-radius: 20px 20px 0px 0px;">
                 <table class="table mb-0 table-custom-style footer-table">
                     <thead>
-                        <th colspan='8' style="background: #fff;"> Total </th>
+                        <th colspan='8' style="background: #fff;font-size: 19px;"> Total </th>
                     </thead>
                     <tfoot>
                         <tr>

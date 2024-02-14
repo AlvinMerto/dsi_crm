@@ -1251,7 +1251,7 @@ class QuoteController extends Controller
             $customFields       = null;
 
             if(!is_null($quote)){
-                return view('sales::quote.quoteview',compact('quote','total',"salesquote","qt_validity","quote_id","qt_valid"));
+                return view('sales::quote.quoteview',compact('quote','total',"salesquote","qt_validity","quote_id","qt_valid","show"));
             }else{
                 return abort('404', 'The Link You Followed Has Expired');
             }

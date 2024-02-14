@@ -1540,9 +1540,11 @@ class SalesQuoteController extends Controller
                 $html .= "<th style='min-width: 5%; text-align:right;'>Extended</th>";
             }
 
-            if (isset($showsettings['tax'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Tax</th>";
-                $html .= "<th> </th>";
+            if ($qt_window == true) {
+                if (isset($showsettings['tax'])) {
+                    $html .= "<th style='min-width: 5%; text-align:right;'>Tax</th>";
+                    $html .= "<th> </th>";
+                }
             }
 
             $html .= "</tr>";
@@ -1811,9 +1813,11 @@ class SalesQuoteController extends Controller
                                 $html .= "</td>";
                             }
 
-                            if (isset($showsettings['tax'])) {
-                                $html .= "<td> &nbsp; </td>";
-                                $html .= "<td> &nbsp; </td>";
+                            if ($qt_window == true) {
+                                if (isset($showsettings['tax'])) {
+                                    $html .= "<td> &nbsp; </td>";
+                                    $html .= "<td> &nbsp; </td>";
+                                }
                             }
 
                             $html .= "</tr>";
@@ -1883,7 +1887,7 @@ class SalesQuoteController extends Controller
                                         }
 
                                         if ($include) {
-                                            $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox"))->render();
+                                            $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox","qt_window"))->render();
                                         }
                                     }
                                 }
@@ -2029,7 +2033,7 @@ class SalesQuoteController extends Controller
                             }
 
                             if ($include) {
-                                $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox"))->render();
+                                $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox","qt_window"))->render();
                             }
 
                         }
@@ -2349,14 +2353,16 @@ class SalesQuoteController extends Controller
                 'tax'                            => $values['tax_used'],
                 'itemTaxPrice'                   => $values['tax_in_dec'],
                 'itemTaxRate'                    => $values['tax_value'],
-                'amount'                         => $values['amount']
+                'amount'                         => $values['amount'],
+                "totalmaincost"                  => $values['totalmaincost']
             ];
             
             $up = DB::table($table)->where("id",$id)->update($valsss);
 
         if ($saveshipping) {
             $s_vals = [
-                "shippingfee" => $shippingfee
+                "shippingfee"  => $shippingfee,
+                "itemshipping" => $values['itemshipping']
             ];
 
             $saveship = DB::table("sales_quotes_item_info_more_flds")->where("itemid",$id)->update($s_vals);

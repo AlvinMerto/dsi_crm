@@ -22,20 +22,23 @@
 
     <tr class="subitem" data-rid="<?php echo $values['id']; ?>" data-itemorder="<?php echo $values['itemorderid']; ?>" style='border-top:1px solid #000;'>
         <td id="<?php echo $values['id']; ?>_count" style="text-align:center"> 
-           
-            <?php 
-                // echo $count; 
-                if ($exp == "expired_item") {
-                    echo " <i class='expired_item ti ti-timeline-event-x'></i>";
-                }
+            <?php if (isset($qt_window)) { ?>
+                <?php if ($qt_window == true) { ?>
+                    <?php 
+                        // echo $count; 
+                        if ($exp == "expired_item") {
+                            echo " <i class='expired_item ti ti-timeline-event-x'></i>";
+                        }
 
-                if ($status == "fapproval") {
-                    echo "<i class='ti ti-exclamation-circle' style='color:red; font-size: 25px;'></i>";
-                } else if ($status == "declined") {
-                    echo "<i class='ti ti-thumb-down' style='color:red; font-size: 25px;'></i>";
-                }
+                        if ($status == "fapproval") {
+                            echo "<i class='ti ti-exclamation-circle' style='color:red; font-size: 25px;'></i>";
+                        } else if ($status == "declined") {
+                            echo "<i class='ti ti-thumb-down' style='color:red; font-size: 25px;'></i>";
+                        }
 
-            ?> 
+                    ?> 
+                <?php } ?>
+            <?php } ?>
         </td>
         <?php if (isset($showsettings['profit'])) { ?>
             <td id="<?php echo $values['id']."_profit"; ?>" class="number"> 
@@ -206,7 +209,7 @@
         <?php } ?>
 
         <?php if (isset($showsettings['itemcost'])) { ?>
-            <td class="number"> 
+            <td class="number" id="<?php echo $values['id']; ?>_totalmaincost"> 
                 <?php if ($intextbox) {?>
                     <?php echo number_format($values['totalmaincost'],2); ?>
                     <!-- <input data-id="<?php // echo $values['id']; ?>" 
@@ -239,22 +242,25 @@
             </td> 
         <?php } ?>
 
-        <?php if (isset($showsettings['tax'])) { ?>
-            <td id="<?php echo $values['id']."_tax_value"; ?>" class="number"> 
-                <?php echo number_format($values['tax_value'],2); ?> 
-            </td>
-            <td style="text-align:center;">
-                <?php
-                    $ischecked = "checked";
+        <?php if (isset($qt_window)) { ?>
+            <?php if ($qt_window == true) { ?>
+                <?php if (isset($showsettings['tax'])) { ?>
+                    <td id="<?php echo $values['id']."_tax_value"; ?>" class="number"> 
+                        <?php echo number_format($values['tax_value'],2); ?> 
+                    </td>
+                    <td style="text-align:center;">
+                        <?php
+                            $ischecked = "checked";
 
-                    if ($values['tax_value'] == 0) {
-                        $ischecked = null;
-                    }
-                ?>
-                <input type='checkbox' 
-                       data-id="<?php echo $values['id']; ?>"
-                       class='taxcheck' <?php echo $ischecked; ?>/>
-            </td>
+                            if ($values['tax_value'] == 0) {
+                                $ischecked = null;
+                            }
+                        ?>
+                        <input type='checkbox' 
+                            data-id="<?php echo $values['id']; ?>"
+                            class='taxcheck' <?php echo $ischecked; ?>/>
+                    </td>
+                <?php } ?>
+            <?php } ?>
         <?php } ?>
-
     </tr>
