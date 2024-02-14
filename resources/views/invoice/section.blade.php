@@ -509,6 +509,7 @@
 
                 $(document).find("#"+grp_id+"_price").val( numberWithCommas( response['sales'][0].price) );
                 $(document).find("#"+grp_id+"_shippingfee").val( numberWithCommas( response['sales'][0].shippingfee) );
+                $(document).find("#"+grp_id+"_itemshipping").html( numberWithCommas( response['sales'][0].itemshipping) );
                 $(document).find("#"+grp_id+"_amount").val( numberWithCommas( response['sales'][0].extended) );
             });
         }
@@ -2085,10 +2086,10 @@
                    
                 </table>
             </div>
-            <div class="table-responsive mt-0" style="position: fixed;bottom: 0px;background: #fff;z-index: 1000; width:80%;box-shadow: 0px -5px 10px #a6a6a6;">
+            <div class="table-responsive mt-0" style="position: fixed;bottom: 0px;background: #fff;z-index: 1000; width:80%;box-shadow: 0px -5px 10px #a6a6a6; border-radius: 20px 20px 0px 0px;">
                 <table class="table mb-0 table-custom-style footer-table">
                     <thead>
-                        <th colspan='8' style="background: #fff; border-top: 3px solid #7f7f7f;"> Total </th>
+                        <th colspan='8' style="background: #fff;"> Total </th>
                     </thead>
                     <tfoot>
                         <tr>

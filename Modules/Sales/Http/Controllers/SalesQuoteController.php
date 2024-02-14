@@ -1563,25 +1563,28 @@ class SalesQuoteController extends Controller
                         // if not posted yet
                         array_push($postedgroup,$aa->grp_id);
 
-                        $st          = $this->get_subtotal($aa->grp_id);
+                        $st           = $this->get_subtotal($aa->grp_id);
 
-                        $grpid       = $aa->grp_id;
-                        $desc        = null;
-                        $qty         = 1;
-                        $price       = $st['subs'][0]->price;
+                        $grpid        = $aa->grp_id;
+                        $desc         = null;
+                        $qty          = 1;
+                        $price        = $st['subs'][0]->price;
+                        $pricewithtax = $st['subs'][0]->pricewithtax;
 
-                        $shippingfee  = 0; 
-                        $itemshipping = 0;
+                        $shippingfee  = $st['subs'][0]->shipping; 
+                        $itemshipping = $st['subs'][0]->itemshipping; // itemshipping
 
-                        $amount       = $st['subs'][0]->extended; 
+                        $totalmaincost = $st['subs'][0]->totalmaincost;
 
-                        $profit      = $st['subs'][0]->profit;
-                        $cost        = $st['subs'][0]->cost;
-                        $markup      = 0;
+                        $amount        = $st['subs'][0]->extended; 
 
-                        $totalprofit = 0;
-                        $totalcost   = 0;
-                        $totalmup    = 0;
+                        $profit       = $st['subs'][0]->profit;
+                        $cost         = $st['subs'][0]->cost;
+                        $markup       = 0;
+
+                        $totalprofit  = $st['subs'][0]->profit;
+                        $totalcost    = $totalcost = $st['subs'][0]->cost;
+                        $totalmup     = $totalmup = $st['subs'][0]->gp; 
 
                         if (count($st['sales']) > 0) {
                             $grpid       = $st['sales'][0]->grpid;
@@ -1603,17 +1606,19 @@ class SalesQuoteController extends Controller
                             }
 
                             // change here
-                            if ($st['sales'][0]->shippingfee != null || strlen($st['sales'][0]->shippingfee) > 0) {
-                                $shippingfee = 2; //$st['sales'][0]->shippingfee;
-                            } else {
-                                $shippingfee = 3; //$st['subs'][0]->shipping; 
-                            }
+                                if ($st['sales'][0]->shippingfee != null) {
+                                    $shippingfee = $st['sales'][0]->shippingfee;
+                                } else if (strlen($st['sales'][0]->shippingfee) > 0){
+                                    $shippingfee = $st['sales'][0]->shippingfee;
+                                } else {
+                                    $shippingfee = $st['subs'][0]->shipping; 
+                                }
                             // end recode
 
                             if ($st['sales'][0]->itemshipping != null || strlen($st['sales'][0]->itemshipping) > 0) {
                                 $itemshipping = $st['sales'][0]->itemshipping;
                             } else {
-                                $itemshipping = $st['subs'][0]->itemshipping; // mark me here
+                                $itemshipping = $st['subs'][0]->itemshipping; 
                             }
 
                             if ($st['sales'][0]->extended != null || strlen($st['sales'][0]->extended) > 0) {
@@ -1641,6 +1646,14 @@ class SalesQuoteController extends Controller
                                 $totalmup = $st['subs'][0]->gp; 
                                 // $totalmup = 0;
                             }
+
+                            // mark 1
+                            // if ($st['sales'][0]->totalmaincost != null || strlen($st['sales'][0]->totalmaincost) > 0) {
+                            //     $totalmaincost = $st['sales'][0]->totalmaincost; 
+                            // } else {
+                            //     $totalmaincost = $st['subs'][0]->totalmaincost; 
+                            // }
+                            // 
 
                         } else {
                             $amount = $amount*$qty;
@@ -1761,9 +1774,9 @@ class SalesQuoteController extends Controller
                             if (isset($showsettings['itemcost'])) {
                                 $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_cost'> ";
                                 if ($intextbox) {
-                                    $html .= "<strong>".number_format($totalcost,2)."</strong>";
+                                    $html .= "<strong>".number_format($totalmaincost,2)."</strong>";
                                 } else {
-                                    $html .= number_format($totalcost,2);
+                                    $html .= number_format($totalmaincost,2);
                                 }
                                 $html .= "</td>";
                             }
@@ -1780,11 +1793,11 @@ class SalesQuoteController extends Controller
 
                             if (isset($showsettings['pricewithtax'])) {
                                 $html .= "<td class='number'>";
-                                if ($intextbox) {
-                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
-                                } else {
-                                    $html .= number_format($price,2);
-                                }
+                                // if ($intextbox) {
+                                //     $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($pricewithtax,2)."'/>";
+                                // } else {
+                                    $html .= number_format($pricewithtax,2);
+                                // }
                                 $html .= "</td>";
                             }
 
@@ -2392,11 +2405,12 @@ class SalesQuoteController extends Controller
         // shipping fee
         // amount   
         // $grpid = 77;
-
+        // mark sub
         $sql  = "select sum(quantity) as qty, 
                         sum(purchase_price) as purchase_price, 
+                        sum(totalmaincost) as totalmaincost,
                         sum(price) as price, 
-                        sum(amount) as amount,
+                        sum(amount) as pricewithtax,
                         sum(extended) as extended,
                         sum(purchase_price) as cost,
                         sum(profit) as profit,
