@@ -1296,6 +1296,11 @@
                 $(document).find("#"+disid+"_amount").html(response['amount']);
                 $(document).find("#"+disid+"_extended").html(response['extended']);
                 $(document).find("#"+disid+"_tax_value").html(response['itemTaxRate']);
+
+
+                $(document).find("#"+disid+"_itemshipping").html(response['itemshipping']);
+                $(document).find("#"+disid+"_totalmaincost").html(response['totalmaincost']);
+                //$(document).find("#"+disid+"_itemshipping").html(response['itemshipping']);
             }
 
             // if (table == "salessubs") {

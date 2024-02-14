@@ -1067,7 +1067,7 @@ class SalesQuoteController extends Controller
         // $extended     = ($price*$qty)+$shippingfee;
 
         // computation of tax
-        // $tax_value               = $extended*$taxprice;  // tax value
+        // $tax_value            = $extended*$taxprice;  // tax value
         $tax_value               = $price*$taxprice;
         
         // $amount       = ($price*$qty)+$shippingfee; // (total price * qty) + shipping fee
@@ -1772,7 +1772,7 @@ class SalesQuoteController extends Controller
                             }
 
                             if (isset($showsettings['itemcost'])) {
-                                $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_cost'> ";
+                                $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_totalmaincost'> ";
                                 if ($intextbox) {
                                     $html .= "<strong>".number_format($totalmaincost,2)."</strong>";
                                 } else {
@@ -2324,18 +2324,20 @@ class SalesQuoteController extends Controller
         ]);
         
         /*
-            "markupvalue" => $markup,
-            "price"       => $price, // price
-            "tax_in_dec"  => $taxprice,
-            "tax_value"   => $tax_value,
-            "tax_used"    => $taxation_id,
-            "extended"    => $price,
-            "amount"      => $amount,
-            "profit"      => $profit,
-            "totalprofit" => $total_profit,
-            "ccost"       => $cost
+           "markupvalue"   => $markup,
+            "price"         => $price, 
+            "tax_in_dec"    => $taxprice,
+            "tax_value"     => $tax_value,
+            "tax_used"      => $taxation_id,
+            "extended"      => $extended,
+            "amount"        => $amount, // price with tax
+            "profit"        => $profit,
+            "totalprofit"   => $total_profit,
+            "totalmaincost" => $totalmaincost,
+            "itemshipping"  => $itemshipping,
+            "ccost"         => $cost
         */
-        
+        // mark 2
         $valsss = [
                 'profit'                         => $values['profit'],
                 'markup'                         => $markup,
@@ -2371,7 +2373,10 @@ class SalesQuoteController extends Controller
             'tax'                            => number_format($values['tax_used'],2),
             'itemTaxPrice'                   => number_format($values['tax_in_dec'],2),
             'itemTaxRate'                    => number_format($values['tax_value'],2),
-            'amount'                         => number_format($values['amount'],2)
+            'amount'                         => number_format($values['amount'],2),
+            'totalprofit'                    => number_format($values['totalprofit'],2),
+            'totalmaincost'                  => number_format($values['totalmaincost'],2),
+            'itemshipping'                   => number_format($values['itemshipping'],2),
         ];
 
         return response()->json($valsss);
