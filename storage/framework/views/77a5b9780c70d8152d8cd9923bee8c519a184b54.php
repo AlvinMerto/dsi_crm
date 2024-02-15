@@ -279,12 +279,12 @@
                                             </table>
                                             <div>
                                                 <?php if (isset($show['tax'])) { ?>
-                                                    <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> <?php echo $total['subtotal']; ?> </span> </p>
+                                                    <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> <?php echo e(company_setting('defult_currancy_symbol')); ?><?php echo $total['subtotal']; ?> </span> </p>
                                                     <p style="text-align: right;padding: 0px 0px; margin:10px;"> Tax &nbsp; &nbsp; &nbsp; <span> <?php echo $total['tax']; ?> </span> </p>
                                                 <?php } else { ?>
-                                                    <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> <?php echo $total['totalamount']; ?> </span> </p>
+                                                    <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> <?php echo e(company_setting('defult_currancy_symbol')); ?><?php echo $total['totalamount']; ?> </span> </p>
                                                 <?php } ?>
-                                                <p style="text-align: right;padding: 0px 0px; margin:10px;">  <strong> Total </strong> &nbsp; &nbsp; &nbsp; <span> <?php echo $total['totalamount']; ?> </span> </p>
+                                                <p style="text-align: right;padding: 0px 0px; margin:10px;">  <strong> Total </strong> &nbsp; &nbsp; &nbsp; <span> <?php echo e(company_setting('defult_currancy_symbol')); ?><?php echo $total['totalamount']; ?> </span> </p>
                                             </div>
                                         </div>
                                         <?php if ($qt_valid) { ?>
