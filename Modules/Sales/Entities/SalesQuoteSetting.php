@@ -49,7 +49,8 @@ class SalesQuoteSetting extends Model
                      "sub"           => true,
                      "subitem"       => true
                 ];
-            
+    
+                $settings = [];
         if (count($data) > 0) {
             $settings = [];
         }

@@ -1482,7 +1482,7 @@ class SalesQuoteController extends Controller
 
             $html  = "<thead>";
             $html .= "<tr>";
-            $html .= "<th style='min-width: 5%; padding:10px 0px;'>*</th>";
+            $html .= "<th style='min-width: 5%; padding:10px 0px; text-align:center;'>*</th>";
 
             if (isset($showsettings['profit'])) {
                 $html .= "<th style='min-width: 5%; text-align:right;'>Profit</th>";
@@ -2225,6 +2225,10 @@ class SalesQuoteController extends Controller
         $qs         = new SalesQuoteSetting();
         $settings   = $qs->salesquotesetting($qid);
 
+        // if (count($settings) == 0) {
+        //     return [];
+        // }
+
         return $settings;
     }
     
@@ -2493,7 +2497,8 @@ class SalesQuoteController extends Controller
 
         foreach($salesquoteitems as $sqi) {
             if ($sqi->type == "subcustomitem" || $sqi->type == "subitem") {
-                $totals['product'] += $sqi->purchase_price; 
+                // $totals['product'] += $sqi->purchase_price; 
+                $totals['product'] += $sqi->extended;
             }
 
             if ( $sqi->type == "labor" ) {
@@ -2509,8 +2514,11 @@ class SalesQuoteController extends Controller
             $totals['tax']      += $sqi->itemtaxrate;
         }
 
-        $totals['subtotal']     = $totals['product']+$totals['shipping']+$totals['labor']+$totals['profit'];
-        $totals['totalamount']  = $totals['subtotal']+$totals['tax'];
+        // $totals['subtotal']     = $totals['product']+$totals['shipping']+$totals['labor']+$totals['profit'];
+        // $totals['totalamount']  = $totals['subtotal']+$totals['tax'];
+
+        $totals['subtotal']      = $totals['product'];
+        $totals['totalamount']   = $totals['subtotal'];
 
         $totals["product"]       = number_format($totals['product'],2);
         $totals["shipping"]      = number_format($totals['shipping'],2);

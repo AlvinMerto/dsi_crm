@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <div class="col-md-12">
+        <!-- <div class="col-md-12">
             <div class="form-group">
                 {{ Form::label('sale_price', __('Price'), ['class' => 'form-label']) }}<span
                         class="text-danger">*</span>
@@ -79,7 +79,7 @@
                     {{ Form::number('sale_price', '', ['class' => 'form-control', 'required' => 'required', 'step' => '0.01','id' => 'cprice']) }}
                 </div>
             </div>
-        </div>
+        </div> -->
 
 {{--        <div class="form-group col-md-6">--}}
 {{--            {{ Form::label('tax_id', __('Tax'), ['class' => 'form-label']) }}--}}

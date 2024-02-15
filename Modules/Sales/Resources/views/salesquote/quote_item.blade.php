@@ -31,9 +31,9 @@
                         }
 
                         if ($status == "fapproval") {
-                            echo "<i class='ti ti-exclamation-circle' style='color:red; font-size: 25px;'></i>";
+                            echo "<i class='ti ti-exclamation-circle' style='color:red; font-size: 18px;'></i>";
                         } else if ($status == "declined") {
-                            echo "<i class='ti ti-thumb-down' style='color:red; font-size: 25px;'></i>";
+                            echo "<i class='ti ti-thumb-down' style='color:red; font-size: 18px;'></i>";
                         }
 
                     ?> 
