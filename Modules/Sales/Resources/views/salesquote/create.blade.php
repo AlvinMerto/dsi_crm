@@ -1420,7 +1420,12 @@
                                             {{ Form::label('issue_date', __('Issue Date'), ['class' => 'form-label']) }}
                                             <span class="text-danger">*</span>
                                             <div class="form-icon-user">
-                                                <input type='date' name='issue_date' class='form-control' placeholder='Select Issue Date' value='<?php echo $issue_date; ?>' required/>
+                                                <input type='date' 
+                                                       name='issue_date' 
+                                                       id = 'issue_date'
+                                                       class='form-control' 
+                                                       placeholder='Select Issue Date' 
+                                                       value='<?php echo $issue_date; ?>' required/>
                                             </div>
                                         </div>
                                     </div>
@@ -1559,7 +1564,7 @@
 
     $(document).ready(function(){
         $('html, body').animate({
-            scrollTop: $(document).find("#topdiv_create").offset().top-10
+            scrollTop: $(document).find(".topdiv_create, #topdiv_create").offset().top-10
         },1000);
     });
 

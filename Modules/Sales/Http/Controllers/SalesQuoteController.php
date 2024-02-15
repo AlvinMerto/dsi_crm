@@ -81,7 +81,11 @@ class SalesQuoteController extends Controller
 
             // $customers    = SalesAccount::where('workspace_id','=',getActiveWorkSpace())->get();
             $users        = User::where('workspace_id','=',getActiveWorkSpace())->where('type','staff')->get()->pluck('name', 'id');
-            return view('sales::salesquote.create',compact('customers','quote_number','users','showsection'));
+            // 2024-01-15
+            $issue_date   = date("Y-m-d");
+
+            $date_valid   = null;
+            return view('sales::salesquote.create',compact('customers','quote_number','users','showsection','issue_date','date_valid'));
         }
         else
         {
@@ -1243,13 +1247,13 @@ class SalesQuoteController extends Controller
         //                     "sub"           => true,
         //                     "subitem"       => true
         //             ];
-         $showsettings = $this->showsettings();
-
+        $showsettings = $this->showsettings();
+        $qt_window     = true;
         $intextbox     = true;
 
        // if ($values[''])
        //  $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
-        $html      = view('sales::salesquote.quote_item', compact('values','description','qty','datetoday','markups','count',"showsettings","intextbox"))->render();
+        $html      = view('sales::salesquote.quote_item', compact('values','description','qty','datetoday','markups','count',"showsettings","intextbox","qt_window"))->render();
   
         return response()->json($html);
     }
@@ -2185,7 +2189,8 @@ class SalesQuoteController extends Controller
                 'otherinfo'         => $other_info
             ];
 
-            $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox"))->render();
+            $qt_window     = true;
+            $html     .= view('sales::salesquote.quote_item', compact('values',"description","qty","markups","datetoday","count","showsettings","intextbox","qt_window"))->render();
 
         }
    
