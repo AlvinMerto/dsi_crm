@@ -164,8 +164,12 @@
 <div class="modal-footer">
     <!-- <a href="#" id="openaddinformation"><i class="ti ti-circle-plus"></i> Add Information </a> -->
 
+    <span id='loading_div_ct' style='display:none; position: absolute;left: 20px;'>
+        <div class='loader'></div>
+    </span>
     <input type="button" value="{{ __('Cancel') }}" class="btn  btn-light" data-bs-dismiss="modal">
     <p class="btn  btn-primary btncutomitem_new"> Create </p>
+    
 </div>
 </form>
 

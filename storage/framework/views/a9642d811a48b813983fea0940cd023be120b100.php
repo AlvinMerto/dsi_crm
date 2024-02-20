@@ -37,7 +37,7 @@
                                 <th scope="col" class="sort" data-sort="name"><?php echo e(__('Customer')); ?></th>
                                 <th scope="col" class="sort" data-sort="budget"><?php echo e(__('Status')); ?></th>
                                 <th scope="col" class="sort" data-sort="budget"><?php echo e(__('Issue Date')); ?></th>
-                                <th scope="col" class="sort" data-sort="budget"><?php echo e(__('Amount')); ?></th>
+                                <!-- <th scope="col" class="sort" data-sort="budget"><?php echo e(__('Amount')); ?></th> -->
                                 <th scope="col" class="sort" data-sort="budget"><?php echo e(__('Created At')); ?></th>
                                 <th scope="col" class="sort" data-sort="budget"><?php echo e(__('Contact person')); ?></th>
                                 <?php if(\Auth::user()->type =="company"): ?>
@@ -61,9 +61,9 @@
                                         <?php else: ?>
                                             <span class="badge fix_badges bg-primary p-2 px-3 rounded">Active</span>
                                         <?php endif; ?></td>
-                                    <td><?php echo e(company_date_formate($salesquote->issue_date)); ?></td>
-                                    <td></td>
-                                    <td><?php echo e(company_date_formate($salesquote->created_at)); ?></td>
+                                    <td> <?php echo date("M. d, Y", strtotime($salesquote->issue_date)); ?> </td>
+                                    <!-- <td></td> <?php echo e(company_date_formate($salesquote->created_at)); ?> <?php echo e(company_date_formate($salesquote->issue_date)); ?>-->
+                                    <td> <?php echo date("M. d, Y", strtotime($salesquote->created_at)); ?> </td>
                                     <td><?php echo e($salesquote->contactperson->name); ?></td>
                                     <?php
                                         if(isset($salesquote->quote_status))
@@ -104,7 +104,12 @@
 
                                         <td class="Action">
                                             <div class="action-btn bg-primary ms-2">
-                                                <a href="#" class="btn btn-sm  align-items-center cp_link" data-link="<?php echo e(route('print.salesquote',\Illuminate\Support\Facades\Crypt::encrypt($salesquote->id))); ?>" data-bs-toggle="tooltip" title="<?php echo e(__('Copy')); ?>" data-original-title="<?php echo e(__('Click to copy invoice link')); ?>">
+                                                <a style='cursor:pointer;' class="btn btn-sm  align-items-center "
+                                                    data-ajax-popup="true" data-size="md" 
+                                                    data-title="<?php echo e(__('Copy to new customer')); ?>" 
+                                                    data-qtid = "<?php echo $salesquote->id; ?>"
+                                                    data-url="<?php echo e(route('quotecontroller.copytonewcustomer',$salesquote->id)); ?>" 
+                                                    data-toggle="tooltip" title="<?php echo e(__('Copy to new customer')); ?>">
                                                     <i class="ti ti-file text-white"></i>
                                                 </a>
                                             </div>
@@ -166,14 +171,14 @@
                                                 </div>
                                             <?php endif; ?>
 
-                                            <div class="action-btn bg-warning ms-2">
+                                            <!-- <div class="action-btn bg-warning ms-2">
                                                 <a href="<?php echo e(route('salesquote.show',encrypt($salesquote->id))); ?>"
                                                    data-size="md"class="mx-3 btn btn-sm align-items-center text-white "
                                                    data-bs-toggle="tooltip" title="<?php echo e(__('Quick View')); ?>"
                                                    data-title="<?php echo e(__('SalesQuote Details')); ?>">
                                                     <i class="ti ti-eye"></i>
                                                 </a>
-                                            </div>
+                                            </div> -->
                                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('salesquote edit')): ?>
                                                 <div class="action-btn bg-info ms-2">
                                                     <a href="<?php echo e(route('salesquote.showquote',$salesquote->id)); ?>"

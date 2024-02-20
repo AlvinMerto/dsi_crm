@@ -164,6 +164,7 @@
         border:1px solid #333;
         padding-left:3px !important;
         padding-right:3px !important;
+      
     }
 
     #tblLocations tbody tr td select {
@@ -174,6 +175,21 @@
 
     #tblLocations tbody tr td textarea {
         resize:none;
+        min-height: 0px !important;
+        height: 20px;
+        
+    }
+
+    #tblLocations tbody tr td textarea:focus {
+        min-height: 100px !important;
+        width: 99% !important;
+        outline: none;
+        position: absolute;
+        background: #fff;
+        z-index: 100000000000;
+        border: 1px solid #fff;
+        box-shadow: 0px 0px 6px #6d6d6d;
+        margin-top: -10px;
     }
 
     #tblLocations tbody tr td,
@@ -270,6 +286,14 @@
 
 </style>
     <script>
+        // $(document).ready(function(){
+        //     var x = "45.00";
+            
+        //     x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+            
+        //     console.log(x);
+        // });
+
         function replaceKeyAtIndex(originalName, newPosition, newKey) {
             var parts = originalName.split('][');
             if (newPosition < 0 || newPosition >= parts.length) {
@@ -434,8 +458,6 @@
                 
                     var disitem = ui.item.parent().index();
 
-                    
-
                     // rowIndex
                     var order_to_use = ui.item.eq().prevObject[0].rowIndex;
 
@@ -467,11 +489,11 @@
                         "inside_order"  : order_to_use_
                     };
 
-                    console.log(t_id+"_"+order_to_use+"-"+hollow_row);
+                    // console.log(t_id+"_"+order_to_use+"-"+hollow_row);
                     
                     postAjax("{{route('salesquote.update_fld')}}", data, function(response){
                         postAjax("{{route('salesquote.set_order')}}", updateorder, function(response){
-                            console.log(response);
+                            // console.log(response);
                             compute_subs(t_id);
                         });
                     });
@@ -547,7 +569,7 @@
                 }
 
                 if (undefined !== totalgp) {
-                    $(document).find("#"+grp_id+"_gp").html( numberWithCommas( totalgp ) );
+                    $(document).find("#"+grp_id+"_gp").html( totalgp );
                 }
 
                 if (undefined !== qty) {
@@ -576,6 +598,11 @@
         }
 
         function numberWithCommas(x) {
+            // return x;
+            if (x == null) {
+                return x;
+            }
+
             return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         }
 
@@ -983,20 +1010,20 @@
         });
     });
 
-    // $(document).on("click","#addnewinformation", function(){
-    //     var itemid = $(this).data("r");
-    //     var data = {
-    //         title  : $(document).find("#texttitle").val(),
-    //         lbl    : $(document).find("#textlabel").val(),
-    //         desc   : $(document).find("#textdesc").val(),
-    //         itemid : itemid
-    //     };
+    $(document).on("click","#addnewinformation", function(){
+        var itemid = $(this).data("r");
+        var data = {
+            title  : $(document).find("#texttitle").val(),
+            lbl    : $(document).find("#textlabel").val(),
+            desc   : $(document).find("#textdesc").val(),
+            itemid : itemid
+        };
 
-    //     postAjax("{{route('salesquote.add_newinfo')}}", data, function(){
-    //         get_additional_info(itemid);
-    //     });
+        postAjax("{{route('salesquote.add_newinfo')}}", data, function(){
+            get_additional_info(itemid);
+        });
 
-    // });
+    });
 
     function get_additional_info(id) {
         postAjax("{{route('salesquote.get_add_info_ajax')}}", {itemid : id}, function(html){
@@ -1118,7 +1145,7 @@
 
         var grpid = $(this).data("grpid");
         
-        if (grpid.length !== 0) {
+        if (undefined !== grpid) {
             compute_subs(grpid);
         }
 
@@ -1185,6 +1212,7 @@
 
         postAjax("{{route('salesquote.update_this')}}", data, function(response){
             trs = [];
+            $("#tblLocations").children().remove();
             showquote_items(qid);
         });
     });
@@ -1414,6 +1442,8 @@
     // });
 
     $(document).on("click",".btncutomitem_new", function(){
+        $(document).find("#loading_div_ct").show();
+
         var qid            = $(document).find("#qid").val();
 
         var productline_id = $("#commonModal form").find("#productlineid").val();
@@ -1484,6 +1514,7 @@
             
             appendTolist(response, function(){
                 $("#commonModal").modal("hide");
+                $(document).find("#loading_div_ct").hide();
             });
             get_computetotal(qid);
         });
@@ -2146,7 +2177,7 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive" style='margin-bottom: 80px;'>
+            <div class="table-responsive" style='margin-bottom: 80px; min-height: 300px;'>
                 <table class="table ui-sortable" id="tblLocations">
                    
                 </table>

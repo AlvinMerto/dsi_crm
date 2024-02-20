@@ -30,6 +30,10 @@ use Modules\Sales\Events\QuoteDuplicate;
 
 use Modules\Sales\Entities\SalesQuoteItem;
 use Modules\Sales\Entities\SalesQuote;
+use Modules\Sales\Entities\salessubs;
+
+use Modules\Sales\Entities\itemadditionalinfo;
+use Modules\Sales\Entities\itemextensionflds;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -1333,4 +1337,152 @@ class QuoteController extends Controller
         // return response()->json($resp);
     }
 
+    function savetonewcustomer(Request $req) {
+        $company_id  = $req->input("comp_id");
+        $qtid        = $req->input("qtid");
+        $cont_person = $req->input("contid");
+
+        // sales_quotes
+        // sales_quotes_items
+        // sales_quotes_item_add_info
+        // sales_quotes_item_info_more_flds
+        // salessubs
+        // sales_quotes_setting
+        
+        // sales qoute 
+        $sq_collection1 = SalesQuote::where("id",$qtid)->get()->toArray();
+        $sq_collection  = $sq_collection1->toArray();
+
+        $savenew_    = null;
+        $save        = false;
+        
+        $subtotal_id = md5( date("mdyhisa") );
+
+        if (count($sq_collection) > 0) {
+            $savenew_                   = $sq_collection[0];
+
+            $savenew_['quote_id']       = $sq_collection[0]['quote_id']++;
+            $savenew_['contact_person'] = $cont_person;
+            $savenew_['customer_id']    = $company_id;
+
+            // save new quote 
+            $save = SalesQuote::create($savenew_);
+
+            // create save quote items
+            foreach($sq_collection1[0]->items as $items) {
+                $grpid = null;
+
+                if ( $items[0]->grp_id == null ) {
+                    $grpid = null;
+                } else {
+                    $grpid = $subtotal_id;
+                }
+
+                $save_sqi                               = new SalesQuoteItem();
+                $save_sqi->quote_id                     = $items[0]->quote_id;
+                $save_sqi->itemorder                    = $items[0]->itemorder;
+                $save_sqi->inside_sub_order             = $items[0]->inside_sub_order;
+                $save_sqi->type                         = $items[0]->type;
+                $save_sqi->grp_id                       = $grpid;
+                $save_sqi->profit                       = $items[0]->profit;
+                $save_sqi->totalmaincost                = $items[0]->totalmaincost;
+                $save_sqi->markup                       = $items[0]->markup;
+                $save_sqi->purchase_price               = $items[0]->purchase_price;
+                $save_sqi->item                         = $items[0]->item;
+                $save_sqi->quantity                     = $items[0]->quantity;
+                $save_sqi->price                        = $items[0]->price;
+                $save_sqi->extended                     = $items[0]->extended;
+                $save_sqi->tax                          = $items[0]->tax;
+                $save_sqi->itemtaxprice                 = $items[0]->itemtaxprice;
+                $save_sqi->itemtaxrate                  = $items[0]->itemtaxrate;
+                $save_sqi->amount                       = $items[0]->amount;
+                $save_sqi->subtotal_description         = $items[0]->subtotal_description;
+                $save_sqi->subtotal_quantity            = $items[0]->subtotal_quantity;
+                $save_sqi->sample_comment               = $items[0]->sample_comment;
+                $save_sqi->supplier_name                = $items[0]->supplier_name;
+                $save_sqi->supplier_part_number         = $items[0]->supplier_part_number;
+                $save_sqi->manufacturer_name            = $items[0]->manufacturer_name;
+                $save_sqi->manufacturer_part_number     = $items[0]->manufacturer_part_number;
+                $save_sqi->created_by                   = $items[0]->created_by;
+                $save_sqi->save();
+
+                if ($grpid != null) {
+                    $sub_grp = salessubs::firstOrNew(
+                        [
+                            "quoteid"           => $items[0]->quote_id,
+                            "grpid"             => $grpid,
+                            "description"       => "", // look for the entry from the salesubs table and copy it here
+                            "quantity"          => "",
+                            "price"             => "",
+                            "extended"          => "",
+                            "shippingfee"       => "",
+                            "tax"               => ""
+                        ]
+                    );
+                }
+
+                // save to item additional information
+                // itemadditionalinfo;
+                // itemextensionflds;
+                $itemid = $items[0]->id;
+                $newid  = $save_sqi->id;
+
+                $add_info = itemadditionalinfo::where("item_id",$itemid)->get();
+
+                if (count($add_info) > 0) {
+                    
+                    foreach($add_info as $adinfo) {
+                        $save_ai              = new itemadditionalinfo();
+                        $save_ai->item_id     = $newid;
+                        $save_ai->title       = $add_info[0]->title;
+                        $save_ai->label       = $add_info[0]->label;
+                        $save_ai->description = $add_info[0]->description;
+                    }
+                }
+
+                $ext_flds = itemextensionflds::where("itemid",$itemid)->get();
+                
+                if (count($ext_flds)>0) {
+                    foreach($ext_flds as $ef) {
+                        $ix                         = new itemextensionflds();
+                        $ix->itemid                 = $newid;
+                        $ix->product_services_id    = $ef[0]->product_services_id;
+                        $ix->shippingfee            = $ef[0]->shippingfee;
+                        $ix->endoflife              = $ef[0]->endoflife;
+                        $ix->markupstatus           = $ef[0]->markupstatus;
+                    }
+                }
+            }
+        }
+
+        return response()->json($save);
+    }
+
+    function copytonewcustomer($qt_id) {
+        $salesacc = SalesAccount::all();
+        return view("sales::quote.copytonewcust", compact("salesacc","qt_id"));
+    }
+
+    function showcontacts(Request $req) {
+        $id         = $req->input("data");
+        $collection = Contact::where("account",$id)->get();
+
+        $html       = ""; 
+    
+        if (count($collection) > 0) {
+            foreach($collection as $cols ) {
+                $html .= "<tr class='hrow copynow' data-contid='{$cols->id}'>";
+                    $html .= "<td> </td>";
+                    $html .= "<td>";
+                        $html .= $cols->name;
+                    $html .= "</td>";
+                $html .= "</tr>";
+            }
+        } else {
+            $html = "<tr class='hrow'> <td colspan=2> No Contact found... </td> </tr>";
+        }
+
+        // $html = "<tr> <td> </td> <td> Pam Campbell </td> </tr>"; data-compid='{$cols->account}'
+        return $html;
+    }
 }

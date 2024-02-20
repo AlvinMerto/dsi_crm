@@ -1,10 +1,28 @@
-<div class="modal-body">
+<style>
+    .table_cust {
+        width:100%;
+    }
+
+    .table_cust tr:nth-child(2n+2) {
+        background:#eaeaea;
+    }
+
+    .table_cust tr th {
+        vertical-align:top;
+    }
+
+    .table_cust tr td,.table_cust tr th {
+        padding: 6px;
+    }
+
+</style>
+<div class="modal-body pt-0">
     <div class="row">
         <div class="col-md-12">
-            <table class="table">
-                <thead>
+            <table class="table_cust">
+                <!-- <thead>
                     <th colspan='2'> <h4 class="card-title">Information</h4> </th>
-                </thead> 
+                </thead>  -->
                 <tbody> 
                     <tr>
                         <th> Description </th>
@@ -84,3 +102,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $(document).find("#exampleModalLongTitle").html("Item Details")
+    })
+</script>

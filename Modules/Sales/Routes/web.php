@@ -405,6 +405,12 @@ Route::group(
         Route::post("/bulkremove","SalesQuoteController@bulkremove")->name("salesquote.deletethis");
 
         Route::post("/set_order","SalesQuoteController@set_order")->name("salesquote.set_order");      
+
+        // copy to new customer
+        Route::get("quotecontroller/copytonewcustomer/{qid?}",["as"=>'quotecontroller.copytonewcustomer','uses' => "QuoteController@copytonewcustomer"]);
+        
+        Route::post("showcontacts","QuoteController@showcontacts")->name("show.contact");
+        Route::post("savetonewcustomer","QuoteController@savetonewcustomer")->name("quotecontroller.savetonewcustomer");
 });
 
 
@@ -415,3 +421,5 @@ Route::post("salesquote/saveview_sets","SalesQuoteController@saveview_sets")->na
 
 Route::get('quote/pdf/{id}', 'QuoteController@downloadpdf')->name('quote.pdf');
 Route::get("/test_quote","SalesQuoteController@test_quote")->name("salesquote.test_quote");
+
+

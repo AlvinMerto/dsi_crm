@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use Modules\Sales\Entities\SalesAccount;
+use Modules\Sales\Entities\SalesQuoteItem;
 use Modules\Sales\Entities\Contact;
 
 class SalesQuote extends Model

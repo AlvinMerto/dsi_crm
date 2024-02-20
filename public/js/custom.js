@@ -195,16 +195,16 @@ function common_bind(selector = "body") {
         });
 
     }
+
     var dateToday = new Date();
-    if ($(".curdatepicker-input").length) {
-        const d_disable = new Datepicker(document.querySelector('.curdatepicker-input'), {
+    //if ($(".curdatepicker-input").length) {
+        new Datepicker(document.querySelector('#quote_validity'), {
             buttonClass: 'btn',
             autohide: true,
             dateFormat: 'yyyy-mm-dd',
             minDate: dateToday,
         });
-    }
-
+    //}
 
     if ($(".flatpickr-time-input").length) {
        $(".flatpickr-time-input").flatpickr({

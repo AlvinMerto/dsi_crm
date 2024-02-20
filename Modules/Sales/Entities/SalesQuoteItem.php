@@ -14,6 +14,7 @@ class SalesQuoteItem extends Model
         'itemorder',
         'inside_sub_order',
         'type',
+        'grp_id',
         'profit',
         'totalmaincost',
         'markup',

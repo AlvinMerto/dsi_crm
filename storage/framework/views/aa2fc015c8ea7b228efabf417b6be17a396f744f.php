@@ -1441,7 +1441,7 @@
 
                                             <span class="text-danger">*</span>
                                             <div class="form-icon-user">
-                                                <input type="text" name="quote_validity" id="quote_validity" value='<?php echo $date_valid; ?>' required class="form-control curdatepicker-input">
+                                                <input type="text" name="quote_validity" id="quote_validity" data-value='<?php echo $date_valid; ?>' required class="form-control curdatepicker-input">
                                             </div>
                                         </div>
                                     </div>
@@ -1574,6 +1574,7 @@
         $('html, body').animate({
             scrollTop: $(document).find(".topdiv_create, #topdiv_create").offset().top-10
         },1000);
+
     });
 
     $(document).on("click","#email_quote", function(){
@@ -1594,9 +1595,6 @@
         }); 
     });
 
-    $(document).on("click","#qt_settings", function(){
-        
-    });
 </script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\dsi_crm\Modules/Sales\Resources/views/salesquote/create.blade.php ENDPATH**/ ?>

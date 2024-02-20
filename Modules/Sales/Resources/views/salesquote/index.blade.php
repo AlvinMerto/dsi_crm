@@ -34,7 +34,7 @@
                                 <th scope="col" class="sort" data-sort="name">{{ __('Customer') }}</th>
                                 <th scope="col" class="sort" data-sort="budget">{{ __('Status') }}</th>
                                 <th scope="col" class="sort" data-sort="budget">{{ __('Issue Date') }}</th>
-                                <th scope="col" class="sort" data-sort="budget">{{ __('Amount') }}</th>
+                                <!-- <th scope="col" class="sort" data-sort="budget">{{ __('Amount') }}</th> -->
                                 <th scope="col" class="sort" data-sort="budget">{{ __('Created At') }}</th>
                                 <th scope="col" class="sort" data-sort="budget">{{ __('Contact person') }}</th>
                                 @if(\Auth::user()->type =="company")
@@ -58,9 +58,9 @@
                                         @else
                                             <span class="badge fix_badges bg-primary p-2 px-3 rounded">Active</span>
                                         @endif</td>
-                                    <td>{{ company_date_formate($salesquote->issue_date) }}</td>
-                                    <td></td>
-                                    <td>{{company_date_formate($salesquote->created_at) }}</td>
+                                    <td> <?php echo date("M. d, Y", strtotime($salesquote->issue_date)); ?> </td>
+                                    <!-- <td></td> {{company_date_formate($salesquote->created_at) }} {{ company_date_formate($salesquote->issue_date) }}-->
+                                    <td> <?php echo date("M. d, Y", strtotime($salesquote->created_at)); ?> </td>
                                     <td>{{$salesquote->contactperson->name}}</td>
                                     @php
                                         if(isset($salesquote->quote_status))
@@ -101,7 +101,12 @@
 
                                         <td class="Action">
                                             <div class="action-btn bg-primary ms-2">
-                                                <a href="#" class="btn btn-sm  align-items-center cp_link" data-link="{{route('print.salesquote',\Illuminate\Support\Facades\Crypt::encrypt($salesquote->id))}}" data-bs-toggle="tooltip" title="{{__('Copy')}}" data-original-title="{{__('Click to copy invoice link')}}">
+                                                <a style='cursor:pointer;' class="btn btn-sm  align-items-center "
+                                                    data-ajax-popup="true" data-size="md" 
+                                                    data-title="{{ __('Copy to new customer') }}" 
+                                                    data-qtid = "<?php echo $salesquote->id; ?>"
+                                                    data-url="{{route('quotecontroller.copytonewcustomer',$salesquote->id)}}" 
+                                                    data-toggle="tooltip" title="{{ __('Copy to new customer') }}">
                                                     <i class="ti ti-file text-white"></i>
                                                 </a>
                                             </div>
@@ -159,14 +164,14 @@
                                                 </div>
                                             @endif
 
-                                            <div class="action-btn bg-warning ms-2">
+                                            <!-- <div class="action-btn bg-warning ms-2">
                                                 <a href="{{ route('salesquote.show',encrypt($salesquote->id)) }}"
                                                    data-size="md"class="mx-3 btn btn-sm align-items-center text-white "
                                                    data-bs-toggle="tooltip" title="{{ __('Quick View') }}"
                                                    data-title="{{ __('SalesQuote Details') }}">
                                                     <i class="ti ti-eye"></i>
                                                 </a>
-                                            </div>
+                                            </div> -->
                                             @can('salesquote edit')
                                                 <div class="action-btn bg-info ms-2">
                                                     <a href="{{route('salesquote.showquote',$salesquote->id)}}"

@@ -1493,7 +1493,11 @@ class SalesQuoteController extends Controller
             }
 
             if (isset($showsettings['cost'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Cost</th>";
+                $html .= "<th style='min-width: 5%; text-align:right;'>Unit Cost</th>";
+            }
+
+            if (isset($showsettings['shipping'])) {
+                $html .= "<th style='min-width: 5%; text-align:right;'>Unit Shipping Cost</th>";
             }
 
             if (isset($showsettings['supplier'])) {
@@ -1516,28 +1520,26 @@ class SalesQuoteController extends Controller
                 $html .= "<th style='text-align:left;'>Description</th>";
             }
 
-            if (isset($showsettings['shipping'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Shipping Cost</th>";
-            }
+            
 
             if (isset($showsettings['qty'])) {
                 $html .= "<th style='min-width: 5%; text-align:center;'>QTY</th>";
             }
 
-            if (isset($showsettings['itemshipping'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Item Shipping</th>";
-            }
+            // if (isset($showsettings['itemshipping'])) {
+            //     $html .= "<th style='min-width: 5%; text-align:right;'>Item Shipping</th>";
+            // }
 
-            if (isset($showsettings['itemcost'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Item Cost</th>";
-            }
+            // if (isset($showsettings['itemcost'])) {
+            //     $html .= "<th style='min-width: 5%; text-align:right;'>Item Cost</th>";
+            // }
 
-            if (isset($showsettings['price'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
-            }
+            // if (isset($showsettings['price'])) {
+            //     $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
+            // }
 
             if (isset($showsettings['pricewithtax'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Price With Tax</th>";
+                $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
             }
 
             if (isset($showsettings['extended'])) {
@@ -1546,8 +1548,8 @@ class SalesQuoteController extends Controller
 
             if ($qt_window == true) {
                 if (isset($showsettings['tax'])) {
-                    $html .= "<th style='min-width: 5%; text-align:right;'>Tax</th>";
-                    $html .= "<th> </th>";
+                    $html .= "<th style='min-width: 5%; text-align:center;' colspan='2'>Tax</th>";
+                    // $html .= "<th> </th>";
                 }
             }
 
@@ -1729,6 +1731,16 @@ class SalesQuoteController extends Controller
                                 $html .= "</td>";
                             }
 
+                            if (isset($showsettings['shipping'])) {
+                                $html .= "<td class='number'>";
+                                if ($intextbox) {
+                                    $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
+                                } else {
+                                    $html .= number_format($shippingfee,2);
+                                }
+                                $html .= "</td>";
+                            }
+
                             if ($qt_window == true) {
                                 $html .= "<td colspan='{$colspan}' style='text-align:right;'> <i> Sub Start </i> &nbsp; </td>";
 
@@ -1747,16 +1759,6 @@ class SalesQuoteController extends Controller
                                 $html .= "<td colspan='{$colspan}' style='text-align:left;'>".$desc."</td>";
                             }
 
-                            if (isset($showsettings['shipping'])) {
-                                $html .= "<td class='number'>";
-                                if ($intextbox) {
-                                    $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
-                                } else {
-                                    $html .= number_format($shippingfee,2);
-                                }
-                                $html .= "</td>";
-                            }
-
                             if (isset($showsettings['qty'])) {
                                 $html .= "<td style='text-align:center;' id='{$grpid}_qty'>";
                                 if ($intextbox) {
@@ -1767,35 +1769,35 @@ class SalesQuoteController extends Controller
                                 $html .= "</td>";
                             }
 
-                            if (isset($showsettings['itemshipping'])) {
-                                $html .= "<td class='number' id = '{$grpid}_itemshipping'>";
-                                //if ($intextbox) {
-                                    // $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
-                                //} else {
-                                    $html .= number_format($itemshipping,2);
-                                //}
-                                $html .= "</td>";
-                            }
+                            // if (isset($showsettings['itemshipping'])) {
+                            //     $html .= "<td class='number' id = '{$grpid}_itemshipping'>";
+                            //     //if ($intextbox) {
+                            //         // $html .= "<input id = '{$grpid}_shippingfee' data-id='{$grpid}' data-fld='shippingfee'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($shippingfee,2)."'/>";
+                            //     //} else {
+                            //         $html .= number_format($itemshipping,2);
+                            //     //}
+                            //     $html .= "</td>";
+                            // }
 
-                            if (isset($showsettings['itemcost'])) {
-                                $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_totalmaincost'> ";
-                                if ($intextbox) {
-                                    $html .= "<strong>".number_format($totalmaincost,2)."</strong>";
-                                } else {
-                                    $html .= number_format($totalmaincost,2);
-                                }
-                                $html .= "</td>";
-                            }
+                            // if (isset($showsettings['itemcost'])) {
+                            //     $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_totalmaincost'> ";
+                            //     if ($intextbox) {
+                            //         $html .= "<strong>".number_format($totalmaincost,2)."</strong>";
+                            //     } else {
+                            //         $html .= number_format($totalmaincost,2);
+                            //     }
+                            //     $html .= "</td>";
+                            // }
 
-                            if (isset($showsettings['price'])) {
-                                $html .= "<td class='number'>";
-                                if ($intextbox) {
-                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
-                                } else {
-                                    $html .= number_format($price,2);
-                                }
-                                $html .= "</td>";
-                            }
+                            // if (isset($showsettings['price'])) {
+                            //     $html .= "<td class='number'>";
+                            //     if ($intextbox) {
+                            //         $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($price,2)."'/>";
+                            //     } else {
+                            //         $html .= number_format($price,2);
+                            //     }
+                            //     $html .= "</td>";
+                            // }
 
                             if (isset($showsettings['pricewithtax'])) {
                                 $html .= "<td class='number'>";
@@ -2881,10 +2883,19 @@ class SalesQuoteController extends Controller
     }
 
     function fortest(Request $req) {
-        $qs     = new SalesQuoteSetting();
-        $data   = $qs->salesquotesetting('78');
+        $qtid = 81;
+        $sq   = SalesQuote::where("id",$qtid)->get()->toArray();
 
-        var_dump($data);
+        var_dump( $sq[0]->items );
+        
+        // return response()->json($v);
+
+        // var_dump($sq[0]->items->totalmaincost);
+        // $qs     = new SalesQuoteSetting();
+        
+        // $data   = $qs->salesquotesetting('78');
+
+        // var_dump($data);
         // return $this->make_a_copy([376,377,379]);
         // $subs  = $this->get_subtotal("3b15dd6ec9e138dcd3ec3d9f02942594", true);
 
@@ -3210,8 +3221,6 @@ public function get_quote_item_test($qid, $showsettings = null, $intextbox = fal
                                 }
                             $html .= "</td>";
                         }
-                        
-
 
                         if (isset($showsettings['cost'])) {
                             $html .= "<td style='text-align:right; padding-right: 4px;' id='{$grpid}_cost'> ";
