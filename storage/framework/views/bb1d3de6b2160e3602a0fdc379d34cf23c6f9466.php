@@ -141,7 +141,7 @@
                 </div>
                 <div class="col-md-12">
                     <span class="btn btn-primary btn-sm" id="save_info_btn"> Save Information  </span>
-                    <span class="btn btn-danger btn-sm" id="delete_info_btn"> Remove Information  </span>
+                    <span class="btn btn-danger btn-sm" id="delete_info_btn" style='display:none;'> Remove Information  </span>
                 </div>
             </div>
         </div> 

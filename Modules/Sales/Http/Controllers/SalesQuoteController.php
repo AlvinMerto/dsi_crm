@@ -1217,42 +1217,22 @@ class SalesQuoteController extends Controller
             $otherinfo->{"label"}       = $ai['label'];
         }
 
-        $values['otherinfo']    = (array) $otherinfo;
+        $values['otherinfo']    = $this->get_otherfields($salesquoteproduct->id, ["Manufacturer","Supplier"]);;
         $values['id']           = $salesquoteproduct->id;
-       //  var_dump($values); return;
+ 
         $values['shippingfee']  = number_format($shippingfee,2);
         $values['itemorderid']  = 1;
         $values['subtotal_gpr'] = null;
         $values['status']       = $status;
 
-       // $markups               = $this->get_markup();
         array_push($markups,$markup);
         $count                 = 1;
         $datetoday             = date("Y-m-d");
-    
-        // 'values',"description","qty","markups","datetoday","count"
-        // $showsettings   = ["profit"        => true,
-        //                     "markup"        => true,
-        //                     "cost"          => true,
-        //                     "supplier"      => true,
-        //                     "supplier_num"  => true,
-        //                     "manu"          => true,
-        //                     "manu_num"      => true,
-        //                     "description"   => true,
-        //                     "qty"           => true,
-        //                     "shipping"      => true,
-        //                     "price"         => true,
-        //                     "extended"      => true,
-        //                     "tax"           => true,
-        //                     "sub"           => true,
-        //                     "subitem"       => true
-        //             ];
+
         $showsettings = $this->showsettings();
         $qt_window     = true;
         $intextbox     = true;
 
-       // if ($values[''])
-       //  $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings"))->render();
         $html      = view('sales::salesquote.quote_item', compact('values','description','qty','datetoday','markups','count',"showsettings","intextbox","qt_window"))->render();
   
         return response()->json($html);
@@ -1903,7 +1883,7 @@ class SalesQuoteController extends Controller
 
                             if ($aa->grp_id !== null) {
                                 if (isset($showsettings['sub'])) {
-                                    $colspan_substop = 8;
+                                    $colspan_substop = 9;
                                     
                                     // if ($intextbox) {
                                     //     $colspan = 8;
@@ -2884,10 +2864,11 @@ class SalesQuoteController extends Controller
 
     function fortest(Request $req) {
         $qtid = 81;
-        $sq   = SalesQuote::where("id",$qtid)->get()->toArray();
-
-        var_dump( $sq[0]->items );
+        $sq_collection1 = SalesQuote::where("id",$qtid)->get();
+        $sq_collection  = $sq_collection1->toArray();
         
+        // var_dump($sq_collection);
+        echo $sq_collection[0]['workspace'];
         // return response()->json($v);
 
         // var_dump($sq[0]->items->totalmaincost);

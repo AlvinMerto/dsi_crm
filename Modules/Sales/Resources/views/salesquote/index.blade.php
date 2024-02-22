@@ -1,3 +1,4 @@
+
 @extends('layouts.main')
 @section('page-title')
     {{ __('Manage Sales Quote') }}
@@ -50,9 +51,16 @@
                                 <tr>
                                     <td>
                                         <a class="btn btn-outline-primary" href="{{route('salesquote.showquote',$salesquote->id)}}"> {{ \Modules\Sales\Entities\SalesQuote::quoteNumberFormat($salesquote->quote_id) }} </a>
-                                        <!-- <a href="{{route('salesquote.show',encrypt($salesquote->id))}}" class="btn btn-outline-primary"></a> -->
                                     </td>
-                                    <td>{{$salesquote->customer->name}}</td>
+                                    <td>
+                                        <?php
+                                            if ( !isset($salesquote->customer->name) ) {
+                                                echo null;
+                                            } else {
+                                                echo $salesquote->customer->name;
+                                            }
+                                        ?>
+                                    </td>
                                     <td>@if(date('Y-m-d') > $salesquote->quote_validity)
                                             <span class="badge fix_badges bg-danger p-2 px-3 rounded">Expired</span>
                                         @else
@@ -61,7 +69,15 @@
                                     <td> <?php echo date("M. d, Y", strtotime($salesquote->issue_date)); ?> </td>
                                     <!-- <td></td> {{company_date_formate($salesquote->created_at) }} {{ company_date_formate($salesquote->issue_date) }}-->
                                     <td> <?php echo date("M. d, Y", strtotime($salesquote->created_at)); ?> </td>
-                                    <td>{{$salesquote->contactperson->name}}</td>
+                                    <td>
+                                        <?php
+                                            if ( !isset($salesquote->contactperson->name)) {
+                                                echo null;
+                                            } else {
+                                                echo $salesquote->contactperson->name;
+                                            }
+                                        ?>
+                                    </td>
                                     @php
                                         if(isset($salesquote->quote_status))
                                         {
@@ -113,23 +129,21 @@
 
                                             @can('salesquote create')
                                                 <div class="action-btn bg-secondary ms-2">
-                                                    {!! Form::open([
-                                                        'method' => 'get',
-                                                        'route' => ['salesquote.duplicate', $salesquote->id],
-                                                        'id' => 'duplicate-form-' . $salesquote->id,
-                                                    ]) !!}
-
-                                                    <a href="#"
-                                                       class="mx-3 btn btn-sm align-items-center text-white show_confirm"
+                                                   
+                                                    <a style='cursor:pointer;'
+                                                       class="mx-3 btn btn-sm align-items-center text-white hallow_copy"
+                                                       data-qtid = "<?php echo $salesquote->id; ?>"
                                                        data-bs-toggle="tooltip" data-title="{{ __('Duplicate') }}"
                                                        title="{{ __('Duplicate') }}"
                                                        data-confirm="{{ __('You want to confirm this action') }}"
                                                        data-text="{{ __('Press Yes to continue or No to go back') }}"
                                                        data-confirm-yes="document.getElementById('duplicate-form-{{ $salesquote->id }}').submit();">
                                                         <i class="ti ti-copy"></i>
-                                                        {!! Form::close() !!}
                                                     </a>
                                                 </div>
+                                                    <div class="action-btn bg-secondary ms-2" id='loading_div_hallow' style='display:none;'>
+                                                        ...
+                                                    </div>
                                             @endcan
 
                                             @if ($salesquote->converted_salesorder_id == 0)
@@ -173,14 +187,14 @@
                                                 </a>
                                             </div> -->
                                             @can('salesquote edit')
-                                                <div class="action-btn bg-info ms-2">
+                                                <!-- <div class="action-btn bg-info ms-2">
                                                     <a href="{{route('salesquote.showquote',$salesquote->id)}}"
                                                        class="mx-3 btn btn-sm  align-items-center"
                                                        data-bs-toggle="tooltip"
                                                        data-bs-original-title="{{ __('Edit') }}">
                                                         <i class="ti ti-pencil text-white"></i>
                                                     </a>
-                                                </div>
+                                                </div> -->
                                             @endcan
                                             @can('salesquote delete')
                                                 <div class="action-btn bg-danger ms-2">
@@ -259,5 +273,27 @@
                         toastrs('success', '{{__('Link Copy on Clipboard')}}', 'success')
                     });
                 </script>
+
+            <script>
+                $(document).on("click",".hallow_copy", function(){
+                    var conf = confirm("Are you sure you want to proceed?");
+
+                    if (!conf) {
+                        return;
+                    }
+                    
+                    var h_contid = 0;
+                    var h_theid  = 0;
+                    var qtid     = $(this).data("qtid");
+
+                    $(document).find("#loading_div_hallow").show();
+
+                    postAjax("{{route('quotecontroller.savetonewcustomer')}}",{comp_id : h_theid, contid : h_contid, qtid : qtid}, function(response) {
+                        alert("Successfully copied to new customer");
+                        
+                        window.location.href = "{{route('salesquote.showquote')}}/"+response;
+                    });
+                })
+            </script>
     @endpush
 

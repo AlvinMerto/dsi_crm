@@ -284,6 +284,10 @@
         border: 1px solid #d2cfcf;
     }
 
+    .sel_openitem {
+        background: green;
+    }
+
 </style>
     <script>
         // $(document).ready(function(){
@@ -605,6 +609,11 @@
 
             return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         }
+
+        $(document).on("click",".btn-close", function(){
+            trs             = [];
+            additional_info = {};
+        })
 
         $(".subtotal").on("click",function () {
             var lastRow = $(".add-sublist").last();
@@ -1019,8 +1028,15 @@
             itemid : itemid
         };
 
+        var qid  = $(document).find("#qid").val();
+
+        $(document).find("#loading_tbody").show();
         postAjax("{{route('salesquote.add_newinfo')}}", data, function(){
+            $(document).find("#loading_tbody").hide();
+
+            $(document).find("#tblLocations").children().remove();
             get_additional_info(itemid);
+            showquote_items(qid);
         });
 
     });
@@ -1233,7 +1249,8 @@
 
         postAjax("{{route('salesquote.removethis')}}", data, function(){
             // trs = [];
-            // showquote_items(qid);
+            $("#tblLocations").children().remove();
+            showquote_items(qid);
             $(document).find("#additional_info_tbody").children().remove();
             get_additional_info(tid);
         });
@@ -1517,6 +1534,8 @@
                 $(document).find("#loading_div_ct").hide();
             });
             get_computetotal(qid);
+
+            additional_info = {};
         });
     });
 </script>

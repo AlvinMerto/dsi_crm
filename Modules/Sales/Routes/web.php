@@ -362,7 +362,7 @@ Route::group(
         // added by Alvin Merto
         Route::post("salesquote/addcustomitem",'SalesQuoteController@addcustomitem')->name('salesquote.addcustomitem');
         Route::post("salesquote/postcreatequote",'SalesQuoteController@postcreatequote')->name("salesquote.postcreatequote");
-        Route::get("salesquote/showquote/{id}",'SalesQuoteController@showquote')->name("salesquote.showquote");
+        Route::get("salesquote/showquote/{id?}",'SalesQuoteController@showquote')->name("salesquote.showquote");
         Route::post("salesquote/getquote_items",'SalesQuoteController@getquote_items')->name("salesquote.getquote_items");
 
         Route::post("salesquote/blursave", 'SalesQuoteController@blursave')->name("salesquote.blursave");

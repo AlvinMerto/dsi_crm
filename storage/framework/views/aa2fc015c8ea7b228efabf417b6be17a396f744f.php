@@ -1151,11 +1151,18 @@
             // tab_nav_info
             // <span class="btn btn-sm btn-primary" data-btnlabel="Manufacturer"> Manufacturer </span>
 
-            tab_id = $(document).find("#tab_nav_info").children().length-1;
-            tab_id = tab_id+1;  
-            tab_id = "tab_"+tab_id;
+            tab_id    = $(document).find("#tab_nav_info").children().length-1;
+            tab_id    = tab_id+1;
+            tab_id    = "tab_"+tab_id;
 
-            $("<span class='btn btn-sm btn-primary mx-1 open_info' data-tab='"+tabname+"' id='"+tab_id+"'> &nbsp; </span>").appendTo("#tab_nav_info");
+            $(document).find("#"+tab_id).siblings().removeClass("sel_openitem");
+            $(document).find("#"+tab_id).addClass("sel_openitem");
+
+            $(document).find("#info_title").val(null);
+            $(document).find("#info_label").val(null);
+            $(document).find("#info_desc").val(null);
+
+            $("<span class='btn btn-sm btn-primary mx-1 open_info' data-tab='"+tabname+"' data-id='"+tab_id+"' id='"+tab_id+"'> &nbsp; </span>").appendTo("#tab_nav_info");
             $(document).find("#info_tab").show();
         });
 
@@ -1172,8 +1179,7 @@
             additional_info[tab_id]['description'] = desc;
 
             alert("Information is saved");
-
-            console.log(additional_info);
+            $(document).find("#delete_info_btn").show();
         });
 
         $(document).on("click","#delete_info_btn", function(){
@@ -1192,11 +1198,13 @@
             tabname = null;
 
             alert("Information is removed");
-
-            console.log(additional_info);
+            $(document).find("#delete_info_btn").hide();
         });
 
         $(document).on("click",".open_info", function(){
+            $(this).siblings().removeClass("sel_openitem");
+            $(this).addClass("sel_openitem");
+
             var btnselected = $(this).data("tab");
             var title       = null;
             var infolabel   = null;
@@ -1214,13 +1222,28 @@
                     $(document).find("#info_title").val("Supplier");
                     $(document).find("#infolabel").text("Supplier Part Number");
                     $(document).find("#infodesc").text("Supplier Name");
+
                     break;
                 default:
+                    tab_id     = $(this).data("id");
                     $(document).find("#info_title").val(tabname);
                     $(document).find("#infolabel").text("Information Label");
                     $(document).find("#infodesc").text("Information Description");
+                    
                     break;
             }
+
+                    if (undefined !== additional_info[tab_id]) {
+                        $(document).find("#info_title").val(additional_info[tab_id]['title']);
+                        $(document).find("#info_label").val(additional_info[tab_id]['label']);
+                        $(document).find("#info_desc").val(additional_info[tab_id]['description']);
+
+                        $(document).find("#delete_info_btn").show();
+                    } else {
+                        $(document).find("#info_label").val(null);
+                        $(document).find("#info_desc").val(null);
+                        $(document).find("#delete_info_btn").hide();
+                    }
 
             $(document).find("#info_tab").show();
         });

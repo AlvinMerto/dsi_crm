@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-sm-12">
             <div class="row">
                 <div class="col-xxl-7">
@@ -616,7 +616,7 @@
                 @endif
             </div>
         </div>
-    </div>
+    </div> -->
 @endsection
 @push('scripts')
     <script src="{{ asset('assets/js/plugins/apexcharts.min.js') }}"></script>

@@ -98,6 +98,15 @@
                         </td> -->
                     </tr>
                 </tbody>
+                <tbody id='loading_tbody' style='display:none; position: absolute;left: 20px;'>
+                    <tr>
+                        <td>
+                            <span>
+                                <div class='loader'></div>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>

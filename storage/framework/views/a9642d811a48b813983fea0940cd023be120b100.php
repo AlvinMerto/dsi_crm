@@ -1,4 +1,5 @@
 
+
 <?php $__env->startSection('page-title'); ?>
     <?php echo e(__('Manage Sales Quote')); ?>
 
@@ -53,9 +54,16 @@
                                 <tr>
                                     <td>
                                         <a class="btn btn-outline-primary" href="<?php echo e(route('salesquote.showquote',$salesquote->id)); ?>"> <?php echo e(\Modules\Sales\Entities\SalesQuote::quoteNumberFormat($salesquote->quote_id)); ?> </a>
-                                        <!-- <a href="<?php echo e(route('salesquote.show',encrypt($salesquote->id))); ?>" class="btn btn-outline-primary"></a> -->
                                     </td>
-                                    <td><?php echo e($salesquote->customer->name); ?></td>
+                                    <td>
+                                        <?php
+                                            if ( !isset($salesquote->customer->name) ) {
+                                                echo null;
+                                            } else {
+                                                echo $salesquote->customer->name;
+                                            }
+                                        ?>
+                                    </td>
                                     <td><?php if(date('Y-m-d') > $salesquote->quote_validity): ?>
                                             <span class="badge fix_badges bg-danger p-2 px-3 rounded">Expired</span>
                                         <?php else: ?>
@@ -64,7 +72,15 @@
                                     <td> <?php echo date("M. d, Y", strtotime($salesquote->issue_date)); ?> </td>
                                     <!-- <td></td> <?php echo e(company_date_formate($salesquote->created_at)); ?> <?php echo e(company_date_formate($salesquote->issue_date)); ?>-->
                                     <td> <?php echo date("M. d, Y", strtotime($salesquote->created_at)); ?> </td>
-                                    <td><?php echo e($salesquote->contactperson->name); ?></td>
+                                    <td>
+                                        <?php
+                                            if ( !isset($salesquote->contactperson->name)) {
+                                                echo null;
+                                            } else {
+                                                echo $salesquote->contactperson->name;
+                                            }
+                                        ?>
+                                    </td>
                                     <?php
                                         if(isset($salesquote->quote_status))
                                         {
@@ -116,25 +132,21 @@
 
                                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('salesquote create')): ?>
                                                 <div class="action-btn bg-secondary ms-2">
-                                                    <?php echo Form::open([
-                                                        'method' => 'get',
-                                                        'route' => ['salesquote.duplicate', $salesquote->id],
-                                                        'id' => 'duplicate-form-' . $salesquote->id,
-                                                    ]); ?>
-
-
-                                                    <a href="#"
-                                                       class="mx-3 btn btn-sm align-items-center text-white show_confirm"
+                                                   
+                                                    <a style='cursor:pointer;'
+                                                       class="mx-3 btn btn-sm align-items-center text-white hallow_copy"
+                                                       data-qtid = "<?php echo $salesquote->id; ?>"
                                                        data-bs-toggle="tooltip" data-title="<?php echo e(__('Duplicate')); ?>"
                                                        title="<?php echo e(__('Duplicate')); ?>"
                                                        data-confirm="<?php echo e(__('You want to confirm this action')); ?>"
                                                        data-text="<?php echo e(__('Press Yes to continue or No to go back')); ?>"
                                                        data-confirm-yes="document.getElementById('duplicate-form-<?php echo e($salesquote->id); ?>').submit();">
                                                         <i class="ti ti-copy"></i>
-                                                        <?php echo Form::close(); ?>
-
                                                     </a>
                                                 </div>
+                                                    <div class="action-btn bg-secondary ms-2" id='loading_div_hallow' style='display:none;'>
+                                                        ...
+                                                    </div>
                                             <?php endif; ?>
 
                                             <?php if($salesquote->converted_salesorder_id == 0): ?>
@@ -180,14 +192,14 @@
                                                 </a>
                                             </div> -->
                                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('salesquote edit')): ?>
-                                                <div class="action-btn bg-info ms-2">
+                                                <!-- <div class="action-btn bg-info ms-2">
                                                     <a href="<?php echo e(route('salesquote.showquote',$salesquote->id)); ?>"
                                                        class="mx-3 btn btn-sm  align-items-center"
                                                        data-bs-toggle="tooltip"
                                                        data-bs-original-title="<?php echo e(__('Edit')); ?>">
                                                         <i class="ti ti-pencil text-white"></i>
                                                     </a>
-                                                </div>
+                                                </div> -->
                                             <?php endif; ?>
                                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('salesquote delete')): ?>
                                                 <div class="action-btn bg-danger ms-2">
@@ -268,6 +280,28 @@
                         toastrs('success', '<?php echo e(__('Link Copy on Clipboard')); ?>', 'success')
                     });
                 </script>
+
+            <script>
+                $(document).on("click",".hallow_copy", function(){
+                    var conf = confirm("Are you sure you want to proceed?");
+
+                    if (!conf) {
+                        return;
+                    }
+                    
+                    var h_contid = 0;
+                    var h_theid  = 0;
+                    var qtid     = $(this).data("qtid");
+
+                    $(document).find("#loading_div_hallow").show();
+
+                    postAjax("<?php echo e(route('quotecontroller.savetonewcustomer')); ?>",{comp_id : h_theid, contid : h_contid, qtid : qtid}, function(response) {
+                        alert("Successfully copied to new customer");
+                        
+                        window.location.href = "<?php echo e(route('salesquote.showquote')); ?>/"+response;
+                    });
+                })
+            </script>
     <?php $__env->stopPush(); ?>
 
 

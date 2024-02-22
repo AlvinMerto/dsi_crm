@@ -15,7 +15,7 @@
         </div>
     <?php endif; ?>
 
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-sm-12">
             <div class="row">
                 <div class="col-xxl-7">
@@ -638,7 +638,7 @@
                 <?php endif; ?>
             </div>
         </div>
-    </div>
+    </div> -->
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('scripts'); ?>
     <script src="<?php echo e(asset('assets/js/plugins/apexcharts.min.js')); ?>"></script>

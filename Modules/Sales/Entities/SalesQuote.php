@@ -26,7 +26,7 @@ class SalesQuote extends Model
         'quote_validity',
         'quote_status',
         'converted_salesorder_id',
-        'workspsace',
+        'workspace',
         'created_by'
     ];
 

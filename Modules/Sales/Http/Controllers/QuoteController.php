@@ -34,6 +34,7 @@ use Modules\Sales\Entities\salessubs;
 
 use Modules\Sales\Entities\itemadditionalinfo;
 use Modules\Sales\Entities\itemextensionflds;
+use Modules\Sales\Entities\SalesQuoteSetting;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -45,6 +46,7 @@ class QuoteController extends Controller
      */
     public function index()
     {
+       
         if(\Auth::user()->can('quote manage'))
         {
             $quotes = Quote::where('created_by', creatorId())->where('workspace',getActiveWorkSpace())->orderBy('id','DESC')->get();
@@ -1350,7 +1352,7 @@ class QuoteController extends Controller
         // sales_quotes_setting
         
         // sales qoute 
-        $sq_collection1 = SalesQuote::where("id",$qtid)->get()->toArray();
+        $sq_collection1 = SalesQuote::where("id",$qtid)->get();
         $sq_collection  = $sq_collection1->toArray();
 
         $savenew_    = null;
@@ -1360,71 +1362,96 @@ class QuoteController extends Controller
 
         if (count($sq_collection) > 0) {
             $savenew_                   = $sq_collection[0];
+            $qtid                       = $sq_collection[0]['quote_id'];
 
-            $savenew_['quote_id']       = $sq_collection[0]['quote_id']++;
+            // $savenew_['quote_id']       = ($qtid+1);
             $savenew_['contact_person'] = $cont_person;
             $savenew_['customer_id']    = $company_id;
+            $savenew_['workspace']      = $sq_collection[0]['workspace'];
+            $savenew_['created_by']     = Auth::user()->id;
 
             // save new quote 
-            $save = SalesQuote::create($savenew_);
+            $save = SalesQuote::create($savenew_)->id;
 
             // create save quote items
             foreach($sq_collection1[0]->items as $items) {
+                $qoute_newid = $save;
                 $grpid = null;
 
-                if ( $items[0]->grp_id == null ) {
+                if ( $items->grp_id == null ) {
                     $grpid = null;
                 } else {
                     $grpid = $subtotal_id;
                 }
 
                 $save_sqi                               = new SalesQuoteItem();
-                $save_sqi->quote_id                     = $items[0]->quote_id;
-                $save_sqi->itemorder                    = $items[0]->itemorder;
-                $save_sqi->inside_sub_order             = $items[0]->inside_sub_order;
-                $save_sqi->type                         = $items[0]->type;
+                $save_sqi->quote_id                     = $qoute_newid;
+                $save_sqi->itemorder                    = $items->itemorder;
+                $save_sqi->inside_sub_order             = $items->inside_sub_order;
+                $save_sqi->type                         = $items->type;
                 $save_sqi->grp_id                       = $grpid;
-                $save_sqi->profit                       = $items[0]->profit;
-                $save_sqi->totalmaincost                = $items[0]->totalmaincost;
-                $save_sqi->markup                       = $items[0]->markup;
-                $save_sqi->purchase_price               = $items[0]->purchase_price;
-                $save_sqi->item                         = $items[0]->item;
-                $save_sqi->quantity                     = $items[0]->quantity;
-                $save_sqi->price                        = $items[0]->price;
-                $save_sqi->extended                     = $items[0]->extended;
-                $save_sqi->tax                          = $items[0]->tax;
-                $save_sqi->itemtaxprice                 = $items[0]->itemtaxprice;
-                $save_sqi->itemtaxrate                  = $items[0]->itemtaxrate;
-                $save_sqi->amount                       = $items[0]->amount;
-                $save_sqi->subtotal_description         = $items[0]->subtotal_description;
-                $save_sqi->subtotal_quantity            = $items[0]->subtotal_quantity;
-                $save_sqi->sample_comment               = $items[0]->sample_comment;
-                $save_sqi->supplier_name                = $items[0]->supplier_name;
-                $save_sqi->supplier_part_number         = $items[0]->supplier_part_number;
-                $save_sqi->manufacturer_name            = $items[0]->manufacturer_name;
-                $save_sqi->manufacturer_part_number     = $items[0]->manufacturer_part_number;
-                $save_sqi->created_by                   = $items[0]->created_by;
+                $save_sqi->profit                       = $items->profit;
+                $save_sqi->totalmaincost                = $items->totalmaincost;
+                $save_sqi->markup                       = $items->markup;
+                $save_sqi->purchase_price               = $items->purchase_price;
+                $save_sqi->item                         = $items->item;
+                $save_sqi->quantity                     = $items->quantity;
+                $save_sqi->price                        = $items->price;
+                $save_sqi->extended                     = $items->extended;
+                $save_sqi->tax                          = $items->tax;
+                $save_sqi->itemtaxprice                 = $items->itemtaxprice;
+                $save_sqi->itemtaxrate                  = $items->itemtaxrate;
+                $save_sqi->amount                       = $items->amount;
+                $save_sqi->subtotal_description         = $items->subtotal_description;
+                $save_sqi->subtotal_quantity            = $items->subtotal_quantity;
+                $save_sqi->sample_comment               = $items->sample_comment;
+                $save_sqi->supplier_name                = $items->supplier_name;
+                $save_sqi->supplier_part_number         = $items->supplier_part_number;
+                $save_sqi->manufacturer_name            = $items->manufacturer_name;
+                $save_sqi->manufacturer_part_number     = $items->manufacturer_part_number;
+                $save_sqi->created_by                   = Auth::user()->id;
                 $save_sqi->save();
 
                 if ($grpid != null) {
-                    $sub_grp = salessubs::firstOrNew(
-                        [
-                            "quoteid"           => $items[0]->quote_id,
-                            "grpid"             => $grpid,
-                            "description"       => "", // look for the entry from the salesubs table and copy it here
-                            "quantity"          => "",
-                            "price"             => "",
-                            "extended"          => "",
-                            "shippingfee"       => "",
-                            "tax"               => ""
-                        ]
-                    );
+                    $salessubs  = salessubs::where("grpid",$grpid)->get();
+
+                    if (count($salessubs) > 0) {
+                        $sub_grp = salessubs::firstOrNew(
+                            [
+                                "quoteid"           => $qoute_newid,
+                                "grpid"             => $grpid,
+                                "description"       => $salessubs[0]->description,
+                                "quantity"          => $salessubs[0]->quantity,
+                                "price"             => $salessubs[0]->price,
+                                "extended"          => $salessubs[0]->extended,
+                                "shippingfee"       => $salessubs[0]->shippingfee,
+                                "tax"               => $salessubs[0]->tax
+                            ]
+                        );
+                    }
+                }
+
+                // sales quote settings
+                $sq_settings = SalesQuoteSetting::where("qid",$items->quote_id)->get();
+
+                if (count($sq_settings) > 0) {
+                    foreach($sq_settings as $sqs) {
+                        $sq_save_settings = SalesQuoteSetting::firstOrNew(
+                            [
+                                "key"           => $qoute_newid,
+                                "value"         => $sqs->value,
+                                "qid"           => $sqs->qid,
+                                "workspace"     => $sqs->workspace,
+                                "created_by"    => Auth::user()->id
+                            ]
+                        );
+                    }
                 }
 
                 // save to item additional information
                 // itemadditionalinfo;
                 // itemextensionflds;
-                $itemid = $items[0]->id;
+                $itemid = $items->id;
                 $newid  = $save_sqi->id;
 
                 $add_info = itemadditionalinfo::where("item_id",$itemid)->get();
@@ -1434,9 +1461,10 @@ class QuoteController extends Controller
                     foreach($add_info as $adinfo) {
                         $save_ai              = new itemadditionalinfo();
                         $save_ai->item_id     = $newid;
-                        $save_ai->title       = $add_info[0]->title;
-                        $save_ai->label       = $add_info[0]->label;
-                        $save_ai->description = $add_info[0]->description;
+                        $save_ai->title       = $adinfo->title;
+                        $save_ai->label       = $adinfo->label;
+                        $save_ai->description = $adinfo->description;
+                        $save_ai->save();
                     }
                 }
 
@@ -1446,10 +1474,11 @@ class QuoteController extends Controller
                     foreach($ext_flds as $ef) {
                         $ix                         = new itemextensionflds();
                         $ix->itemid                 = $newid;
-                        $ix->product_services_id    = $ef[0]->product_services_id;
-                        $ix->shippingfee            = $ef[0]->shippingfee;
-                        $ix->endoflife              = $ef[0]->endoflife;
-                        $ix->markupstatus           = $ef[0]->markupstatus;
+                        $ix->product_services_id    = $ef->product_services_id;
+                        $ix->shippingfee            = $ef->shippingfee;
+                        $ix->endoflife              = $ef->endoflife;
+                        $ix->markupstatus           = $ef->markupstatus;
+                        $ix->save();
                     }
                 }
             }
