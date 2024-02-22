@@ -1162,7 +1162,11 @@
             $(document).find("#info_label").val(null);
             $(document).find("#info_desc").val(null);
 
-            $("<span class='btn btn-sm btn-primary mx-1 open_info' data-tab='"+tabname+"' data-id='"+tab_id+"' id='"+tab_id+"'> &nbsp; </span>").appendTo("#tab_nav_info");
+            $(document).find("#infolabel").html("Information Label");
+            $(document).find("#infodesc").html("Information Description");
+
+            $(document).find(".open_info").removeClass("sel_openitem");
+            $("<span class='btn btn-sm btn-primary mx-1 open_info sel_openitem' data-tab='"+tabname+"' data-id='"+tab_id+"' id='"+tab_id+"'> &nbsp; </span>").appendTo("#tab_nav_info");
             $(document).find("#info_tab").show();
         });
 
