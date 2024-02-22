@@ -1075,10 +1075,15 @@
         var tblloc         = $(document).find("#tblLocations");
         var doc            = $(this);
 
+        var dis = $(this).find(".deletehtml");
+        dis.html("Deleting...");
         postAjax("{{route('salesquote.deletethis')}}", data , function(response){
             if (response) {
+                dis.html("Delete");
                 alert("Items are deleted");
-
+                
+                // tblloc.children(".selectedTr").remove();
+                // get_computetotal( qid );
                 tblloc.children().remove();
                 showquote_items(qid);
                 trs                = [];
@@ -1091,7 +1096,11 @@
     $(document).on("click",".copythis", function(){
         var qid = $(document).find("#qid").val();
 
+        var dis = $(this).find(".copyhtml");
+        dis.html("copying...");
+
         postAjax("{{route('salesquote.copythis')}}", {ids : trs}, function(response){
+            dis.html("Copy");
             appendTolist(response);
 
             // var grpid = $(this).data("grpid");
@@ -1100,7 +1109,7 @@
             //     compute_subs(grpid);
             // }
 
-             get_computetotal( qid );
+            get_computetotal( qid );
             
         });
     });
@@ -2177,10 +2186,10 @@
                         <i class="ti ti-eye"></i> <span class="hide-mob"> View Item Details </span>
                     </a>
                     <a style="display:none;" class="border-right mr-5 deletethis" data-title="{{ __('Delete') }}" title="{{ __('Delete') }}" data-toggle="tooltip" title="{{ __('Delete') }}">
-                        <i class="ti ti-trash"></i> <span class="hide-mob"> Delete </span>
+                        <i class="ti ti-trash"></i> <span class="hide-mob deletehtml"> Delete </span>
                     </a>
-                    <a style="display:none;" class="border-right mr-5 copythis" data-title="{{ __('Delete') }}" title="{{ __('Copy') }}" data-toggle="tooltip" title="{{ __('Copy') }}">
-                        <i class="ti ti-copy"></i> <span class="hide-mob"> Copy </span>
+                    <a style="display:none;" class="border-right mr-5 copythis" data-title="{{ __('Copy') }}" title="{{ __('Copy') }}" data-toggle="tooltip" title="{{ __('Copy') }}">
+                        <i class="ti ti-copy"></i> <span class="hide-mob copyhtml"> Copy </span>
                     </a>
                     <a class="border-right mr-5 subcustomitem" data-ajax-popup="true" data-size="md" data-title="{{ __('Create New Custom Item') }}" data-url="{{route('salesquote.customitem')}}" data-toggle="tooltip" title="{{ __('Create Custom Item') }}">
                         <i class="ti ti-adjustments-plus"></i>

@@ -2097,7 +2097,7 @@ class SalesQuoteController extends Controller
                         $salesquoteid = DB::table($ts)->insertGetId($get);
 
                         // $showsettings    = $this->showsettings();
-                        $other_info      = $this->get_otherfields($salesquoteid, ["Manufacturer","Supplier"]);
+                        
                         $markups         = $this->get_markup();
                         $count           = 1;
                         $description     = $get['item'];
@@ -2124,12 +2124,14 @@ class SalesQuoteController extends Controller
                     $get = DB::table($ts)->where("item_id",$is)->get()->toArray();
 
                     if (count($get) > 0) {
-                        $get = (array) $get[0];
+                        foreach($get as $g) {
+                            $get = (array) $g;
 
-                            unset($get['id']);
-                            $get['item_id']         = $salesquoteid;
+                                unset($get['id']);
+                                $get['item_id']         = $salesquoteid;
 
-                        $id = DB::table($ts)->insertGetId($get);
+                            $id = DB::table($ts)->insertGetId($get);
+                        }
                     }
                 }
 
@@ -2151,6 +2153,8 @@ class SalesQuoteController extends Controller
                     }
                 }
             }
+            
+            $other_info      = $this->get_otherfields($salesquoteid, ["Manufacturer","Supplier"]);
             
             $values = [
                 "id"                => $salesquoteid,
