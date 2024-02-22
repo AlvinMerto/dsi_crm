@@ -1155,9 +1155,6 @@
             tab_id    = tab_id+1;
             tab_id    = "tab_"+tab_id;
 
-            $(document).find("#"+tab_id).siblings().removeClass("sel_openitem");
-            $(document).find("#"+tab_id).addClass("sel_openitem");
-
             $(document).find("#info_title").val(null);
             $(document).find("#info_label").val(null);
             $(document).find("#info_desc").val(null);

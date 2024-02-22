@@ -543,9 +543,10 @@
                     // console.log(response['sales']);
                     profit        = response['sales'][0].totalprofit;
                     totalcost     = response['sales'][0].totalcost;
-                    totalgp       = response['sales'][0].markup+"&";
+                    totalgp       = response['sales'][0].markup+"%";
                     qty           = response['sales'][0].quantity;
                     price         = response['sales'][0].price;
+                    // price         = response['sales'][0].pricewithtax;
                     shippingfee   = response['sales'][0].shippingfee;
                     itemshipping  = response['sales'][0].itemshipping;
                     amount        = response['sales'][0].extended;
@@ -557,13 +558,14 @@
                     totalcost     = response['subs'][0].cost;
                     totalgp       = response['subs'][0].gp+"%";
                     qty           = response['subs'][0].qty;
-                    price         = response['subs'][0].price;
+                    // price         = response['subs'][0].price;
+                    price         = response['subs'][0].pricewithtax;
                     shippingfee   = response['subs'][0].shipping;
                     itemshipping  = response['subs'][0].itemshipping;
                     amount        = response['subs'][0].extended;
                     totalmaincost = 0;
                 }
-                
+                // alert(price);
                 if (undefined !== profit) {
                     $(document).find("#"+grp_id+"_profit").html( numberWithCommas( profit ) );
                 }

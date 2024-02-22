@@ -1780,12 +1780,12 @@ class SalesQuoteController extends Controller
                             // }
 
                             if (isset($showsettings['pricewithtax'])) {
-                                $html .= "<td class='number'>";
-                                // if ($intextbox) {
-                                //     $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($pricewithtax,2)."'/>";
-                                // } else {
+                                $html .= "<td class='number'>"; 
+                                if ($intextbox) {
+                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($pricewithtax,2)."'/>";
+                                } else {
                                     $html .= number_format($pricewithtax,2);
-                                // }
+                                }
                                 $html .= "</td>";
                             }
 
@@ -2155,7 +2155,7 @@ class SalesQuoteController extends Controller
             }
             
             $other_info      = $this->get_otherfields($salesquoteid, ["Manufacturer","Supplier"]);
-            
+
             $values = [
                 "id"                => $salesquoteid,
                 "profit"            => $profit,
@@ -2390,6 +2390,10 @@ class SalesQuoteController extends Controller
             $a->cost   = number_format($a->cost,2);
             $a->price  = number_format($a->price,2);
             $a->profit = number_format($a->profit,2);
+            $a->pricewithtax = number_format($a->pricewithtax,2);
+            $a->extended = number_format($a->extended,2);
+            $a->shipping = number_format($a->shipping,2);
+            $a->itemshipping = number_format($a->itemshipping,2);
 
             return $a;
         }, $subs['subs']);
