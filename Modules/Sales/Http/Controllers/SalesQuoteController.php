@@ -1500,7 +1500,6 @@ class SalesQuoteController extends Controller
                 $html .= "<th style='text-align:left;'>Description</th>";
             }
 
-            
 
             if (isset($showsettings['qty'])) {
                 $html .= "<th style='width: 0px; text-align:center;'>QTY</th>";
