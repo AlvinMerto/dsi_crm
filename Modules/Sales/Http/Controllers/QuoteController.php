@@ -32,7 +32,7 @@ use Modules\Sales\Entities\SalesQuoteItem;
 use Modules\Sales\Entities\SalesQuote;
 use Modules\Sales\Entities\salessubs;
 
-use Modules\Sales\Entities\itemadditionalinfo;
+use Modules\Sales\Entities\itemadditionalinfo as itemadditionalinfo;
 use Modules\Sales\Entities\itemextensionflds;
 use Modules\Sales\Entities\SalesQuoteSetting;
 

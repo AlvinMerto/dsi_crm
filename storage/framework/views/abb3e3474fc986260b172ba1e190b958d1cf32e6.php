@@ -698,7 +698,7 @@
 
                 //if (undefined !== grpid) {
                     //alert(grpid);
-                    compute_subs(grpid, istaxed);
+                     compute_subs(grpid, istaxed);
                 //} else {
                     //alert("undefined")
                 //}
