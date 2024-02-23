@@ -84,7 +84,7 @@ class SalesQuoteController extends Controller
             // 2024-01-15
             $issue_date   = date("Y-m-d");
 
-            $date_valid   = null;
+            $date_valid   = date("Y-m-d", strtotime("+30 days"));
             return view('sales::salesquote.create',compact('customers','quote_number','users','showsection','issue_date','date_valid'));
         }
         else
@@ -1519,11 +1519,11 @@ class SalesQuoteController extends Controller
             // }
 
             if (isset($showsettings['price'])) { // price with tax
-                $html .= "<th style='width: 0px; text-align:right;'>Price</th>";
+                $html .= "<th style='width: 1%; text-align:right;'>Price</th>";
             }
 
             if (isset($showsettings['extended'])) {
-                $html .= "<th style='width: 0px; text-align:right;'>Extended</th>";
+                $html .= "<th style='width: 1%; text-align:right;'>Extended</th>";
             }
 
             if ($qt_window == true) {
@@ -1783,7 +1783,7 @@ class SalesQuoteController extends Controller
                             if (isset($showsettings['price'])) { // price with tax :: textsubtotal
                                 $html .= "<td class='number'>"; 
                                 if ($intextbox) {
-                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class=' form-control' type='text' value='".number_format($pricewithtax,2)."'/>";
+                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price' data-removecomma = 'true' style='border:0px;font-weight:bold;' class=' form-control' type='text' value='".number_format($pricewithtax,2)."'/>";
                                 } else {
                                     $html .= number_format($pricewithtax,2);
                                 }
@@ -1793,7 +1793,7 @@ class SalesQuoteController extends Controller
                             if (isset($showsettings['extended'])) {
                                 $html .= "<td class='number'>";
                                 if ($intextbox) {
-                                    $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='font-weight:bold;' class=' form-control' type='text' value='".number_format($amount,2)."'/>";
+                                    $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='border:0px;font-weight:bold;' class=' form-control' type='text' value='".number_format($amount,2)."'/>";
                                 } else {
                                     $html .= number_format($amount,2); 
                                 }

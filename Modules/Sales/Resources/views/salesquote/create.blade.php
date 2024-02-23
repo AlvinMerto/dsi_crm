@@ -1458,7 +1458,7 @@
                                             {{ Form::label('quote_validity', __('Quote Validity'), ['class' => 'form-label']) }}
                                             <span class="text-danger">*</span>
                                             <div class="form-icon-user">
-                                                <input type="text" name="quote_validity" id="quote_validity" data-value='<?php echo $date_valid; ?>' required class="form-control curdatepicker-input">
+                                                <input type='date' id='quote_validity' class='form-control' value='<?php echo $date_valid; ?>'/>
                                             </div>
                                         </div>
                                     </div>
@@ -1591,6 +1591,9 @@
             scrollTop: $(document).find(".topdiv_create, #topdiv_create").offset().top-10
         },1000);
 
+        // $( "#quote_validity" ).datepicker({ defaultDate: new Date() });
+        // var dateval = $( "#quote_validity" ).data("value");
+        // $(document).find( "#quote_validity" ).datepicker({ defaultDate: 30 })
     });
 
     $(document).on("click","#email_quote", function(){

@@ -230,10 +230,10 @@
         <?php if (isset($qt_window)) { ?>
             <?php if ($qt_window == true) { ?>
                 <?php if (isset($showsettings['tax'])) { ?>
-                    <td id="<?php echo $values['id']."_tax_value"; ?>" class="number"> 
+                    <td id="<?php echo $values['id']."_tax_value"; ?>" class="number" style='width: 0px;'> 
                         <?php echo number_format($values['tax_value'],2); ?> 
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center; width: 0px;">
                         <?php
                             $ischecked = "checked";
 
