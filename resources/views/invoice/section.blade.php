@@ -525,7 +525,7 @@
             dis.remove();
         }
 
-        function compute_subs(grp_id) {
+        function compute_subs(grp_id, istaxed = false) {
             postAjax("{{route('salesquote.compute_subtotal')}}", {grp_id:grp_id}, function(response){
                 var theindex      = null;
                 var profit        = 0;
@@ -562,14 +562,19 @@
                     totalcost     = response['subs'][0].cost;
                     totalgp       = response['subs'][0].gp+"%";
                     qty           = response['subs'][0].qty;
-                    // price         = response['subs'][0].price;
-                    price         = response['subs'][0].pricewithtax;
+
+                    // if (istaxed == true) {
+                        price         = response['subs'][0].pricewithtax;
+                    // } else {
+                    //     price         = response['subs'][0].price;
+                    // }
+                
                     shippingfee   = response['subs'][0].shipping;
                     itemshipping  = response['subs'][0].itemshipping;
                     amount        = response['subs'][0].extended;
                     totalmaincost = 0;
                 }
-                // alert(price);
+                
                 if (undefined !== profit) {
                     $(document).find("#"+grp_id+"_profit").html( numberWithCommas( profit ) );
                 }
@@ -673,16 +678,32 @@
                 "istaxable"  : null
             };
 
+            var istaxed = false;
             if ( $(this).is(":checked") ){
                 data['istaxable'] = true;
+                istaxed = true;
             } else {
                 data['istaxable'] = false;
+                istaxed = false;
             }
 
            // console.log(data); return;
+            var dis = $(this);
+
+            var grpid = $(this).parent().parent().parent().data("tid");
 
             postAjax("{{route('quote.updatetax')}}", data, function(response){
+                // console.log(response);
                 $(document).find("#"+tr_id+"_tax_value").html(response);
+
+                //if (undefined !== grpid) {
+                    //alert(grpid);
+                    // compute_subs(grpid, istaxed);
+                //} else {
+                    //alert("undefined")
+                //}
+                
+                edittext(dis, "sales_quotes_items");
                 get_computetotal( qt );
             });
         });
