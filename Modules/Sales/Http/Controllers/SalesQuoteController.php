@@ -1518,7 +1518,7 @@ class SalesQuoteController extends Controller
             //     $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
             // }
 
-            if (isset($showsettings['pricewithtax'])) {
+            if (isset($showsettings['price'])) { // price with tax
                 $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
             }
 
@@ -1556,7 +1556,8 @@ class SalesQuoteController extends Controller
                         $grpid        = $aa->grp_id;
                         $desc         = null;
                         $qty          = 1;
-                        $price        = $st['subs'][0]->price;
+
+                        // $price        = $st['subs'][0]->price;
                         $pricewithtax = $st['subs'][0]->pricewithtax;
 
                         $shippingfee  = $st['subs'][0]->shipping; 
@@ -1779,10 +1780,10 @@ class SalesQuoteController extends Controller
                             //     $html .= "</td>";
                             // }
 
-                            if (isset($showsettings['pricewithtax'])) {
+                            if (isset($showsettings['price'])) { // price with tax :: textsubtotal
                                 $html .= "<td class='number'>"; 
                                 if ($intextbox) {
-                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($pricewithtax,2)."'/>";
+                                    $html .= "<input id = '{$grpid}_price' data-id='{$grpid}' data-fld='price'  data-removecomma = 'true' style='font-weight:bold;' class=' form-control' type='text' value='".number_format($pricewithtax,2)."'/>";
                                 } else {
                                     $html .= number_format($pricewithtax,2);
                                 }
@@ -1792,7 +1793,7 @@ class SalesQuoteController extends Controller
                             if (isset($showsettings['extended'])) {
                                 $html .= "<td class='number'>";
                                 if ($intextbox) {
-                                    $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='font-weight:bold;' class='textsubtotal form-control' type='text' value='".number_format($amount,2)."'/>";
+                                    $html .="<input id = '{$grpid}_amount' data-id='{$grpid}' data-fld='extended' data-removecomma = 'true' style='font-weight:bold;' class=' form-control' type='text' value='".number_format($amount,2)."'/>";
                                 } else {
                                     $html .= number_format($amount,2); 
                                 }

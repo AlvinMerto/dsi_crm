@@ -538,8 +538,10 @@
                 var amount        = 0;
                 var totalmaincost = 0;
 
+                console.log(response);
+
                 if (response['sales'].length > 0) {
-                    // console.log("sales");
+                    console.log("sales");
                     // console.log(response['sales']);
                     profit        = response['sales'][0].totalprofit;
                     totalcost     = response['sales'][0].totalcost;
@@ -551,8 +553,10 @@
                     itemshipping  = response['sales'][0].itemshipping;
                     amount        = response['sales'][0].extended;
                     totalmaincost = 0;
-                } else if (response['subs'].length > 0) {
-                    // console.log("subs");
+                } 
+                
+                if (response['subs'].length > 0) {
+                    console.log("subs");
                     // console.log(response['subs']);
                     profit        = response['subs'][0].profit;
                     totalcost     = response['subs'][0].cost;
@@ -1409,8 +1413,9 @@
         postAjax("<?php echo e(route('salesquote.blursave')); ?>", data, function(response){
             if (table == "sales_quotes_items") {
                 $(document).find("#"+disid+"_profit").html(response['profit']);
-                $(document).find("#"+disid+"_price").html(response['price']);
+                //$(document).find("#"+disid+"_price").html(response['price']);
                 $(document).find("#"+disid+"_amount").html(response['amount']);
+                
                 $(document).find("#"+disid+"_extended").html(response['extended']);
                 $(document).find("#"+disid+"_tax_value").html(response['itemTaxRate']);
 
