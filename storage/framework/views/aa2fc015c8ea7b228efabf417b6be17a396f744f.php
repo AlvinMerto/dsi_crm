@@ -1465,7 +1465,7 @@
 
                                             <span class="text-danger">*</span>
                                             <div class="form-icon-user">
-                                                <input type='date' id='quote_validity' class='form-control' value='<?php echo $date_valid; ?>'/>
+                                                <input type='date' id='quote_validity' name='quote_validity' class='form-control' value='<?php echo $date_valid; ?>'/>
                                             </div>
                                         </div>
                                     </div>
