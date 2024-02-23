@@ -1462,38 +1462,38 @@ class SalesQuoteController extends Controller
 
             $html  = "<thead>";
             $html .= "<tr>";
-            $html .= "<th style='min-width: 5%; padding:10px 0px; text-align:center;'>*</th>";
+            $html .= "<th style='width: 0px; padding:10px 0px; text-align:center;'>*</th>";
 
             if (isset($showsettings['profit'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Profit</th>";
+                $html .= "<th style='width: 0px; text-align:right;'>Profit</th>";
             }
 
             if (isset($showsettings['markup'])) {
-                $html .= "<th style='min-width: 5%; text-align:center;'>Mark-Up</th>";
+                $html .= "<th style='width: 0px; text-align:center;'>Mark-Up</th>";
             }
 
             if (isset($showsettings['cost'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Unit Cost</th>";
+                $html .= "<th style='width: 0px; text-align:right;'>Unit Cost</th>";
             }
 
             if (isset($showsettings['shipping'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Unit Shipping Cost</th>";
+                $html .= "<th style='width: 0px; text-align:right;'>Unit Shipping Cost</th>";
             }
 
             if (isset($showsettings['supplier'])) {
-                $html .= "<th style='min-width: 5%;'>Supplier</th>";
+                $html .= "<th style='width: 0px;'>Supplier</th>";
             }
 
             if (isset($showsettings['supplier_num'])) {
-                $html .= "<th style='min-width: 5%;'>Supplier #</th>";
+                $html .= "<th style='width: 0px;'>Supplier #</th>";
             }
 
             if (isset($showsettings['manu'])) {
-                $html .= "<th style='min-width: 5%;'>MFG</th>";
+                $html .= "<th style='width: 0px;'>MFG</th>";
             }
 
             if (isset($showsettings['manu_num'])) {
-                $html .= "<th style='min-width: 5%;'>MFG #</th>";
+                $html .= "<th style='width: 0px;'>MFG #</th>";
             }
 
             if (isset($showsettings['description'])) {
@@ -1503,7 +1503,7 @@ class SalesQuoteController extends Controller
             
 
             if (isset($showsettings['qty'])) {
-                $html .= "<th style='min-width: 5%; text-align:center;'>QTY</th>";
+                $html .= "<th style='width: 0px; text-align:center;'>QTY</th>";
             }
 
             // if (isset($showsettings['itemshipping'])) {
@@ -1519,16 +1519,16 @@ class SalesQuoteController extends Controller
             // }
 
             if (isset($showsettings['price'])) { // price with tax
-                $html .= "<th style='min-width: 5%; text-align:right;'>Price</th>";
+                $html .= "<th style='width: 0px; text-align:right;'>Price</th>";
             }
 
             if (isset($showsettings['extended'])) {
-                $html .= "<th style='min-width: 5%; text-align:right;'>Extended</th>";
+                $html .= "<th style='width: 0px; text-align:right;'>Extended</th>";
             }
 
             if ($qt_window == true) {
                 if (isset($showsettings['tax'])) {
-                    $html .= "<th style='min-width: 5%; text-align:center;' colspan='2'>Tax</th>";
+                    $html .= "<th style='width: 0px; text-align:center;' colspan='2'>Tax</th>";
                     // $html .= "<th> </th>";
                 }
             }
