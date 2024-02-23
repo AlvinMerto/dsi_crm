@@ -538,7 +538,7 @@
                 var amount        = 0;
                 var totalmaincost = 0;
 
-                console.log(response);
+                // console.log(response);
 
                 if (response['sales'].length > 0) {
                     console.log("sales");
@@ -566,7 +566,7 @@
                     // if (istaxed == true) {
                         price         = response['subs'][0].pricewithtax;
                     // } else {
-                    //     price         = response['subs'][0].price;
+                        price_         = response['subs'][0].price;
                     // }
                 
                     shippingfee   = response['subs'][0].shipping;
@@ -575,6 +575,7 @@
                     totalmaincost = 0;
                 }
                 
+               
                 if (undefined !== profit) {
                     $(document).find("#"+grp_id+"_profit").html( numberWithCommas( profit ) );
                 }
@@ -696,14 +697,15 @@
                 // console.log(response);
                 $(document).find("#"+tr_id+"_tax_value").html(response);
 
+                edittext(dis, "sales_quotes_items");
+
                 //if (undefined !== grpid) {
                     //alert(grpid);
-                     compute_subs(grpid, istaxed);
+                     compute_subs(grpid);
                 //} else {
                     //alert("undefined")
                 //}
                 
-                edittext(dis, "sales_quotes_items");
                 get_computetotal( qt );
             });
         });
