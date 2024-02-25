@@ -1271,14 +1271,20 @@ class QuoteController extends Controller
         $show           = (new SalesQuoteController)->showsettings($id);
         $quote          = (new SalesQuoteController)->get_quote_item($id, $show, false, false);
 
-        // return view('sales::quote.templates.quotepdf', compact("quote"));
-        
-        $pdf = Pdf::loadView('sales::quote.templates.quotepdf', compact("quote"));
+        $salesquote     = SalesQuote::where("id",$id)->get();
+
+        $qt_num         = \Modules\Sales\Entities\SalesQuote::quoteNumberFormat($salesquote[0]->quote_id);
+        $logo           =  asset('uploads/logo/logo_light.png');
+
+        // echo $salesquote[0]->customer->name;
+
+        $pdf = Pdf::loadView('sales::quote.templates.quotepdf', compact("quote","show","logo","salesquote","qt_num"));
         $pdf = $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
 
         $pdf = $pdf->setPaper('a4', 'portrait');
+        $pdf->render(); 
+
         return $pdf->download();
-       
     }
 
     function respond($qid) {
@@ -1364,7 +1370,7 @@ class QuoteController extends Controller
             $savenew_                   = $sq_collection[0];
             $qtid                       = $sq_collection[0]['quote_id'];
 
-            // $savenew_['quote_id']       = ($qtid+1);
+            $savenew_['quote_id']       = (new SalesQuoteController)->quoteNumber();
             $savenew_['contact_person'] = $cont_person;
             $savenew_['customer_id']    = $company_id;
             $savenew_['workspace']      = $sq_collection[0]['workspace'];
@@ -1373,6 +1379,7 @@ class QuoteController extends Controller
             // save new quote 
             $save = SalesQuote::create($savenew_)->id;
 
+            //$qoute_newid = (new SalesQuoteController)->quoteNumber();
             // create save quote items
             foreach($sq_collection1[0]->items as $items) {
                 $qoute_newid = $save;

@@ -215,7 +215,7 @@
             </td> -->
         <?php //} ?>
 
-        <?php if (isset($showsettings['pricewithtax'])) { ?>
+        <?php if (isset($showsettings['price'])) { ?>
             <td class="number" id="<?php echo $values['id']."_amount"; ?>"> 
                 <?php echo number_format($values['amount'],2); ?> 
             </td>

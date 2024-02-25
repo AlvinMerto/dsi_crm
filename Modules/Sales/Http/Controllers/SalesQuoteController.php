@@ -1310,10 +1310,11 @@ class SalesQuoteController extends Controller
         if(\Auth::user()->can('salesquote create'))
         {
             $showsection  = true;
-            $quote_number = SalesQuote::quoteNumberFormat($this->quoteNumber());
+            //$quote_number = SalesQuote::quoteNumberFormat($this->quoteNumber());
             
             $thequote     = $salesquote=SalesQuote::find($quoteid);
-                                        
+
+            $quote_number = SalesQuote::quoteNumberFormat($thequote->quote_id);                            
             $customers    = SalesAccount::get()->pluck("name","id");
             $cont_person  = Contact::get()->pluck("name","account");
         
@@ -1473,11 +1474,11 @@ class SalesQuoteController extends Controller
             }
 
             if (isset($showsettings['cost'])) {
-                $html .= "<th style='width: 0px; text-align:right;'>Unit Cost</th>";
+                $html .= "<th style='width: 0px; text-align:center;'>Unit Cost</th>";
             }
 
             if (isset($showsettings['shipping'])) {
-                $html .= "<th style='width: 0px; text-align:right;'>Unit Shipping Cost</th>";
+                $html .= "<th style='width: 0px; text-align:center;'>Unit Shipping Cost</th>";
             }
 
             if (isset($showsettings['supplier'])) {
