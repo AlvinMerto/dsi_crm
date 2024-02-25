@@ -121,11 +121,11 @@
 
 <div style='border-top:5px double;'>
     <?php if (isset($show['tax'])) { ?>
-        <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo "3,405.34"; ?> </span> </p>
-        <p style="text-align: right;padding: 0px 0px; margin:10px;"> Tax &nbsp; &nbsp; &nbsp; <span> <?php echo "23.23"; ?> </span> </p>
+        <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['subtotal']; ?> </span> </p>
+        <p style="text-align: right;padding: 0px 0px; margin:10px;"> Tax &nbsp; &nbsp; &nbsp; <span> <?php echo $total['tax']; ?> </span> </p>
     <?php } else { ?>
-        <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo "3,094.36"; ?> </span> </p>
+        <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['totalamount']; ?> </span> </p>
     <?php } ?>
-        <p style="text-align: right;padding: 0px 0px; margin:10px;">  <strong> Total </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo "3,453.63"; ?> </span> </p>
+        <p style="text-align: right;padding: 0px 0px; margin:10px;">  <strong> Total </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['totalamount']; ?> </span> </p>
 </div>
 </div>

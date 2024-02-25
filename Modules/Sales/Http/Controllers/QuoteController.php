@@ -1270,6 +1270,7 @@ class QuoteController extends Controller
         // $id             = 78;
         $show           = (new SalesQuoteController)->showsettings($id);
         $quote          = (new SalesQuoteController)->get_quote_item($id, $show, false, false);
+        $total          = (new SalesQuoteController)->compute_totality($id);
 
         $salesquote     = SalesQuote::where("id",$id)->get();
 
@@ -1278,7 +1279,7 @@ class QuoteController extends Controller
 
         // echo $salesquote[0]->customer->name;
 
-        $pdf = Pdf::loadView('sales::quote.templates.quotepdf', compact("quote","show","logo","salesquote","qt_num"));
+        $pdf = Pdf::loadView('sales::quote.templates.quotepdf', compact("quote","show","logo","salesquote","qt_num","total"));
         $pdf = $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
 
         $pdf = $pdf->setPaper('a4', 'portrait');

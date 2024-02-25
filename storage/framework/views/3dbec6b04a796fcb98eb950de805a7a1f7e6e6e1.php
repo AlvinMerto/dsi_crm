@@ -100,69 +100,98 @@
         <?php } ?>
 
         <?php 
-            if (count($values['otherinfo']) > 0) {
-                if ($values['otherinfo'][0]->title =="Supplier") {
-                    echo "<td style='position:relative;'>";
-                        echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
-                    echo "</td>";
-                    echo "<td style='position:relative;'>";
-                        echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
-                    echo "</td>";
-
-                    if (isset($values['otherinfo'][1])) {
-                        if ($values['otherinfo'][1]->title == "Manufacturer") {
+            
+                if (count($values['otherinfo']) > 0) {
+                    if ($values['otherinfo'][0]->title =="Supplier") {
+                        if (isset($showsettings['supplier'])) {
                             echo "<td style='position:relative;'>";
-                                echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->description}</textarea>";
+                                echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
                             echo "</td>";
-                            echo "<td style='position:relative;'>";
-                                echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->label}</textarea>";
-                            echo "</td>";
+                        } else {
+                            echo "<td> </td>";
                         }
-                    } else {
-                        echo "<td> &nbsp; </td>";
+
+                        if (isset($showsettings['supplier_num'])) {
+                            echo "<td style='position:relative;'>";
+                                echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
+                            echo "</td>";
+                        } else {
+                            echo "<td> </td>";
+                        }
+
+                        if (isset($values['otherinfo'][1])) {
+                            if ($values['otherinfo'][1]->title == "Manufacturer") {
+                                if (isset($showsettings['manu'])) {
+                                    echo "<td style='position:relative;'>";
+                                        echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->description}</textarea>";
+                                    echo "</td>";
+                                } else {
+                                    echo "<td> </td>";
+                                }
+
+                                if (isset($showsettings['manu_num'])) {
+                                    echo "<td style='position:relative;'>";
+                                        echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->label}</textarea>";
+                                    echo "</td>";
+                                } else {
+                                    echo "<td> </td>";
+                                }
+                            }
+                        } else {
+                            echo "<td> &nbsp; </td>";
+                            echo "<td> &nbsp; </td>";
+                        }
+                    } else if ($values['otherinfo'][0]->title == "Manufacturer") {
+                        if (isset($values['otherinfo'][1])) {
+                            if ($values['otherinfo'][1]->title == "Supplier") {
+                                if (isset($showsettings['supplier'])) {
+                                    echo "<td style='position:relative;'>";
+                                        echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->description}</textarea>";
+                                    echo "</td>";
+                                } else {
+                                    echo "<td> </td>";
+                                }
+
+                                if (isset($showsettings['supplier_num'])) {
+                                    echo "<td style='position:relative;'>";
+                                        echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->label}</textarea>";
+                                    echo "</td>";
+                                } else {
+                                    echo "<td> </td>";
+                                }
+                            }
+                        } else {
+                            echo "<td> &nbsp; </td>";
+                            echo "<td> &nbsp; </td>";
+                        }
+
+                        // echo "<td style='position:relative;'>";
+                        //     echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
+                        // echo "</td>";
+                        // echo "<td style='position:relative;'>";
+                        //     echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
+                        // echo "</td>";
+                    }
+
+                
+                } else {
+                    if (isset($showsettings['supplier'])) {
                         echo "<td> &nbsp; </td>";
                     }
-                } else if ($values['otherinfo'][0]->title == "Manufacturer") {
-                    if (isset($values['otherinfo'][1])) {
-                        if ($values['otherinfo'][1]->title == "Supplier") {
-                            echo "<td style='position:relative;'>";
-                                echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->description}</textarea>";
-                            echo "</td>";
-                            echo "<td style='position:relative;'>";
-                                echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->label}</textarea>";
-                            echo "</td>";
-                        }
-                    } else {
-                        echo "<td> &nbsp; </td>";
+
+                    if (isset($showsettings['supplier_num'])) { 
                         echo "<td> &nbsp; </td>";
                     }
 
-                    echo "<td style='position:relative;'>";
-                        echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
-                    echo "</td>";
-                    echo "<td style='position:relative;'>";
-                        echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
-                    echo "</td>";
-                }
+                    if (isset($showsettings['manu'])) {
+                        echo "<td> &nbsp; </td>";
+                    }
 
-               
-            } else {
-                if (isset($showsettings['supplier'])) {
-                    echo "<td> &nbsp; </td>";
+                    if (isset($showsettings['manu_num'])) {
+                        echo "<td> &nbsp; </td>";
+                    }
                 }
-
-                if (isset($showsettings['supplier_num'])) { 
-                    echo "<td> &nbsp; </td>";
-                }
-
-                if (isset($showsettings['manu'])) {
-                    echo "<td> &nbsp; </td>";
-                }
-
-                if (isset($showsettings['manu_num'])) {
-                    echo "<td> &nbsp; </td>";
-                }
-            }
+            
         ?>
 
         <?php if (isset($showsettings['description'])) { ?>
