@@ -108,7 +108,9 @@
                                 echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
                             echo "</td>";
                         } else {
-                            echo "<td> </td>";
+                            if ($qt_window == true) {
+                                echo "<td> </td>";
+                            }
                         }
 
                         if (isset($showsettings['supplier_num'])) {
@@ -116,7 +118,9 @@
                                 echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
                             echo "</td>";
                         } else {
-                            echo "<td> </td>";
+                            if ($qt_window == true) {
+                                echo "<td> </td>";
+                            }
                         }
 
                         if (isset($values['otherinfo'][1])) {
@@ -126,7 +130,9 @@
                                         echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->description}</textarea>";
                                     echo "</td>";
                                 } else {
-                                    echo "<td> </td>";
+                                    if ($qt_window == true) {
+                                        echo "<td> </td>";
+                                    }
                                 }
 
                                 if (isset($showsettings['manu_num'])) {
@@ -134,12 +140,19 @@
                                         echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->label}</textarea>";
                                     echo "</td>";
                                 } else {
-                                    echo "<td> </td>";
+                                    if ($qt_window == true) {
+                                        echo "<td> </td>";
+                                    }
                                 }
                             }
                         } else {
-                            echo "<td> &nbsp; </td>";
-                            echo "<td> &nbsp; </td>";
+                            if ($qt_window == true) {
+                                echo "<td> </td>";
+                            }
+
+                            if ($qt_window == true) {
+                                echo "<td> </td>";
+                            }
                         }
                     } else if ($values['otherinfo'][0]->title == "Manufacturer") {
                         if (isset($values['otherinfo'][1])) {
@@ -149,7 +162,9 @@
                                         echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->description}</textarea>";
                                     echo "</td>";
                                 } else {
-                                    echo "<td> </td>";
+                                    if ($qt_window == true) {
+                                        echo "<td> </td>";
+                                    }
                                 }
 
                                 if (isset($showsettings['supplier_num'])) {
@@ -157,23 +172,43 @@
                                         echo "<textarea data-id='{$values['otherinfo'][1]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][1]->label}</textarea>";
                                     echo "</td>";
                                 } else {
-                                    echo "<td> </td>";
+                                    if ($qt_window == true) {
+                                        echo "<td> </td>";
+                                    }
                                 }
                             }
                         } else {
-                            echo "<td> &nbsp; </td>";
-                            echo "<td> &nbsp; </td>";
+                            if ($qt_window == true) {
+                                echo "<td> </td>";
+                            }
+
+                            if ($qt_window == true) {
+                                echo "<td> </td>";
+                            }
                         }
 
-                        echo "<td style='position:relative;'>";
-                            echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
-                        echo "</td>";
-                        echo "<td style='position:relative;'>";
-                            echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
-                        echo "</td>";
+                        if (isset($showsettings['manu'])) {
+                            echo "<td style='position:relative;'>";
+                                echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
+                            echo "</td>";
+                        } else {
+                            if ($qt_window == true) {
+                                echo "<td> </td>";
+                            }
+                        }
+    
+                        if (isset($showsettings['manu_num'])) {
+                            echo "<td style='position:relative;'>";
+                                echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'label' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->label}</textarea>";
+                            echo "</td>";
+                        } else {
+                            if ($qt_window == true) {
+                                echo "<td> </td>";
+                            }
+                        }
+
                     }
 
-                
                 } else {
                     if (isset($showsettings['supplier'])) {
                         echo "<td> &nbsp; </td>";
