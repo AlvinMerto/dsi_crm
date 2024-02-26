@@ -2493,8 +2493,9 @@ class SalesQuoteController extends Controller
             }
 
             if ( $sqi->type == "labor" ) {
-                $totals['product'] += $sqi->price;
-                // $totals['labor']   += $sqi->price; // $sqi->price;
+                // $labor              = $sqi->price*
+                $totals['product'] += $sqi->extended;
+                $totals['labor']   += $sqi->extended; // $sqi->price;
             }
 
             // if ($sqi->type == "shipping") {
