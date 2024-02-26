@@ -102,15 +102,17 @@
         <?php 
             
                 if (count($values['otherinfo']) > 0) {
+
                     if ($values['otherinfo'][0]->title =="Supplier") {
                         if (isset($showsettings['supplier'])) {
+                            $supp     = true;
                             echo "<td style='position:relative;'>";
                                 echo "<textarea data-id='{$values['otherinfo'][0]->id}' data-fld = 'description' class='otherinfo_text form-control left-it'>{$values['otherinfo'][0]->description}</textarea>";
                             echo "</td>";
                         } else {
                             if ($qt_window == true) {
                                 echo "<td> </td>";
-                            }
+                            } 
                         }
 
                         if (isset($showsettings['supplier_num'])) {
@@ -120,6 +122,8 @@
                         } else {
                             if ($qt_window == true) {
                                 echo "<td> </td>";
+                            } else {
+                               
                             }
                         }
 
@@ -132,6 +136,8 @@
                                 } else {
                                     if ($qt_window == true) {
                                         echo "<td> </td>";
+                                    } else {
+                                       
                                     }
                                 }
 
@@ -142,16 +148,22 @@
                                 } else {
                                     if ($qt_window == true) {
                                         echo "<td> </td>";
+                                    } else {
+                                        
                                     }
                                 }
                             }
                         } else {
                             if ($qt_window == true) {
                                 echo "<td> </td>";
+                            } else {
+                                
                             }
 
                             if ($qt_window == true) {
                                 echo "<td> </td>";
+                            } else {
+                               
                             }
                         }
                     } else if ($values['otherinfo'][0]->title == "Manufacturer") {
@@ -164,6 +176,8 @@
                                 } else {
                                     if ($qt_window == true) {
                                         echo "<td> </td>";
+                                    } else {
+                                        
                                     }
                                 }
 
@@ -174,16 +188,22 @@
                                 } else {
                                     if ($qt_window == true) {
                                         echo "<td> </td>";
+                                    } else {
+                                        
                                     }
                                 }
                             }
                         } else {
                             if ($qt_window == true) {
                                 echo "<td> </td>";
+                            } else {
+                                
                             }
 
                             if ($qt_window == true) {
                                 echo "<td> </td>";
+                            } else {
+                                
                             }
                         }
 
@@ -194,6 +214,8 @@
                         } else {
                             if ($qt_window == true) {
                                 echo "<td> </td>";
+                            } else {
+                               
                             }
                         }
     
@@ -204,6 +226,8 @@
                         } else {
                             if ($qt_window == true) {
                                 echo "<td> </td>";
+                            } else {
+                               
                             }
                         }
 

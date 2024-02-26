@@ -277,7 +277,7 @@
                                             <table class="quoteviewtbl">
                                                 <?php echo $quote; ?>
                                             </table>
-                                            <div>
+                                            <div style='border-top:3px double;'>
                                                 <?php if (isset($show['tax'])) { ?>
                                                     <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> {{ company_setting('defult_currancy_symbol') }} &nbsp; <?php echo $total['subtotal']; ?> </span> </p>
                                                     <p style="text-align: right;padding: 0px 0px; margin:10px;"> Tax &nbsp; &nbsp; &nbsp; <span> <?php echo $total['tax']; ?> </span> </p>

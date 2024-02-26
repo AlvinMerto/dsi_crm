@@ -51,7 +51,33 @@
                 <tbody>
                     <tr>
                         <td>
-                            <table>
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="text-align:center;"> 
+                                        <?php
+                                            $ship_chk = null;
+                                            
+                                            if (isset($data['shipping'])) {
+                                                $ship_chk = "checked";
+                                            }
+                                        ?>
+                                        <input type='checkbox' class='settings_chk' value='shipping' id='ship_chk' <?php echo $ship_chk; ?>/>
+                                    </td>
+                                    <td> <label for='ship_chk'> Shipping <label></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center;"> 
+                                        <?php
+                                            $qty_chk = null;
+                                            
+                                            if (isset($data['qty'])) {
+                                                $qty_chk = "checked";
+                                            }
+                                        ?>
+                                        <input type='checkbox' class='settings_chk' value='qty' id='qty_chk' <?php echo $qty_chk; ?>/> 
+                                    </td>
+                                    <td> <label for='qty_chk'> Quantity <label></td>
+                                </tr>
                                 <tr>
                                     <td style="text-align:center;"> 
                                         <?php
@@ -78,141 +104,85 @@
                                     </td>
                                     <td> <label for='profit_chk'> Profit </label> </td>
                                 </tr> -->
-                                <tr>
+                                <!-- <tr>
                                     <td style="text-align:center;"> 
                                         <?php
-                                            $markup_chk = null;
+                                            // $markup_chk = null;
                                             
-                                            if (isset($data['markup'])) {
-                                                $markup_chk = "checked";
-                                            }
+                                            // if (isset($data['markup'])) {
+                                            //     $markup_chk = "checked";
+                                            // }
                                         ?>
-                                        <input type='checkbox' class='settings_chk' value='markup' id='markup_chk' <?php echo $markup_chk; ?>/> 
+                                        <input type='checkbox' class='settings_chk' value='markup' id='markup_chk' <?php // echo $markup_chk; ?>/> 
                                     </td>
                                     <td> <label for='markup_chk'> Markup <label> </td>
-                                </tr>
-                                <tr>
+                                </tr> -->
+                                <!-- <tr>
                                     <td style="text-align:center;"> 
                                         <?php
-                                            $cost_chk = null;
+                                            // $cost_chk = null;
                                             
-                                            if (isset($data['cost'])) {
-                                                $cost_chk = "checked";
-                                            }
+                                            // if (isset($data['cost'])) {
+                                            //     $cost_chk = "checked";
+                                            // }
                                         ?>
-                                        <input type='checkbox' class='settings_chk' value='cost' id='cost_chk' <?php echo $cost_chk; ?>/> 
+                                        <input type='checkbox' class='settings_chk' value='cost' id='cost_chk' <?php // echo $cost_chk; ?>/> 
                                     </td>
                                     <td> <label for='cost_chk'> Cost <label></td>
-                                </tr>
-                                <tr>
+                                </tr> -->
+                                <!-- <tr>
                                     <td style="text-align:center;"> 
                                         <?php
-                                            $sup_chk = null;
+                                            // $sup_chk = null;
                                             
-                                            if (isset($data['supplier'])) {
-                                                $sup_chk = "checked";
-                                            }
+                                            // if (isset($data['supplier'])) {
+                                            //     $sup_chk = "checked";
+                                            // }
                                         ?>
-                                        <input type='checkbox' class='settings_chk' value='supplier' id='sup_chk' <?php echo $sup_chk; ?>/> 
+                                        <input type='checkbox' class='settings_chk' value='supplier' id='sup_chk' <?php //echo $sup_chk; ?>/> 
                                     </td>
                                     <td> <label for='sup_chk'> Supplier <label></td>
-                                </tr>
-                                <tr>
+                                </tr> -->
+                                <!-- <tr>
                                     <td style="text-align:center;"> 
                                         <?php
-                                            $supnum_chk = null;
+                                            // $supnum_chk = null;
                                             
-                                            if (isset($data['supplier_num'])) {
-                                                $supnum_chk = "checked";
-                                            }
+                                            // if (isset($data['supplier_num'])) {
+                                            //     $supnum_chk = "checked";
+                                            // }
                                         ?>
-                                        <input type='checkbox' class='settings_chk' value='supplier_num' id='supnum_chk' <?php echo $supnum_chk; ?>/> 
+                                        <input type='checkbox' class='settings_chk' value='supplier_num' id='supnum_chk' <?php // echo $supnum_chk; ?>/> 
                                     </td>
-                                    <td> <label for='supnum_chk'> Supplier Number <label></td>
-                                </tr>
-                                <tr>
+                                    <td> <label for='supnum_chk'> Supplier Part # <label></td>
+                                </tr> -->
+                                <!-- <tr>
                                     <td style="text-align:center;"> 
                                         <?php
-                                            $manu_chk = null;
+                                            // $manu_chk = null;
                                             
-                                            if (isset($data['manu'])) {
-                                                $manu_chk = "checked";
-                                            }
+                                            // if (isset($data['manu'])) {
+                                            //     $manu_chk = "checked";
+                                            // }
                                         ?>
-                                        <input type='checkbox' class='settings_chk' value='manu' id='manu_chk' <?php echo $manu_chk; ?>/>
+                                        <input type='checkbox' class='settings_chk' value='manu' id='manu_chk' <?php //echo $manu_chk; ?>/>
                                     </td>
                                     <td> <label for='manu_chk'> Manufacturer <label></td>
-                                </tr>
-                                <tr>
+                                </tr> -->
+                                <!-- <tr>
                                     <td style="text-align:center;"> 
                                         <?php
-                                            $manu_num_chk = null;
+                                            // $manu_num_chk = null;
                                             
-                                            if (isset($data['manu_num'])) {
-                                                $manu_num_chk = "checked";
-                                            }
+                                            // if (isset($data['manu_num'])) {
+                                            //     $manu_num_chk = "checked";
+                                            // }
                                         ?>
-                                        <input type='checkbox' class='settings_chk' value='manu_num' id='manu_num_chk' <?php echo $manu_num_chk; ?>/>
+                                        <input type='checkbox' class='settings_chk' value='manu_num' id='manu_num_chk' <?php //echo $manu_num_chk; ?>/>
                                     </td>
-                                    <td> <label for='manu_num_chk'> Manufacturer Number <label></td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td>
-                            <table>
-                                
-                                <tr>
-                                    <td style="text-align:center;"> 
-                                        <?php
-                                            $qty_chk = null;
-                                            
-                                            if (isset($data['qty'])) {
-                                                $qty_chk = "checked";
-                                            }
-                                        ?>
-                                        <input type='checkbox' class='settings_chk' value='qty' id='qty_chk' <?php echo $qty_chk; ?>/> 
-                                    </td>
-                                    <td> <label for='qty_chk'> Quantity <label></td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:center;"> 
-                                        <?php
-                                            $ship_chk = null;
-                                            
-                                            if (isset($data['shipping'])) {
-                                                $ship_chk = "checked";
-                                            }
-                                        ?>
-                                        <input type='checkbox' class='settings_chk' value='shipping' id='ship_chk' <?php echo $ship_chk; ?>/>
-                                    </td>
-                                    <td> <label for='ship_chk'> Shipping <label></td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:center;"> 
-                                        <?php
-                                            $price_chk = null;
-                                            
-                                            if (isset($data['price'])) {
-                                                $price_chk = "checked";
-                                            }
-                                        ?>
-                                        <input type='checkbox' class='settings_chk' value='price' id='price_chk' <?php echo $price_chk; ?>/> 
-                                    </td>
-                                    <td> <label for='price_chk'> Price <label></td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:center;"> 
-                                        <?php
-                                            $ext_chk = null;
-                                            
-                                            if (isset($data['price'])) {
-                                                $ext_chk = "checked";
-                                            }
-                                        ?>
-                                        <input type='checkbox' class='settings_chk' value='extended' id='ext_chk' <?php echo $ext_chk; ?>/> 
-                                    </td>
-                                    <td> <label for='ext_chk'> Extended <label></td>
-                                </tr>  
+                                    <td> <label for='manu_num_chk'> Manufacturer Part # <label></td>
+                                </tr> -->
+
                                 <tr>
                                     <td style="text-align:center;"> 
                                         <?php
@@ -226,6 +196,38 @@
                                     </td>
                                     <td> <label for='tax_chk'> Tax <label></td>
                                 </tr>  
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                
+                                <!-- <tr>
+                                    <td style="text-align:center;"> 
+                                        <?php
+                                            // $price_chk = null;
+                                            
+                                            // if (isset($data['price'])) {
+                                            //     $price_chk = "checked";
+                                            // }
+                                        ?>
+                                        <input type='checkbox' class='settings_chk' value='price' id='price_chk' <?php // echo $price_chk; ?>/> 
+                                    </td>
+                                    <td> <label for='price_chk'> Price <label></td>
+                                </tr> -->
+                                <tr>
+                                    <td style="text-align:center;"> 
+                                        <?php
+                                            $ext_chk = null;
+                                            
+                                            if (isset($data['extended'])) {
+                                                $ext_chk = "checked";
+                                            }
+                                        ?>
+                                        <input type='checkbox' class='settings_chk' value='extended' id='ext_chk' <?php echo $ext_chk; ?>/> 
+                                    </td>
+                                    <td> <label for='ext_chk'> Extended Price <label></td>
+                                </tr>  
+                                
                                 <tr>
                                     <td style="text-align:center;">
                                         <?php
@@ -238,7 +240,7 @@
                                         <input type='checkbox' class='settings_chk' value='sub' id='subgrp_chk' <?php echo $subgrp_chk; ?>/> 
                                     </td>
                                     <td> <label for='subgrp_chk'> Sub Group <label></td>
-                                </tr>  
+                                </tr>
                                 <tr>
                                     <td style="text-align:center;"> 
                                         <?php
@@ -250,7 +252,13 @@
                                         ?>
                                         <input type='checkbox' class='settings_chk' value='subitem' id='sub_chk' <?php echo $sub_chk; ?>/> 
                                     </td>
-                                    <td> <label for='sub_chk'> Sub Items <label></td>
+                                    <td> <label for='sub_chk'> Text Within Groups <label></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center;"> 
+                                        &nbsp;
+                                    </td>
+                                    <td> &nbsp; </td>
                                 </tr>
                             </table>
                         </td>
