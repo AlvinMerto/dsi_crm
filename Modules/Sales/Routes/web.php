@@ -411,6 +411,8 @@ Route::group(
         
         Route::post("showcontacts","QuoteController@showcontacts")->name("show.contact");
         Route::post("savetonewcustomer","QuoteController@savetonewcustomer")->name("quotecontroller.savetonewcustomer");
+
+        
 });
 
 
@@ -420,6 +422,7 @@ Route::get("salesquote/fortest", "SalesQuoteController@fortest")->name("salesquo
 Route::post("salesquote/saveview_sets","SalesQuoteController@saveview_sets")->name("salesquote.saveview_sets");
 
 Route::get('quote/pdf/{id}', 'QuoteController@downloadpdf')->name('quote.pdf');
+Route::get("quote/printpreview/{id}",'QuoteController@printpreview')->name('quote.printpreview');
 Route::get("/test_quote","SalesQuoteController@test_quote")->name("salesquote.test_quote");
 
 

@@ -1288,6 +1288,23 @@ class QuoteController extends Controller
         return $pdf->download();
     }
 
+    function printpreview($id) {
+        $show           = (new SalesQuoteController)->showsettings($id);
+        $quote          = (new SalesQuoteController)->get_quote_item($id, $show, false, false);
+        $total          = (new SalesQuoteController)->compute_totality($id);
+
+        $salesquote     = SalesQuote::where("id",$id)->get();
+
+        $qt_num         = \Modules\Sales\Entities\SalesQuote::quoteNumberFormat($salesquote[0]->quote_id);
+        $logo           =  asset('uploads/logo/logo_light.png');
+
+        // echo $salesquote[0]->customer->name;
+
+       $html = view('sales::quote.templates.quotepdf', compact("quote","show","logo","salesquote","qt_num","total"))->render();
+
+       return view('sales::quote.templates.printpreview', compact("html"));
+    }
+
     function respond($qid) {
         // $qid         = $qid;
 

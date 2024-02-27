@@ -29,11 +29,11 @@
                 <?php if ($intextbox) { ?>
                     <textarea  data-id="<?php echo $values['id']; ?>" data-fld="item" style="text-align:left; padding-left:5px;" class='edittext form-control bold_input' type='text'><?php echo $description; ?></textarea>
                 <?php } else { ?>
-                    <span style="float:left; color:#999;padding: 10px 0px;font-style: italic; "> <?php echo $description; ?> </span>
+                    <span style="float:left; color:#999;padding: 4px 0px;font-style: italic; "> <?php echo $description; ?> </span>
                 <?php } ?>
             <?php } else { ?>
                 <?php if ($intextbox) { ?>
-                    <span style="float:left; color:#999;padding: 10px 0px;font-style: italic; "> <?php echo $description; ?> </span>
+                    <span style="float:left; color:#999;padding: 4px 0px;font-style: italic; "> <?php echo $description; ?> </span>
                 <?php } else { ?>
                     <span> &nbsp; </span>
                 <?php } ?>

@@ -164,7 +164,7 @@
         border:1px solid #333;
         padding-left:3px !important;
         padding-right:3px !important;
-      
+        position:relative;
     }
 
     #tblLocations tbody tr td select {
@@ -181,7 +181,7 @@
     }
 
     #tblLocations tbody tr td textarea:focus {
-        min-height: 100px !important;
+        /* min-height: 100px !important;
         width: 99% !important;
         outline: none;
         position: absolute;
@@ -189,7 +189,44 @@
         z-index: 100000000000;
         border: 1px solid #fff;
         box-shadow: 0px 0px 6px #6d6d6d;
+        margin-top: -10px; */
+        text-align: left;
+        min-height: 100px !important;
+        outline: none;
+        position: absolute;
+        background: #fff !important;
+        z-index: 100000000000;
+        border: 1px solid #fff;
+        box-shadow: 0px 0px 6px #6d6d6d;
         margin-top: -10px;
+        border: 2px solid #3d45bd;
+    }
+
+    .markupchange:focus, .edittext:focus, .edittext_ship:focus {
+        /* text-align: left;
+        min-height: auto !important;
+        outline: none;
+        position: absolute;
+        background: #fff !important;
+        z-index: 100000000000;
+        border: 1px solid #fff;
+        box-shadow: 0px 0px 6px #6d6d6d;
+        margin-top: -10px;
+        border: 2px solid #3d45bd; */
+        text-align: left !important;
+        padding-left: 5px;
+        min-height: auto !important;
+        outline: none;
+        position: absolute;
+        background: #fff !important;
+        z-index: 100000000000;
+        border: 1px solid #fff;
+        box-shadow: 0px 0px 6px #6d6d6d;
+        margin-top: -10px;
+        border: 2px solid #3d45bd;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        height: inherit;
     }
 
     #tblLocations tbody tr td,
@@ -828,6 +865,7 @@
                 itemtype    = "blank";
             }
 
+           // alert(itemtype); return;
             // alert(item+""+itemtype); return;
             var thistr       = $(document).find(".selectedTr");
             var len          = thistr.length;

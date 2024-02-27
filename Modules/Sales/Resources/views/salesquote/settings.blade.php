@@ -265,7 +265,7 @@
                     </tr>
                     <tr>
                         <td colspan='0' style='padding-left:0px;'> 
-                            <button class='btn btn-primary' id='saveqt_setts'> Save Quotation View </button>
+                            <button class='btn btn-primary' id='saveqt_setts'> Save Settings </button>
                         </td>
                         <td class='with_as' style='padding-left:0px;text-align: right;'>
                             <a class="border-right" id="email_quote" title="Send Quotation" data-size="md" data-toggle="tooltip" title="{{ __('Comment') }}"> 
@@ -274,8 +274,11 @@
                             <a class="border-right" href="{{route('quote.pdf', [$qid])}}" target='_blank' title="Download Quotation" data-toggle="tooltip" title="{{ __('Comment') }}"> 
                                 <i class="ti ti-download"></i> <span> Download Quotation </span> 
                             </a>
-                            <a class="border-right" href="{{route('quote.displayquote', [$qid])}}" target='_blank' title="Preview Quotation" data-toggle="tooltip" title="{{ __('Comment') }}"> 
-                                <i class="ti ti-presentation"></i> <span> Preview Quotation </span> 
+                            <a class="border-right" href="{{route('quote.displayquote', [$qid])}}" target='_blank' title="Sent Preview Quotation" data-toggle="tooltip" title="{{ __('Comment') }}"> 
+                                <i class="ti ti-presentation"></i> <span> Sent Preview Quotation </span> 
+                            </a>
+                            <a class="border-right" href="{{route('quote.printpreview', [$qid])}}" target='_blank' title="Print Preview Quotation" data-toggle="tooltip" title="{{ __('Comment') }}"> 
+                            <i class="ti ti-printer"></i> <span> Print Preview Quotation</span> 
                             </a>
                         </td>
                     </tr>
