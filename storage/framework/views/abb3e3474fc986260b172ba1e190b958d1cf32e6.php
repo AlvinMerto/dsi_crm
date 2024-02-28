@@ -849,20 +849,25 @@
         //     });
         // });
 
-        $(document).on("click","#savecomment,#subblank",function(e){
+        $(document).on("click",".common_btn_a",function(e){
             $(document).find("#theloader").removeClass("hidethis");
 
-            var item         = null;
-            var itemtype     = null;
+            var item         = "";
+            var itemtype     = "";
 
-            var id           = e.target.id;
-            
-            if (id == "savecomment") {
+            // var id           = e.target.id;
+            var id           = $(this).data("btnid");
+            var dis          = null;
+
+            if (id === "savecomment") {
                 item        = $(document).find("#commenttxt").val();
                 itemtype    = "comment";
-            } else if (id == "subblank") {
+            } else if (id === "subblank") {
                 item        = "--- blank ---";
                 itemtype    = "blank";
+
+                dis         = $(this);
+                $(this).html("adding blank space...");
             }
 
            // alert(itemtype); return;
@@ -916,6 +921,7 @@
 
                             get_no_value(dd_id, function(){
                                 $('#commonModal').modal('hide');
+                                dis.html("<i class='ti ti-space'></i>");
                             }, thistr);
                 
                         });
@@ -1156,6 +1162,12 @@
                 tblloc.children().remove();
                 showquote_items(qid);
                 trs                = [];
+
+                $(document).find(".viewdetails").hide();
+                $(document).find(".subcomment").hide();
+                $(document).find(".subblank").hide();
+                $(document).find(".copythis").hide();
+                $(document).find(".deletethis").hide();
 
                 doc.hide();
             }
@@ -2356,10 +2368,10 @@
                         <i class="ti ti-brand-producthunt"></i></i>
                     </a>
 
-                    <a class="border-right mr-5 subcomment" style="display:none;" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
+                    <a class="border-right mr-5 common_btn_a subcomment" data-btnid='subcomment' id='subcomment' style="display:none;" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
                         <i class="ti ti-message-dots"></i>
                     </a>
-                    <a class="border-right mr-5 subblank" id='subblank' style="display:none;" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
+                    <a class="border-right mr-5 common_btn_a subblank" data-btnid='subblank' id='subblank' style="display:none;" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
                         <i class="ti ti-space"></i>
                     </a>
                     <!-- <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('View Item Details')); ?>" data-url="<?php echo e(route('salesquote.viewitemdetails')); ?>" data-toggle="tooltip" title="<?php echo e(__('View Item Details')); ?>">

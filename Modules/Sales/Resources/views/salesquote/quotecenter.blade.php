@@ -5,22 +5,14 @@
     }
 </style>
 
-<div class='row'>
-    <div class='col-md-12'>
+<!-- <div class='row'>
+    <div class='col-md-12'> -->
         <table id='table_quotecenter' class="table pc-dt-simple">
             <thead>
                 <th> # </th>
                 <th> Name </th>
             </thead>
             <?php
-
-            //  var productline_id = res[0].category_id;
-            //  var description    = res[0].description;
-            //  var ccost          = res[0].purchase_price;
-            //  var cmarkup        = res[0].markup;
-            //  var cquantity      = 1;
-            //  var shippingfee    = 0;
-            //  var istaxable      = false;
 
                 $count = 1;
                 foreach($collection as $c) {
@@ -38,8 +30,8 @@
                               data-manu_label      = '{$c->manufacturer_name}' 
                               data-manu_descs      = '{$c->manufacturer_part_number}'
                               >";
-                        echo "<td>".$count++."</td>";
-                        echo "<td> {$c->description} </td>";
+                        echo "<td style='vertical-align:top;'>".$count++."</td>";
+                        echo "<td style='white-space: break-spaces;'> {$c->description} </td>";
                     echo "</tr>";
                 }
             ?>
@@ -51,8 +43,8 @@
                 </td>
             </tr>
         </table>
-    </div>
-</div>
+    <!-- </div>
+</div> -->
 <script>
     $(document).ready(function(){
         const dataTable = new simpleDatatables.DataTable("#table_quotecenter");
