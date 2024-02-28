@@ -55,7 +55,7 @@
                                                                         <?php echo $qt_num; ?>
                                                                     </td>
                                                                     <td style='text-align:center; border:1px solid; padding:4px 10px;'> 
-                                                                        <?php echo $salesquote[0]->issue_date; ?>
+                                                                        <?php echo (isset($salesquote[0]->issue_date)?$salesquote[0]->issue_date:null); ?>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -63,8 +63,8 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td style='text-align:center; border:1px solid; padding:4px 10px;' colspan='2'>
-                                                                        <p style='margin:0px;'> <?php echo $salesquote[0]->cont_person->name; ?> </p>
-                                                                        <p style='margin:0px;'> <?php echo $salesquote[0]->cont_person->email; ?> </p>
+                                                                        <p style='margin:0px;'> <?php echo (isset($salesquote[0]->cont_person->name)?$salesquote[0]->cont_person->name:null); ?> </p>
+                                                                        <p style='margin:0px;'> <?php echo (isset($salesquote[0]->cont_person->email)?$salesquote[0]->cont_person->email:null); ?> </p>
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -76,14 +76,14 @@
                                                             <table style='width:100%; border-collapse:collapse;'>
                                                                 <tr>
                                                                     <th style='text-align:left;background:#ccc; border:1px solid; padding:4px 10px;'> For: </th>
-                                                                    <th style='text-align:left;border:1px solid; padding:4px 10px;'> Customer #: <?php echo $salesquote[0]->customer->id; ?> </th>
+                                                                    <th style='text-align:left;border:1px solid; padding:4px 10px;'> Customer #: <?php echo (isset($salesquote[0]->customer->id)?$salesquote[0]->customer->id:null); ?> </th>
                                                                 </tr>
                                                                 <tr>
                                                                     <td style='text-align:left;border:1px solid; padding:4px 10px;' colspan='2'>
-                                                                        &nbsp; <?php echo $salesquote[0]->customer->name; ?> <br/>
-                                                                        &nbsp; <?php echo $salesquote[0]->contactperson->name; ?> <br/>
-                                                                        &nbsp; <?php echo $salesquote[0]->contactperson->phone; ?> <br/>
-                                                                        &nbsp; <?php echo $salesquote[0]->contactperson->email; ?> <br/>
+                                                                        &nbsp; <?php echo (isset($salesquote[0]->customer->name)?$salesquote[0]->customer->name:null); ?> <br/>
+                                                                        &nbsp; <?php echo (isset($salesquote[0]->contactperson->name)?$salesquote[0]->contactperson->name:null); ?> <br/>
+                                                                        &nbsp; <?php echo (isset($salesquote[0]->contactperson->phone)?$salesquote[0]->contactperson->phone:null); ?> <br/>
+                                                                        &nbsp; <?php echo (isset($salesquote[0]->contactperson->email)?$salesquote[0]->contactperson->email:null); ?> <br/>
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -95,7 +95,7 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td style='text-align:left;border:1px solid; padding:4px 10px;' colspan='4'>
-                                                                        <?php echo $salesquote[0]->customer->phone; ?>
+                                                                        <?php echo (isset($salesquote[0]->customer->phone)?$salesquote[0]->customer->phone:null); ?>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>

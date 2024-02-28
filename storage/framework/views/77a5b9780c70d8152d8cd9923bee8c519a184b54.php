@@ -232,16 +232,16 @@
                                                         <table>
                                                             <tr>
                                                                 <th> Customer: </th>
-                                                                <td class='px-2'> <?php echo $salesquote[0]->customer->name; ?> </td>
+                                                                <td class='px-2'> <?php echo (isset($salesquote[0]->customer->name)?$salesquote[0]->customer->name:null); ?> </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class='py-3'> Bill To:</th>
                                                                 <td class='px-2 py-3'> 
-                                                                    <p> <?php echo $salesquote[0]->customer->name; ?> </p>
-                                                                    <p> <i class="ti ti-map-pins"></i> &nbsp; <?php echo $salesquote[0]->customer->shipping_address; ?> </p>
-                                                                    <p> <i class="ti ti-user"></i> &nbsp; <?php echo $salesquote[0]->contactperson->name; ?> </p>
-                                                                    <p> <i class="ti ti-phone"></i> &nbsp; <?php echo $salesquote[0]->contactperson->phone; ?> </p>
-                                                                    <p> <i class="ti ti-mail"></i> &nbsp; <?php echo $salesquote[0]->contactperson->email; ?> </p>
+                                                                    <p> <?php echo (isset($salesquote[0]->customer->name)?$salesquote[0]->customer->name:null); ?> </p>
+                                                                    <p> <i class="ti ti-map-pins"></i> &nbsp; <?php echo (isset($salesquote[0]->customer->shipping_address)?$salesquote[0]->customer->shipping_address:null); ?> </p>
+                                                                    <p> <i class="ti ti-user"></i> &nbsp; <?php echo (isset($salesquote[0]->contactperson->name)?$salesquote[0]->contactperson->name:null); ?> </p>
+                                                                    <p> <i class="ti ti-phone"></i> &nbsp; <?php echo (isset($salesquote[0]->contactperson->phone)?$salesquote[0]->contactperson->phone:null); ?> </p>
+                                                                    <p> <i class="ti ti-mail"></i> &nbsp; <?php echo (isset($salesquote[0]->contactperson->email)?$salesquote[0]->contactperson->email:null); ?> </p>
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -251,16 +251,16 @@
                                                             <tr>
                                                                 <th> Your Contact: </th>
                                                                 <td> 
-                                                                    <p> <?php echo $salesquote[0]->cont_person->name; ?> </p>
+                                                                    <p> <?php echo (isset($salesquote[0]->cont_person->name)?$salesquote[0]->cont_person->name:null); ?> </p>
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <th> Quote Date: </th>
-                                                                <td> <?php echo date("M. d, Y", strtotime($salesquote[0]->issue_date)); ?> </td>
+                                                                <td> <?php echo date("M. d, Y", strtotime( (isset($salesquote[0]->issue_date)?$salesquote[0]->issue_date:date("M. d, Y")) )); ?> </td>
                                                             </tr>
                                                             <tr>
                                                                 <th> Expiration Date: </th>
-                                                                <td> <?php echo date("l - M. d, Y", strtotime($salesquote[0]->quote_validity)); ?> </td>
+                                                                <td> <?php echo date("l - M. d, Y", strtotime( (isset($salesquote[0]->quote_validity)?$salesquote[0]->quote_validity:date("Y-m-d")))); ?> </td>
                                                             </tr>
                                                         </table>
                                                     </div>

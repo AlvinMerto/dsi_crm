@@ -36,10 +36,7 @@
     </div>
 
     <script>
-        // window.onload = function(){
-        //     printprv("printhere");
-        // }
-        
+                
         function printprv(divName) {
             var printContents = document.getElementById(divName).innerHTML;
             w=window.open();

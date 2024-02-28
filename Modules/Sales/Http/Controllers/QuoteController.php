@@ -1269,6 +1269,7 @@ class QuoteController extends Controller
 
     function downloadpdf($id) {
         // $id             = 78;
+
         $show           = (new SalesQuoteController)->showsettings($id);
         $quote          = (new SalesQuoteController)->get_quote_item($id, $show, false, false);
         $total          = (new SalesQuoteController)->compute_totality($id);
@@ -1277,6 +1278,10 @@ class QuoteController extends Controller
 
         $qt_num         = \Modules\Sales\Entities\SalesQuote::quoteNumberFormat($salesquote[0]->quote_id);
         $logo           =  asset('uploads/logo/logo_light.png');
+
+        // if ( !isset($salesquote[0]->customer->id)) {
+        //     die("Cannot download PDF without a designated name to it");
+        // }
 
         // echo $salesquote[0]->customer->name;
 
