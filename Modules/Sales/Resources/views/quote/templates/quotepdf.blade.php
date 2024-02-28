@@ -119,13 +119,29 @@
     echo "<table class='qt_tbl'>".$quote."</table>";
 ?>
 
-<div style='border-top:5px double;'>
-    <?php if (isset($show['tax'])) { ?>
-        <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['subtotal']; ?> </span> </p>
-        <p style="text-align: right;padding: 0px 0px; margin:10px;"> Tax &nbsp; &nbsp; &nbsp; <span> <?php echo $total['tax']; ?> </span> </p>
-    <?php } else { ?>
-        <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['totalamount']; ?> </span> </p>
-    <?php } ?>
-        <p style="text-align: right;padding: 0px 0px; margin:10px;">  <strong> Total </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['totalamount']; ?> </span> </p>
+    <div style='border-top:5px double;'>
+        <?php if (isset($show['tax'])) { ?>
+            <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['subtotal']; ?> </span> </p>
+            <p style="text-align: right;padding: 0px 0px; margin:10px;"> Tax &nbsp; &nbsp; &nbsp; <span> <?php echo $total['tax']; ?> </span> </p>
+        <?php } else { ?>
+            <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['totalamount']; ?> </span> </p>
+        <?php } ?>
+            <p style="text-align: right;padding: 0px 0px; margin:10px;">  <strong> Total </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['totalamount']; ?> </span> </p>
+    </div>
+
+    <div style='margin-top:20px;'>
+        <table style='width:100%;'>
+            <tr>
+                <td>
+                    <p style='margin:0px;'> Accepted By: </p>
+                    <div style='border:3px double #333; padding:30px 20px;'> </div>
+                </td>
+                <td>
+                    <p style='margin:0px;'> Date Accepted: </p>
+                    <div style='border:3px double #333; padding:30px 20px;'> </div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
-</div>
+

@@ -1284,14 +1284,15 @@ class QuoteController extends Controller
         // }
 
         // echo $salesquote[0]->customer->name;
-
+        $name = (isset($salesquote[0]->customer->name)?$salesquote[0]->customer->name:"sample");
+    
         $pdf = Pdf::loadView('sales::quote.templates.quotepdf', compact("quote","show","logo","salesquote","qt_num","total"));
         $pdf = $pdf->setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
 
         $pdf = $pdf->setPaper('a4', 'portrait');
         $pdf->render(); 
 
-        return $pdf->download();
+        return $pdf->download($qt_num."_".$name.".pdf");
     }
 
     function printpreview($id) {
