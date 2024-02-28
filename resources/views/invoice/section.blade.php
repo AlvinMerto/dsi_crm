@@ -1086,6 +1086,8 @@
         });
     });
 
+    
+
     $(document).on("click","#addnewinformation", function(){
         var itemid = $(this).data("r");
         var data = {
@@ -1529,11 +1531,96 @@
 
     var additional_info = {};
 
-    // $(document).on("change","#cmarkup", function(){
+    $(document).on("click",".savetoitem", function(){
+        $(document).find("#loading_div_ct").show();
 
-       
+        var quote_item_id  = $(this).data("itemid");
+        var qid            = $(document).find("#qid").val();
 
-    // });
+
+        //postAjax("{{route('salesquote.getquotecenteritem')}}", {quoteitem_id : quote_item_id} , function(res) {
+            additional_info['supply_1'] = {};
+            additional_info['supply_1']['title']       = $(this).data("supply_title");
+            additional_info['supply_1']['label']       = $(this).data("supply_label");
+            additional_info['supply_1']['description'] = $(this).data("supply_descs");
+
+            additional_info['manu_1'] = {};
+            additional_info['manu_1']['title']         = $(this).data("manu_title");
+            additional_info['manu_1']['label']         = $(this).data("manu_label");
+            additional_info['manu_1']['description']   = $(this).data("manu_descs");
+
+            var productline_id = $(this).data("catid");
+            var description    = $(this).data("desc");
+            var ccost          = $(this).data("cost");
+            var cmarkup        = $(this).data("cmarkup");
+            var cquantity      = 1;
+            var shippingfee    = 0;
+            var istaxable      = false;
+
+            var customer_id    = $(document).find("#customer").val();
+            var contact_person = $(document).find("#contact_person").val();
+            var issue_date     = $(document).find("#issue_date").val();
+            var quote_validity = $(document).find("#quote_validity").val();
+
+            if (cquantity.length == 0) {
+                alert("Quantity cannot be empty");
+                return;
+            }
+
+            if ( cmarkup.length == 0 ) {
+                alert("Markup cannot be empty");
+                return;
+            }
+
+            if ( shippingfee.length == 0 ) {
+                alert("Shipping fee cannot be empty");
+                return;
+            }
+
+            if ( $("#commonModal form").find("#istaxable").is(":checked") ){
+                istaxable = true;
+            } else {
+                istaxable = false;
+            }
+
+            var price          = $("#commonModal form").find("#cprice").val();
+
+            var expiry         = null; // expiry
+
+            if ( $("commonModal form").find("#expiry").is(":checked") ) {
+                expiry         = $("#commonModal form").find("#expirydate_text").val();
+            }
+
+            var data = {
+                'qid'             : qid,
+                "productlineid"   : productline_id,
+                "type"            : "subcustomitem",
+                "description"     : description,
+                "cost"            : ccost,
+                "markup"          : cmarkup,
+                "quantity"        : cquantity,
+                "shippingfee"     : shippingfee,
+                "istaxable"       : istaxable,
+                "price"           : price,
+                "expiry"          : expiry,
+                "customerid"      : customer_id,
+                "cont_person"     : contact_person,
+                "issue_date"      : issue_date,
+                "quote_validity"  : quote_validity,
+                "additional_info" : additional_info
+            };
+
+            postAjax("{{route('salesquote.addcustomitem')}}",data, function(response) {
+                appendTolist(response, function(){
+                    $("#commonModal").modal("hide");
+                    $(document).find("#loading_div_ct").hide();
+                });
+                get_computetotal(qid);
+
+                additional_info = {};
+            });
+        //});
+    });
 
     $(document).on("click",".btncutomitem_new", function(){
         $(document).find("#loading_div_ct").show();
@@ -2238,9 +2325,10 @@
                     <!-- <a href="#"class="border-right mr-5 shipping" data-ajax-popup="true" data-size="md" data-title="{{ __('Shipping') }}" data-url="{{route('salesquote.addshippingfee')}}" data-toggle="tooltip" title="{{ __('Shipping Fee') }}" >
                         <i class="ti ti-truck"></i> <span class="hide-mob"> Shipping </span>
                     </a> -->
-                    <a class="border-right mr-5 subitem_add">
-                        <i class="ti ti-brand-producthunt"></i>
+                    <a class="border-right mr-5 subitem_add" style='margin-right:0px !important;' data-ajax-popup="true" data-size="md" data-title="{{ __('Quote Center') }}" data-url="{{route('salesquote.quotecenter')}}" data-toggle="tooltip" title="{{ __('Quote Center') }}">
+                        <i class="ti ti-brand-producthunt"></i></i>
                     </a>
+
                     <a class="border-right mr-5 subcomment" style="display:none;" data-ajax-popup="true" data-size="md" data-title="{{ __('Add Comment') }}" data-url="{{route('salesquote.addcomment')}}" data-toggle="tooltip" title="{{ __('Comment') }}">
                         <i class="ti ti-message-dots"></i>
                     </a>

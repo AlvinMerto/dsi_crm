@@ -1146,7 +1146,7 @@
     <script>
         var tab_id  = null;
         var tabname = null;
-    
+        
         $(document).on("click","#addinformation_btn", function(){
             // tab_nav_info
             // <span class="btn btn-sm btn-primary" data-btnlabel="Manufacturer"> Manufacturer </span>
@@ -1254,6 +1254,26 @@
             $(document).find("#"+tab_id).text( tabname  )
         });
 
+        $(document).on("click",".hallow_copy", function(){
+            var conf = confirm("Are you sure you want to proceed copying this qoute?");
+
+            if (!conf) {
+                return;
+            }
+                    
+            var h_contid = 0;
+            var h_theid  = 0;
+            var qtid     = $(this).data("qtid");
+
+            $(document).find("#loading_div_hallow").show();
+
+            postAjax("<?php echo e(route('quotecontroller.savetonewcustomer')); ?>",{comp_id : h_theid, contid : h_contid, qtid : qtid}, function(response) {
+                alert("Successfully copied");
+                        
+                window.location.href = "<?php echo e(route('salesquote.showquote')); ?>/"+response;
+            });
+        });
+
         $(document).on("change","#expiry",function(){
             if ( $(this).prop("checked") ) {
                 $(document).find("#expirydate_text").show();
@@ -1341,6 +1361,8 @@
             });
         }
 
+                
+
     </script>
 <?php $__env->stopPush(); ?>
 <?php $__env->startSection('content'); ?>
@@ -1352,13 +1374,32 @@
             <div style="display:flex; justify-content:space-between;" class="mb-3">
                 <div class="with_as" id="bigbtn_div" style="width: 100%;">
                     
-                    <a class="border-right"  title="Convert to Order" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Convert to Order')); ?>"> 
-                        <i class="ti ti-transform-filled"></i> <span> Convert to Order </span> 
+                    <a class="border-right"  title="Convert to Order" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Convert to Order')); ?>"><i class="ti ti-transform-filled" style='margin-right:0px !important;'></i></a>
+
+                    <a  style='cursor:pointer;' 
+                        class="border-right"
+                        data-ajax-popup="true" data-size="md" 
+                        data-title="<?php echo e(__('Copy to new customer')); ?>" 
+                        data-qtid = "<?php echo $quoteid; ?>"
+                        data-url="<?php echo e(route('quotecontroller.copytonewcustomer',$quoteid)); ?>" 
+                        data-toggle="tooltip" 
+                        title="<?php echo e(__('Copy to new customer')); ?>">
+                        <i class="ti ti-file" style='margin-right:0px !important;'></i>
                     </a>
                     
-                    <a class="border-right" id='qt_settings' title="Quotation Settings" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Quotation Settings')); ?>" data-url="<?php echo e(route('salesquote.settings',[$quoteid])); ?>" data-toggle="tooltip" title="<?php echo e(__('settings')); ?>"> 
-                        <i class="ti ti-settings-2"></i> <span> Quotation Settings </span> 
+                    <a style='cursor:pointer;'
+                       class="border-right hallow_copy"
+                       data-qtid = "<?php echo $quoteid; ?>"
+                       data-bs-toggle="tooltip" 
+                       data-title="<?php echo e(__('Duplicate')); ?>"
+                       title="<?php echo e(__('Duplicate')); ?>"
+                       data-confirm="<?php echo e(__('You want to confirm this action')); ?>"
+                       data-text="<?php echo e(__('Press Yes to continue or No to go back')); ?>"
+                       data-confirm-yes="document.getElementById('duplicate-form-<?php echo e($quoteid); ?>').submit();">
+                       <i class="ti ti-copy" style='margin-right:0px !important;'></i>
                     </a>
+
+                    <a class="border-right" id='qt_settings' title="Quotation Settings" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Quotation Settings')); ?>" data-url="<?php echo e(route('salesquote.settings',[$quoteid])); ?>" data-toggle="tooltip" title="<?php echo e(__('settings')); ?>"><i class="ti ti-settings-2" style='margin-right:0px !important;'></i></a>
                 </div>
             </div>
         </div>

@@ -418,6 +418,72 @@ class ProductServiceController extends Controller
 
     }
 
+    public function new_fileimport(Request $request) {
+        if ($request->hasFile('file')) {
+            $file     = $request->file('file');
+            $filePath = $file->getPathname();
+    
+            if (($handle = fopen($filePath, 'r')) !== false) {
+                // $data = fgetcsv($handle, 1000, ',');
+
+                $count = 0;
+                $aw;
+               
+                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                    if ($count > 0) {
+                        // $aw["name"]                      = $data[0];
+                        // $aw["sku"]                       = $data[1];
+                        // $aw["sale_price"]                = $data[2];
+                        // $aw["purchase_price"]            = $data[3];
+                        // $aw["quantity"]                  = $data[4];
+                        // $aw["tax_id"]                    = Tax::where("name",$data[5])->get("id")[0]->id;
+                        // $aw["category_id"]               = $data[6];
+                        // $aw["image"]                     = $data[7];
+                        // $aw["unit_id"]                   = $data[8];
+                        // $aw["type"]                      = $data[9];
+                        // $aw["description"]               = $data[10];
+                        // $aw["markup"]                    = $data[11];
+                        // $aw["manufacturer_part_number"]  = $data[12];
+                        // $aw["manufacturer_name"]         = $data[13];
+                        // $aw["supplier_part_number"]      = $data[14];
+                        // $aw["supplier_name"]             = $data[15];
+                        // $aw["created_by"]                = Auth::user()->id;
+                        // $aw["workspace_id"]              = getActiveWorkSpace();
+                        ProductService::create([
+                            "name"                      => $data[0],
+                            "sku"                       => $data[1],
+                            "sale_price"                => $data[2],
+                            "purchase_price"            => $data[3],
+                            "quantity"                  => $data[4],
+                            "tax_id"                    => Tax::where("name",$data[5])->get("id")[0]->id,
+                            "category_id"               => $data[6],
+                            "image"                     => $data[7],
+                            "unit_id"                   => $data[8],
+                            "type"                      => $data[9],
+                            "description"               => $data[10],
+                            "markup"                    => $data[11],
+                            "manufacturer_part_number"  => $data[12],
+                            "manufacturer_name"         => $data[13],
+                            "supplier_part_number"      => $data[14],
+                            "supplier_name"             => $data[15],
+                            "created_by"                => Auth::user()->id,
+                            "workspace_id"              => getActiveWorkSpace()
+                        ]);
+                    }
+
+                    $count++;
+                }
+
+                // return response()->json($aw);
+                fclose($handle);
+            }
+    
+            return response()->json(true);
+        }
+    
+        return response()->json(false);
+    }
+
     public function fileImportModal()
     {
         if(Auth::user()->can('product&service import'))

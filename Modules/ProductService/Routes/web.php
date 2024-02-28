@@ -27,6 +27,7 @@ Route::group(['middleware' => 'PlanModuleCheck:ProductService'], function ()
     //Product & Service import
     Route::get('product-service/import/export', 'ProductServiceController@fileImportExport')->name('product-service.file.import')->middleware(['auth']);
     Route::post('product-service/import', 'ProductServiceController@fileImport')->name('product-service.import')->middleware(['auth']);
+    Route::post('product-service/new_fileimport', 'ProductServiceController@new_fileimport')->name('product-service.new_fileimport')->middleware(['auth']);
     Route::get('product-service/import/modal', 'ProductServiceController@fileImportModal')->name('product-service.import.modal')->middleware(['auth']);
     Route::post('product-service/data/import/', 'ProductServiceController@productserviceImportdata')->name('product-service.import.data')->middleware(['auth']);
     Route::post('get-taxes', 'ProductServiceController@getTaxes')->name('get.taxes');

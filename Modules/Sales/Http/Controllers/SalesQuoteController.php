@@ -978,6 +978,7 @@ class SalesQuoteController extends Controller
 
         return view('sales::salesquote.printview', compact('salesquote', 'salesquoteitems','company_id','workspace_id'));
     }
+
     public function getcustomitem()
     {
         $category     = Category::where('created_by', '=',creatorId())->where('workspace_id', '=', getActiveWorkSpace())->where('type', '=', 0)->get()->pluck('name', 'id');
@@ -985,6 +986,24 @@ class SalesQuoteController extends Controller
         $tax          = Tax::where('created_by', '=',creatorId())->where('workspace_id', '=', getActiveWorkSpace())->get()->pluck('name', 'id');
 
         return view('sales::salesquote.customitem',compact('category','tax'));
+    }
+
+    public function quotecenter() {
+        // $category     = Category::where('created_by', '=',creatorId())->where('workspace_id', '=', getActiveWorkSpace())->where('type', '=', 0)->get()->pluck('name', 'id');
+
+        // $tax          = Tax::where('created_by', '=',creatorId())->where('workspace_id', '=', getActiveWorkSpace())->get()->pluck('name', 'id');
+
+        $collection      = ProductService::all();
+      
+        return view('sales::salesquote.quotecenter',compact('collection'));
+    }
+
+    public function getquotecenteritem(Request $req) {
+        $item       = $req->input("quoteitem_id");
+
+        $collection = ProductService::where("id",$item)->get();
+
+        return response()->json($collection);
     }
 
     public function getlaborwindow() {

@@ -27,6 +27,10 @@ class ProductService extends Model
         return $this->hasOne('Modules\ProductService\Entities\Tax', 'id', 'tax_id')->first();
     }
 
+    public function the_tax() {
+        return $this->hasOne('Modules\ProductService\Entities\Tax', 'id', 'tax_id');
+    }
+
     public function unit()
     {
         return $this->hasOne('Modules\ProductService\Entities\Unit', 'id', 'unit_id')->first();

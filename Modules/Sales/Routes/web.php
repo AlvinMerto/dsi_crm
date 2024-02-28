@@ -343,6 +343,7 @@ Route::get('salesquote/duplicate/{id}', 'SalesQuoteController@duplicate')->name(
 Route::get('salesquote/{id}/convert', 'SalesQuoteController@convert')->name('salesquote.convert');
 Route::get('/salesquote/print/{salesquote}', ['as' => 'print.salesquote','uses' => 'SalesQuoteController@printsalesquote']);
 Route::get('/salesquote/customitem', ['as' => 'salesquote.customitem','uses' => 'SalesQuoteController@getcustomitem']);
+Route::get('/salesquote/quotecenter', ['as' => 'salesquote.quotecenter','uses' => 'SalesQuoteController@quotecenter']);
 
 Route::get('report/salesquotesummary', 'ReportController@salesquotesummary')->name('report.salesquotesummary');
 Route::get('report/salesquote-totalprofit', 'ReportController@salesquotetotalprofit')->name('report.salesquotetotalprofit');
@@ -412,7 +413,7 @@ Route::group(
         Route::post("showcontacts","QuoteController@showcontacts")->name("show.contact");
         Route::post("savetonewcustomer","QuoteController@savetonewcustomer")->name("quotecontroller.savetonewcustomer");
 
-        
+        Route::post("salesquote/getquotecenteritem","SalesQuoteController@getquotecenteritem")->name("salesquote.getquotecenteritem");
 });
 
 

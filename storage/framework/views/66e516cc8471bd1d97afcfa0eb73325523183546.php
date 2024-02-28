@@ -20,20 +20,23 @@
         100% { transform: rotate(360deg); }
     }
 </style>
-{{ Form::open(['method' => 'post', 'enctype' => 'multipart/form-data', 'id' => 'upload_form']) }}
+<?php echo e(Form::open(['method' => 'post', 'enctype' => 'multipart/form-data', 'id' => 'upload_form'])); ?>
+
 <div class="modal-body">
     <div class="row">
         <div class="col-md-12 mb-6">
-            {{ Form::label('file', __('Download Sample Product & Service CSV File'), ['class' => 'col-form-label text-danger mx-1']) }}
-            @if(check_file('uploads/sample/sample_product.csv'))
-                <a href="{{ asset('uploads/sample/sample_product.csv') }}"
+            <?php echo e(Form::label('file', __('Download Sample Product & Service CSV File'), ['class' => 'col-form-label text-danger mx-1'])); ?>
+
+            <?php if(check_file('uploads/sample/sample_product.csv')): ?>
+                <a href="<?php echo e(asset('uploads/sample/sample_product.csv')); ?>"
                     class="btn btn-sm btn-primary btn-icon-only">
                     <i class="fa fa-download"></i>
                 </a>
-            @endif
+            <?php endif; ?>
         </div>
         <div class="col-md-12 mt-1">
-            {{ Form::label('file', __('Select CSV File'), ['class' => 'col-form-label']) }}
+            <?php echo e(Form::label('file', __('Select CSV File'), ['class' => 'col-form-label'])); ?>
+
             <div class="choose-file form-group">
                 <label for="file" class="col-form-label">
                     <input type="file" class="form-control" name="file" id="file" data-filename="upload_file"
@@ -50,13 +53,15 @@
                     <div class='loader'></div> 
                 </span>
             </span>
-    <input type="button" value="{{ __('Cancel') }}" class="btn btn-secondary btn-light" data-bs-dismiss="modal">
-    <button type="submit" value="{{ __('Upload') }}" class="btn btn-primary ms-2">
-        {{__('Upload')}}
+    <input type="button" value="<?php echo e(__('Cancel')); ?>" class="btn btn-secondary btn-light" data-bs-dismiss="modal">
+    <button type="submit" value="<?php echo e(__('Upload')); ?>" class="btn btn-primary ms-2">
+        <?php echo e(__('Upload')); ?>
+
     </button>
-    <a href="" data-url="{{ route('product-service.import.modal') }}" data-ajax-popup-over="true" title="{{ __('Create') }}" data-size="xl" data-title="{{ __('Import Product & Service CSV Data') }}"  class="d-none import_modal_show"></a>
+    <a href="" data-url="<?php echo e(route('product-service.import.modal')); ?>" data-ajax-popup-over="true" title="<?php echo e(__('Create')); ?>" data-size="xl" data-title="<?php echo e(__('Import Product & Service CSV Data')); ?>"  class="d-none import_modal_show"></a>
 </div>
-{{ Form::close() }}
+<?php echo e(Form::close()); ?>
+
 
 <script>
     $('#upload_form').on('submit', function(event) {
@@ -65,10 +70,10 @@
 
         $(document).find("#loading_div_ct").show();
         let data = new FormData(this);
-        data.append('_token', "{{ csrf_token() }}");
+        data.append('_token', "<?php echo e(csrf_token()); ?>");
         $.ajax({
-            // url: "{{ route('product-service.import') }}",
-            url : "{{ route('product-service.new_fileimport') }}",
+            // url: "<?php echo e(route('product-service.import')); ?>",
+            url : "<?php echo e(route('product-service.new_fileimport')); ?>",
             method: "POST",
             data: data,
             dataType: 'json',
@@ -97,3 +102,4 @@
     });
     
 </script>
+<?php /**PATH C:\xampp\htdocs\dsi_crm\Modules/ProductService\Resources/views/import.blade.php ENDPATH**/ ?>
