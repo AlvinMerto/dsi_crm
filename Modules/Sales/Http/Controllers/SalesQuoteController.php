@@ -1287,7 +1287,8 @@ class SalesQuoteController extends Controller
         $showsettings = $this->showsettings();
         
         $intextbox      = true;
-        $html           = view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings","intextbox"))->render();
+        $qt_window      = true;
+        $html           = view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings","intextbox","qt_window"))->render();
         return response()->json($html);
     }
 
