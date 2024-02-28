@@ -1,0 +1,2 @@
+name,sku,sale price,purchase price,quantity,tax,category,image,unit_id,type,description,markup,manufacturer part,manufacturer name,supplier part,supplier name
+test 2,23456,23.46,347.57,2,none,1,,1,product,test 2 only ,35,manu part 1,manu name,supplier part 1,supplier name

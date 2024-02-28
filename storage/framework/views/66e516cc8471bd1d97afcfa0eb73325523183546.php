@@ -27,8 +27,8 @@
         <div class="col-md-12 mb-6">
             <?php echo e(Form::label('file', __('Download Sample Product & Service CSV File'), ['class' => 'col-form-label text-danger mx-1'])); ?>
 
-            <?php if(check_file('uploads/sample/sample_product.csv')): ?>
-                <a href="<?php echo e(asset('uploads/sample/sample_product.csv')); ?>"
+            <?php if(check_file('uploads/sample/new_import.csv')): ?>
+                <a href="<?php echo e(asset('uploads/sample/new_import.csv')); ?>"
                     class="btn btn-sm btn-primary btn-icon-only">
                     <i class="fa fa-download"></i>
                 </a>

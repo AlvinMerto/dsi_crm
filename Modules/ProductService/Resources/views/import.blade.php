@@ -25,8 +25,8 @@
     <div class="row">
         <div class="col-md-12 mb-6">
             {{ Form::label('file', __('Download Sample Product & Service CSV File'), ['class' => 'col-form-label text-danger mx-1']) }}
-            @if(check_file('uploads/sample/sample_product.csv'))
-                <a href="{{ asset('uploads/sample/sample_product.csv') }}"
+            @if(check_file('uploads/sample/new_import.csv'))
+                <a href="{{ asset('uploads/sample/new_import.csv') }}"
                     class="btn btn-sm btn-primary btn-icon-only">
                     <i class="fa fa-download"></i>
                 </a>
