@@ -1877,7 +1877,7 @@ class SalesQuoteController extends Controller
                                         }
 
                                         if ($include) {
-                                            $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings","intextbox"))->render();
+                                            $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings","intextbox","qt_window"))->render();
                                         }
 
                                     } else {
@@ -2024,7 +2024,7 @@ class SalesQuoteController extends Controller
                             }
 
                             if ($include) {
-                                $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings","intextbox"))->render();
+                                $html     .= view('sales::salesquote.novalueitem', compact('values',"description","count","type","showsettings","intextbox","qt_window"))->render();
                             }
                         } else {
                             $include   = true;

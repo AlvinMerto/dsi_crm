@@ -54,9 +54,13 @@
             <td> &nbsp; </td>
         <?php } ?>
         <?php if (isset($showsettings['tax'])) { ?>
-            <!-- <td> &nbsp; </td> -->
+            <?php if ($qt_window) { ?>
+                <td> &nbsp; </td>
+            <?php } ?>
         <?php } ?>
         <?php if (isset($showsettings['tax'])) { ?>
-            <!-- <td> &nbsp; </td> -->
+            <?php if ($qt_window) { ?>
+                <td> &nbsp; </td>
+            <?php } ?>
         <?php } ?>
     </tr>
