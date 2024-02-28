@@ -849,7 +849,7 @@
         //     });
         // });
 
-        $(document).on("click",".common_btn_a",function(e){
+        $(document).on("click",".common_btn_a, #savecomment",function(e){
             $(document).find("#theloader").removeClass("hidethis");
 
             var item         = "";
@@ -858,6 +858,7 @@
             // var id           = e.target.id;
             var id           = $(this).data("btnid");
             var dis          = null;
+        
 
             if (id === "savecomment") {
                 item        = $(document).find("#commenttxt").val();
@@ -2341,7 +2342,7 @@
                         <i class="ti ti-brand-producthunt"></i></i>
                     </a>
 
-                    <a class="border-right mr-5 common_btn_a subcomment" data-btnid='subcomment' id='subcomment' style="display:none;" data-ajax-popup="true" data-size="md" data-title="{{ __('Add Comment') }}" data-url="{{route('salesquote.addcomment')}}" data-toggle="tooltip" title="{{ __('Comment') }}">
+                    <a class="border-right mr-5 subcomment" data-btnid='subcomment' id='subcomment' style="display:none;" data-ajax-popup="true" data-size="md" data-title="{{ __('Add Comment') }}" data-url="{{route('salesquote.addcomment')}}" data-toggle="tooltip" title="{{ __('Comment') }}">
                         <i class="ti ti-message-dots"></i>
                     </a>
                     <a class="border-right mr-5 common_btn_a subblank" data-btnid='subblank' id='subblank' style="display:none;" title="{{ __('Create a blank row') }}" data-toggle="tooltip">
