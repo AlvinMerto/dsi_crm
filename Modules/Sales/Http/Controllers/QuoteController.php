@@ -1292,7 +1292,7 @@ class QuoteController extends Controller
         $pdf = $pdf->setPaper('a4', 'portrait');
         $pdf->render(); 
 
-        return $pdf->download($qt_num."_".$name.".pdf");
+        return $pdf->download(str_replace("#","",$qt_num)."_".$name.".pdf");
     }
 
     function printpreview($id) {
