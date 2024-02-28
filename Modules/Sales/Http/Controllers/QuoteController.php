@@ -30,7 +30,8 @@ use Modules\Sales\Events\QuoteDuplicate;
 
 use Modules\Sales\Entities\SalesQuoteItem;
 use Modules\Sales\Entities\SalesQuote;
-use Modules\Sales\Entities\salessubs;
+
+use Modules\Sales\Entities\Salessubs as salessubs;
 
 use Modules\Sales\Entities\Itemadditionalinfo as itemadditionalinfo;
 use Modules\Sales\Entities\Itemextensionflds as itemextensionflds;
