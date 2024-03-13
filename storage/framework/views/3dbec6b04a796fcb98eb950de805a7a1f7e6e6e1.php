@@ -21,19 +21,19 @@
     ?>
 
     <tr class="subitem" data-rid="<?php echo $values['id']; ?>" data-itemorder="<?php echo $values['itemorderid']; ?>" style='border-top:1px solid #000;'>
-        <td id="<?php echo $values['id']; ?>_count" style="text-align:center"> 
+        <td id="<?php echo $values['id']; ?>_count" class='firsttd' style="text-align:center" title='click to select the row'> 
             <?php if (isset($qt_window)) { ?>
                 <?php if ($qt_window == true) { ?>
                     <?php 
                         // echo $count; 
                         if ($exp == "expired_item") {
-                            echo " <i class='expired_item ti ti-timeline-event-x'></i>";
+                            echo " <i class='expired_item ti ti-timeline-event-x' title='The item's validity have expired.'></i>";
                         }
 
                         if ($status == "fapproval") {
-                            echo "<i class='ti ti-exclamation-circle' style='color:red; font-size: 18px;'></i>";
+                            echo "<i class='ti ti-exclamation-circle' style='color:red; font-size: 18px;' title='Markup needs approval'></i>";
                         } else if ($status == "declined") {
-                            echo "<i class='ti ti-thumb-down' style='color:red; font-size: 18px;'></i>";
+                            echo "<i class='ti ti-thumb-down' style='color:red; font-size: 18px;' title='Markup's approval has been declined'></i>";
                         }
 
                     ?> 

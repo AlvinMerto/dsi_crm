@@ -293,7 +293,7 @@
                         
                         window.location.href = "{{route('salesquote.showquote')}}/"+response;
                     });
-                })
+                });
             </script>
     @endpush
 

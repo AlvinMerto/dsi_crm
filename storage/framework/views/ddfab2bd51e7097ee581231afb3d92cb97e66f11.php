@@ -1,5 +1,5 @@
     <tr class="subitem" data-rid="<?php echo $values['id']; ?>">
-        <td style="text-align:center" id="<?php echo $values['id']; ?>_count"> <?php // echo $count; ?> </td>
+        <td style="text-align:center" id="<?php echo $values['id']; ?>_count" class='firsttd' title='click to select the row'>  <?php // echo $count; ?> </td>
         <?php if (isset($showsettings['profit'])) { ?>
             <td> &nbsp; </td>
         <?php } ?>

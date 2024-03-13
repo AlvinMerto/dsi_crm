@@ -30,8 +30,8 @@
                               data-manu_label      = '{$c->manufacturer_name}' 
                               data-manu_descs      = '{$c->manufacturer_part_number}'
                               >";
-                        echo "<td>".$count++."</td>";
-                        echo "<td style='text-wrap:wrap;'> {$c->description} </td>";
+                        echo "<td style='vertical-align:top;'>".$count++."</td>";
+                        echo "<td style='white-space: break-spaces;'> {$c->description} </td>";
                     echo "</tr>";
                 }
             ?>

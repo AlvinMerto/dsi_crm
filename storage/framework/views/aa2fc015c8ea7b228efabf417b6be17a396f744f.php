@@ -1427,6 +1427,7 @@
         ?>
         <div class="col-12 topdiv_create <?php echo $reduceheight; ?>">
             <div class="card mb-2">
+                    <p style="width: 100%;text-align: center;padding: 0px;font-size: 11px;"> <i class="ti ti-edit"></i> Update quotation information here </p>
                 <div class="card-body <?php echo $padd; ?>">
                         <div class="row">
                             <?php 
@@ -1572,6 +1573,34 @@
 </div>
 
 <style>
+    @media screen and (max-width:600px){
+        .border-right {
+            padding: calc(20px + (100vw - 700px) * (15 - 30) / (700 -  1000));
+        }
+
+        .with_as {
+            text-align:center;
+        }
+
+        .thetotaltable {
+            width:90% !important;
+        }
+
+        .hide-mob{
+            display:none !Important;
+        }
+    }
+
+    .thetotaltable {
+        position: fixed;
+        bottom: 0px;
+        background: #fff;
+        z-index: 1000; 
+        width:80%;
+        box-shadow: 0px -5px 10px #a6a6a6; 
+        border-radius: 20px 20px 0px 0px;
+    }
+
     .edittext, .otherinfo_text, .edittext_ship {
         border:0px;
         outline:none;
@@ -1591,6 +1620,10 @@
     .reduceheight:hover > .card {
         cursor:pointer;
         background-color:#333 !important;
+    }
+
+    .reduceheight:hover > .card p {
+        color:#fff;
     }
 
     .topdiv_create {

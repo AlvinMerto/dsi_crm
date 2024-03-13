@@ -238,6 +238,11 @@
         background:transparent;
     }
 
+    #tblLocations tbody tr td:first-child,
+    #tblLocations thead tr th:first-child {
+        padding:3px 3px !important;
+    }
+
     #tblLocations tbody tr td input, 
     #tblLocations tbody tr td select {
         padding:4px;
@@ -267,7 +272,7 @@
     }
     
     .border-right {
-        border: 1px solid #e0e0e0;
+        border: 1px solid #040404;
         color: #767575;
         padding: 7px 15px;
         margin-right: -5px;
@@ -282,7 +287,14 @@
     }
 
     .selectedTr {
-        background:#eee !important;
+        background: #949393 !important;
+    }
+
+    .selectedTr td, 
+    .selectedTr td textarea, 
+    .selectedTr td input[type='text'],
+    .selectedTr td select {
+        color:#fff !Important;
     }
 
     #bigbtn_div a:hover > span {
@@ -384,21 +396,23 @@
         $(function () {
             var qid = $(document).find("#qid").val();
 
-            $(document).on("click","#tblLocations tbody tr.subitem", function(){
+            // $(document).on("click","#tblLocations tbody tr.subitem", function(){
+            $(document).on("click","#tblLocations tbody tr td.firsttd", function(){
+                
+                var id    = $(this).parent().data("rid");
 
-                var id = $(this).data("rid");
-
-                var state = $(this).hasClass("selectedTr");
-
+                var state = $(this).parent().hasClass("selectedTr");
+                // alert(id);
+                // alert(state);
                 if (state == true || state == "true") {
                     let indx  = trs.indexOf( id );
                     trs.splice(indx,1);
 
-                    $(this).removeClass("selectedTr");
+                    $(this).parent().removeClass("selectedTr");
 
                     $(document).find(".viewdetails").hide();
-                    $(document).find(".subcomment").hide();
-                    $(document).find(".subblank").hide();
+                    // $(document).find(".subcomment").hide();
+                    // $(document).find(".subblank").hide();
                     $(document).find(".copythis").hide();
                     $(document).find(".deletethis").hide();
 
@@ -406,23 +420,23 @@
                     
                     trs.push( id );
                      
-                    $(this).addClass("selectedTr");
+                    $(this).parent().addClass("selectedTr");
                     $(document).find(".viewdetails").show();
-                    $(document).find(".subcomment").show();
-                    $(document).find(".subblank").show();
+                    // $(document).find(".subcomment").show();
+                    // $(document).find(".subblank").show();
                     $(document).find(".deletethis").show();
                     $(document).find(".copythis").show();
                 }
 
                 if (trs.length > 1 || trs.length == 0) {
                     $(document).find(".viewdetails").hide();
-                    $(document).find(".subcomment").hide();
-                    $(document).find(".subblank").hide();
+                    // $(document).find(".subcomment").hide();
+                    // $(document).find(".subblank").hide();
                     // $(document).find(".copythis").hide();
                 } else if (trs.length == 1 ) {
                     $(document).find(".viewdetails").show();
-                    $(document).find(".subcomment").show();
-                    $(document).find(".subblank").show();
+                    // $(document).find(".subcomment").show();
+                    // $(document).find(".subblank").show();
                     // $(document).find(".copythis").show();
                 }
                 
@@ -858,7 +872,7 @@
             // var id           = e.target.id;
             var id           = $(this).data("btnid");
             var dis          = null;
-        
+            // var dis         = $(this);
 
             if (id === "savecomment") {
                 item        = $(document).find("#commenttxt").val();
@@ -876,7 +890,15 @@
             var thistr       = $(document).find(".selectedTr");
             var len          = thistr.length;
             
-            var order_to_use = thistr.eq().prevObject[0].rowIndex+1;
+            var order_to_use = 0;
+
+            if (thistr.length == 0) {
+                order_to_use = $(document).find("#tblLocations tbody tr").length+1;
+                thistr       = $(document).find("#tblLocations tbody tr").eq( $(document).find("#tblLocations tbody tr").length-1 );
+            } else {
+                order_to_use = thistr.eq().prevObject[0].rowIndex+1;
+            }
+            
             var original_row = $(document).find("#tblLocations tbody tr").length;
 
             // alert(original_row); return;
@@ -888,7 +910,7 @@
             var d_id    = thistr.data("rid");
             var t_id    = thistr.parent().data('tid');
 
-        //   console.log(t_id); return;
+            // console.log(t_id); return;
             // console.log(updateorder); return;
 
             savethis({
@@ -922,7 +944,9 @@
 
                             get_no_value(dd_id, function(){
                                 $('#commonModal').modal('hide');
-                                dis.html("<i class='ti ti-space'></i>");
+                                if (dis != null) {
+                                    dis.html("<i class='ti ti-space'></i>");
+                                }
                             }, thistr);
                 
                         });
@@ -1165,8 +1189,8 @@
                 trs                = [];
 
                 $(document).find(".viewdetails").hide();
-                $(document).find(".subcomment").hide();
-                $(document).find(".subblank").hide();
+                // $(document).find(".subcomment").hide();
+                // $(document).find(".subblank").hide();
                 $(document).find(".copythis").hide();
                 $(document).find(".deletethis").hide();
 
@@ -1545,7 +1569,7 @@
     var additional_info = {};
 
     $(document).on("click",".savetoitem", function(){
-        $(document).find("#loading_div_ct").show();
+        
 
         var quote_item_id  = $(this).data("itemid");
         var qid            = $(document).find("#qid").val();
@@ -1623,6 +1647,7 @@
                 "additional_info" : additional_info
             };
 
+            $(document).find("#loading_div_ct").show();
             postAjax("<?php echo e(route('salesquote.addcustomitem')); ?>",data, function(response) {
                 appendTolist(response, function(){
                     $("#commonModal").modal("hide");
@@ -1636,8 +1661,7 @@
     });
 
     $(document).on("click",".btncutomitem_new", function(){
-        $(document).find("#loading_div_ct").show();
-
+        
         var qid            = $(document).find("#qid").val();
 
         var productline_id = $("#commonModal form").find("#productlineid").val();
@@ -1703,6 +1727,7 @@
 
         // $("#commonModal").modal("hide"); return;
         // console.log(data); 
+        $(document).find("#loading_div_ct").show();
         postAjax("<?php echo e(route('salesquote.addcustomitem')); ?>",data, function(response) {
             // $(response).appendTo('.add-list');
             
@@ -2344,7 +2369,7 @@
             </div>
 <?php elseif($type == 'salesquote'): ?>
     <!-- <h5 class="h4 d-inline-block font-weight-400 mb-4"><?php echo e(__('Sales Quote')); ?></h5> -->
-    <div class="card" style="box-shadow: 0px -5px 9px #b5b5b5;">
+    <div class="card" style="border-top:1px solid #fff;">
         <div class="card-header p-3" style="background: #fff;">
             <!-- <div class="col-md-12 d-flex p-2"> -->
             <div class="card-tools">
@@ -2369,10 +2394,10 @@
                         <i class="ti ti-brand-producthunt"></i></i>
                     </a>
 
-                    <a class="border-right mr-5 subcomment" data-btnid='subcomment' id='subcomment' style="display:none;" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
+                    <a class="border-right mr-5 subcomment" data-btnid='subcomment' id='subcomment' style="" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('Add Comment')); ?>" data-url="<?php echo e(route('salesquote.addcomment')); ?>" data-toggle="tooltip" title="<?php echo e(__('Comment')); ?>">
                         <i class="ti ti-message-dots"></i>
                     </a>
-                    <a class="border-right mr-5 common_btn_a subblank" data-btnid='subblank' id='subblank' style="display:none;" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
+                    <a class="border-right mr-5 common_btn_a subblank" data-btnid='subblank' id='subblank' style="" title="<?php echo e(__('Create a blank row')); ?>" data-toggle="tooltip">
                         <i class="ti ti-space"></i>
                     </a>
                     <!-- <a style="display:none;" class="border-right mr-5 viewdetails" data-ajax-popup="true" data-size="md" data-title="<?php echo e(__('View Item Details')); ?>" data-url="<?php echo e(route('salesquote.viewitemdetails')); ?>" data-toggle="tooltip" title="<?php echo e(__('View Item Details')); ?>">
@@ -2406,7 +2431,7 @@
                    
                 </table>
             </div>
-            <div class="table-responsive mt-0" style="position: fixed;bottom: 0px;background: #fff;z-index: 1000; width:80%;box-shadow: 0px -5px 10px #a6a6a6; border-radius: 20px 20px 0px 0px;">
+            <div class="table-responsive mt-0 thetotaltable" style="">
                 <table class="table mb-0 table-custom-style footer-table">
                     <thead>
                         <th colspan='8' style="background: #fff;font-size: 19px;"> Total </th>
