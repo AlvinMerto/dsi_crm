@@ -1484,6 +1484,11 @@ class SalesQuoteController extends Controller
 
             $html  = "<thead>";
             $html .= "<tr>";
+
+            if ($qt_window) {
+                $html .= "<th style='width: 0px; padding:10px 0px; text-align:center;'>&nbsp;</th>";
+            }
+            
             $html .= "<th style='width: 0px; padding:10px 0px; text-align:center;'>*</th>";
 
             if (isset($showsettings['profit'])) {

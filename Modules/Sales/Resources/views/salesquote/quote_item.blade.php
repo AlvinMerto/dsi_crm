@@ -21,7 +21,15 @@
     ?>
 
     <tr class="subitem" data-rid="<?php echo $values['id']; ?>" data-itemorder="<?php echo $values['itemorderid']; ?>" style='border-top:1px solid #000;'>
-        <td id="<?php echo $values['id']; ?>_count" class='firsttd' style="text-align:center" title='click to select the row'> 
+        <?php if (isset($qt_window)) { ?>
+            <?php if ($qt_window == true) { ?>
+                <td class='firsttd'>
+                    <i class="ti ti-square"></i>
+                </td>
+            <?php } ?>
+        <?php } ?>
+        
+        <td id="<?php echo $values['id']; ?>_count" style="text-align:center" title='click to select the row'> 
             <?php if (isset($qt_window)) { ?>
                 <?php if ($qt_window == true) { ?>
                     <?php 

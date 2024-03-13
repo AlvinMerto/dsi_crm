@@ -416,6 +416,9 @@
                     $(document).find(".copythis").hide();
                     $(document).find(".deletethis").hide();
 
+                    $(this).html("");
+                    $(this).html("<i class='ti ti-square'></i>");
+
                 } else if (state == false || state == "false") {
                     
                     trs.push( id );
@@ -426,6 +429,9 @@
                     // $(document).find(".subblank").show();
                     $(document).find(".deletethis").show();
                     $(document).find(".copythis").show();
+
+                    $(this).html("");
+                    $(this).html("<i class='ti ti-checkbox'></i>");
                 }
 
                 if (trs.length > 1 || trs.length == 0) {

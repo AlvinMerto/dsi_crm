@@ -1,4 +1,12 @@
     <tr class="subitem" data-rid="<?php echo $values['id']; ?>">
+        <?php if (isset($qt_window)) { ?>
+            <?php if ($qt_window == true) { ?>
+                <td class='firsttd'>
+                    <i class="ti ti-square"></i>
+                </td>
+            <?php } ?>
+        <?php } ?>
+
         <td style="text-align:center" id="<?php echo $values['id']; ?>_count" class='firsttd' title='click to select the row'>  <?php // echo $count; ?> </td>
         <?php if (isset($showsettings['profit'])) { ?>
             <td> &nbsp; </td>
