@@ -119,7 +119,7 @@
     echo "<table class='qt_tbl'>".$quote."</table>";
 ?>
 
-    <div style='border-top:5px double;'>
+    <div style="border-top:5px double;border-bottom: 5px double;">
         <?php if (isset($show['tax'])) { ?>
             <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['subtotal']; ?> </span> </p>
             <p style="text-align: right;padding: 0px 0px; margin:10px;"> Tax &nbsp; &nbsp; &nbsp; <span> <?php echo $total['tax']; ?> </span> </p>
@@ -127,6 +127,20 @@
             <p style="text-align: right;padding: 0px 0px; margin:10px;"> <strong> Subtotal </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['totalamount']; ?> </span> </p>
         <?php } ?>
             <p style="text-align: right;padding: 0px 0px; margin:10px;">  <strong> Total </strong> &nbsp; &nbsp; &nbsp; <span> &nbsp; <?php echo $total['totalamount']; ?> </span> </p>
+    </div>
+    
+    <div style='margin-top:20px;'>
+        <span> This quote is valid for thirty (30) days </span> <br/>
+        <span>Delivery Time: 6-8 weeks ARO </span> <br/>
+        <span>100% payment or Original Govt PO required </span> <br/>
+        <span>2.5% convenience fee for all payments via credit card </span> <br/>
+        <span>$25 incoming wire fee for all payments via wire transfer </span> <br/> <br/>
+        <span>
+            Confidentiality Notice: This quotation including any attachments 
+            are for the sole use of the Intended recipient(s), 
+            and may contain confidential and privilege information. 
+            Any unauthorized review, use, disclosure of or distribution is prohibited.
+        </span>
     </div>
 
     <div style='margin-top:20px;'>
@@ -143,6 +157,7 @@
             </tr>
         </table>
     </div>
+
 </div>
 
 <?php /**PATH C:\xampp\htdocs\dsi_crm\Modules/Sales\Resources/views/quote/templates/quotepdf.blade.php ENDPATH**/ ?>
