@@ -300,7 +300,7 @@
                         
                         window.location.href = "<?php echo e(route('salesquote.showquote')); ?>/"+response;
                     });
-                })
+                });
             </script>
     <?php $__env->stopPush(); ?>
 

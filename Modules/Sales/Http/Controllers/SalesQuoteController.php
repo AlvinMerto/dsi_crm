@@ -95,13 +95,17 @@ class SalesQuoteController extends Controller
 
     public static function quoteNumber()
     {
-        $latest = SalesQuote::where('created_by', '=', creatorId())->latest()->first();
-        if(!$latest)
+        // $latest = SalesQuote::where('created_by', '=', creatorId())->latest()->first();
+         $latest   = SalesQuote::max("quote_id");
+        // $latest      = SalesOrder::max("quote");
+     
+        if($latest == null)
         {
             return 1;
         }
-
-        return $latest->quote_id + 1;
+        
+        return $latest+1;
+        // return $latest->quote_id + 1;
     }
 
     /**
@@ -1488,7 +1492,7 @@ class SalesQuoteController extends Controller
             if ($qt_window) {
                 $html .= "<th style='width: 0px; padding:10px 0px; text-align:center;'>&nbsp;</th>";
             }
-            
+
             $html .= "<th style='width: 0px; padding:10px 0px; text-align:center;'>*</th>";
 
             if (isset($showsettings['profit'])) {
@@ -1706,6 +1710,11 @@ class SalesQuoteController extends Controller
                             }
 
                             $html .= "<tr class='substart_click hollow_row' data-tid='{$grpid}' style='border-top:1px solid #000;'>";
+                            
+                            if ($qt_window) {
+                                $html .= "<td> </td>";
+                            }
+                            
                             $html .= "<td> </td>";
 
                             if (isset($showsettings['profit'])) {
@@ -1829,7 +1838,7 @@ class SalesQuoteController extends Controller
                             if ($qt_window == true) {
                                 if (isset($showsettings['tax'])) {
                                     $html .= "<td> &nbsp; </td>";
-                                    $html .= "<td> &nbsp; </td>";
+                                    // $html .= "<td> &nbsp; </td>";
                                 }
                             }
 
@@ -1910,7 +1919,7 @@ class SalesQuoteController extends Controller
 
                             if ($aa->grp_id !== null) {
                                 if (isset($showsettings['sub'])) {
-                                    $colspan_substop = 9;
+                                    $colspan_substop = 10;
                                     
                                     // if ($intextbox) {
                                     //     $colspan = 8;
@@ -1972,7 +1981,7 @@ class SalesQuoteController extends Controller
                                             $html .= "<td> </td>";
                                         }
                                         if (isset($showsettings['tax'])) {
-                                            $html .= "<td> </td>";
+                                            // $html .= "<td> </td>";
                                         }
                                         
                                         $html .= "</tr>";
